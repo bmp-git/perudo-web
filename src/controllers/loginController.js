@@ -31,43 +31,38 @@ exports.show_signup = function(req, res) {
 
 exports.user_signup = function(req, res) {
 	var username = req.body.username;
-	var email = req.params.email;
+	var email = req.body.email;
     var password = req.body.password;
     if(!username || username.length < 3 || username.length > 15) {
         res.status(400).send("The username must consist of 3 to 15 characters");
         res.end();
-        return;
-    }
-    if(!validator.validate(email)) {
+    } else if(!validator.validate(email)) {
         res.status(400).send("Email not valid");
         res.end();
-        return;
-    }
-    if(!password || password.length < 5 || password.length > 30) {
+    } else if(!password || password.length < 5 || password.length > 30) {
         res.status(400).send("The password must consist of 5 to 30 characters");
         res.end();
-        return;
-    }
-	User.exists({ email: req.body.email }, function(err, found) { 
-		if(found) {
-			res.status(409).send('Email already used');
-			console.log('[user_signup] Email ' + email + ' already in use');
-		} else {
-			var salt = genRandomString(128);
-			var hashedPassword = saltPassword(password, salt);
-			var new_user = new User({email: email, username: username, password: hashedPassword, salt: salt});
-			console.log('[user_signup] New user: ' + new_user);
-			new_user.save(function(err, user) {
-				if (err) {
-					res.send(err);
-				}
-				delete user.password;
-				delete user.salt;
-				res.status(201).json(user);
-			});
-        }
-        res.end();
-	});
+	} else {
+		User.exists({ email: email }, function(err, found) { 
+			if(found) {
+				res.status(409).send('Email already used');
+				console.log('[user_signup] Email ' + email + ' already in use');
+			} else {
+				var salt = genRandomString(128);
+				var hashedPassword = saltPassword(password, salt);
+				var new_user = new User({email: email, username: username, password: hashedPassword, salt: salt});
+				console.log('[user_signup] New user: ' + new_user);
+				new_user.save(function(err, user) {
+					if (err) {
+						res.send(err);
+					}
+					user.password = "";
+					user.salt = "";
+					res.status(201).json(user).end();
+				});
+			}
+		});
+	}
 }
 
 exports.user_login = function(req, res) {
@@ -104,7 +99,9 @@ exports.user_login = function(req, res) {
 }
 
 exports.user_logout = function(req, res) {
-    if(req.session.loggedin) {
+	if(req.params.email != req.session.user.email) {
+		res.status(401).send('Incorrect Email');
+	} else if(req.session.loggedin) {
         console.log("[user_logout]" + req.session.user.email + " logout");
         req.session.loggedin = false;				
         res.status(200).send("Loggout ok");
