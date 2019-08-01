@@ -2,8 +2,6 @@ var mongoose = require('mongoose');
 var Movie = mongoose.model('Movies');
 
 
-
-
 exports.show_index = function(req, res) {
 	res.sendFile(appRoot  + '/www/index.html');
 };
