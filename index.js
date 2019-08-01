@@ -1,8 +1,8 @@
 var express = require('express');
 var app = express();
-var mongoose = require('mongoose')
-var Movie = require('./src/models/moviesModel')
-var User = require('./src/models/user')
+var mongoose = require('mongoose');
+require('./src/models/moviesModel');
+require('./src/models/user');
 var bodyParser = require('body-parser');
 var session = require('express-session');
 

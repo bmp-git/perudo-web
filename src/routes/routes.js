@@ -3,16 +3,13 @@ module.exports = function(app) {
 	var loginController = require('../controllers/loginController');
 	
 	/* Login / Signup */
-	app.route('/login')
-		.get(loginController.show_login)
-		.post(loginController.user_login);
+	app.route('/login').get(loginController.show_login);
+	app.route('/signup').get(loginController.show_signup);
+	
 
-	app.route('/signup')
-		.get(loginController.show_signup)
-		.post(loginController.user_signup);
-
-	app.route('/logout')
-		.post(loginController.user_logout);
+	app.route('/api/login/:email').post(loginController.user_login);
+	app.route('/api/logout').post(loginController.user_logout);
+	app.route('/api/signup/:email').post(loginController.user_signup);
 
 	
 	app.route('/')
