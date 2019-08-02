@@ -49,7 +49,7 @@ module.exports = function(app) {
 			req.token = bearerToken;
 			jwt.verify(req.token, 'secretkey', (err, authData) => {
 				if(err) {
-					res.status(403).send({message: 'Authentication token is not valid.'});
+					res.status(403).send({message: 'Authentication token is not valid.'}).end();
 				} else {
 					req.authData = authData;
 					req.user = authData.user;
@@ -57,7 +57,7 @@ module.exports = function(app) {
 				}
 			});
 		} else {
-		  res.status(403).send({message: 'Authentication token undefined.'});
+		  res.status(403).send({message: 'Authentication token undefined.'}).end();
 		}
 	}
 };

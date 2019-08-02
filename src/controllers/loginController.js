@@ -43,7 +43,9 @@ exports.user_signup = function(req, res) {
         res.status(400).send({message: "The password must consist of 5 to 30 characters."}).end();
 	} else {
 		User.exists({ email: email }, function(err, found) { 
-			if(found) {
+			if(err) {
+				res.status(500).send({message: err});
+			} else if(found) {
 				res.status(409).send({message: "Email already used."}).end();
 				console.log('[user_signup] Email ' + email + ' already in use');
 			} else {
@@ -53,7 +55,7 @@ exports.user_signup = function(req, res) {
 				console.log('[user_signup] New user: ' + new_user);
 				new_user.save(function(err, user) {
 					if (err) {
-						res.send({message: err});
+						res.status(500).send({message: err});
 					}
 					res.status(201).send({message: 'Sign up completed.'}).end();
 				});
@@ -67,11 +69,13 @@ exports.user_login = function(req, res) {
 	var password = req.body.password;
 	if (email && password) {
 		User.findOne({ email: email }, function(err, user) { 
-			if(user) {
+			if(err) {
+				res.status(500).send({message: err});
+			} else if(user) {
 				var hashedPassword = saltPassword(password, user.salt);
 				if(hashedPassword == user.password) {
                     console.log('[user_auth] Auth of: ' + email + ' success!');
-                    jwt.sign({user: {_id:user._id, email: user.email}}, 'secretkey', { expiresIn: '2 days' }, (err, token) => {
+                    jwt.sign({user: {_id: user._id, email: user.email}}, 'secretkey', { expiresIn: '2 days' }, (err, token) => {
                         res.json({ token: token }).end();
                     });
 				} else {
