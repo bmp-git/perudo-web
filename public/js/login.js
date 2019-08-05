@@ -1,31 +1,35 @@
 const Login = {
-    template: `<div class="row">
-                        <form class="form-group" method="post">
-                        <!-- divider Accesso -->
+    template: `<div class="container">
+                        <form class="form-group">
+                        <hr class="hr-text" data-content="Sign in">
 
 
                         <label class="sr-only" for="txbEmail">Email</label>
                         <div class="input-group mb-2 mt-2">
-                            <div class="input-group-addon"><div class="fa fa-envelope fa-fw"></div></div>
+                            <div class="input-group-prepend">
+                                <div class="input-group-text"><i class="fas fa-envelope"></i></div>
+                            </div>
                             <input v-model="email" type="email" class="form-control" placeholder="Email" value="">
                         </div>
-                        <label class="sr-only" for="txbPasswordTmp">Passowrd</label>
+                        <label class="sr-only" for="txbPasswordTmp">Password</label>
                         <div class="input-group">
-                            <div class="input-group-addon"><div class="fa fa-lock fa-fw"></div></div>
+                            <div class="input-group-prepend">
+                                <div class="input-group-text"><i class="fas fa-key"></i></div>
+                            </div>
                             <input v-model="login_request.password" type="password" class="form-control" placeholder="Password">
                         </div>
                         <small class="text-danger" v-if="show_error">
                             {{error_message}}
                         </small>
-                        <div class="form-group">
-                            <input type="button" @click.prevent="login" class="btn btn-primary btn-lg btn-block" value="Accedi">
+                        <div class="form-group" style="padding-top:10px">
+                            <input type="button" @click.prevent="login" class="btn btn-primary btn-lg btn-block" value="Sign in">
                         </div>
 
                         </form>
                             
                         <div class="form-group" style="padding-top:10px">
-                        <!-- divider Sei nuovo? -->
-                        <button type="button" class="btn btn-primary btn-lg btn-block login-button" onclick="">Registrati</button>
+                        <hr class="hr-text" data-content="Are you new?">
+                        <router-link class="btn btn-primary btn-lg btn-block login-button" to="/signup"><i class="fas fa-user-plus"></i> Sign Up</router-link>
                         </div>
 	</div>`,
     data() {
