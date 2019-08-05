@@ -6,8 +6,8 @@
 <title>Perudo</title>
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
-<style>
-</style>
+<link rel="stylesheet" href="/static/css/404.css"></link>
+
 </head>
 
 <body>
@@ -80,51 +80,8 @@
 <script src="/static/js/404.js"></script>
 <script src="/static/js/router.js"></script>
 
-<script>
-	const store = new Vuex.Store( {
-		state: {
-			user : {
-				_id : "",
-				username : "",
-				email : "",
-			},
-			authenticated : false,
-			token: ""
-		},
-		mutations: {
-			setToken(state, token) {
-				if(token !== 'null') {
-					state.authenticated = true;
-					tokenData = JSON.parse(atob(token.split('.')[1]));
-					state.user = tokenData.user;
-					state.token = token;
-				}
-			},
-			unsetToken(state) {
-				state.authenticated = false;
-				state.user = {
-					_id : "",
-					username : "",
-					email : "",
-				};
-				state.token = "";
-			}
-		}
-	});
-  var app = new Vue({
-		router,
-		el: "#perudo",
-		store,
-		methods: {
-		},
-		mounted() {
-            if (localStorage.token !== 'null') {
-            	console.log("Loaded token from localstorage " + localStorage.token);
-				store.commit('setToken', localStorage.token);
-            }
-          }
-	});
-</script>
+<script src="/static/js/store.js"></script>
+<script src="/static/js/vueMain.js"></script>
 
 </body>
 </html>
