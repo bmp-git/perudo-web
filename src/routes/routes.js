@@ -1,16 +1,29 @@
 var jwt = require('jsonwebtoken');
 
 module.exports = function(app) {
-	var moviesController = require('../controllers/moviesController');
 	var loginController = require('../controllers/loginController');
-	
-	app.route('/')
-		.get(moviesController.show_index);
+	var userController = require('../controllers/userController');
 
-	app.route('/api/users').post(loginController.user_signup)
-	app.route('/api/users/:email/token').post(loginController.user_login)
+	app.route('/').get(function(req, res) {
+			res.sendFile(appRoot  + '/www/index.html');
+	});
+
+	//Login apis
+	app.route('/api/users')
+		.post(loginController.user_signup);
+	app.route('/api/users/:email/token')
+		.post(loginController.user_login);
 	//Logout non server più: il token scade da solo dopo 2 giorni
 
+	//User apis
+	app.route('/api/users/:id/password')
+		.put(autheticate, loginController.change_user_password);
+	
+	app.route('/api/users/:id/username')
+		.put(autheticate, userController.change_user_username);
+
+	app.route('/api/users/:id/avatar')
+		.put(autheticate, userController.change_user_avatar);
 	
 	//Esempio: per richiedere la lista delle lobby non server l'authentication code.
 	//		   per aggiungere una lobby invece serve, quindi: "autheticate"
@@ -21,20 +34,6 @@ module.exports = function(app) {
 		.post(autheticate, (req, res) => {
 			res.send("Hello " + req.user.email + "!");
 		});
-
-
-	app.route('/api/movies')
-		.get(moviesController.list_movies)
-		.post(moviesController.create_movie);
-	
-	app.route('/api/movies/:id')
-		.get(moviesController.read_movie)
-		.put(moviesController.update_movie)
-		.delete(moviesController.delete_movie);
-
-	app.use(moviesController.show_index);
-
-
 
 	function autheticate(req, res, next) {
 		const bearerHeader = req.headers['authorization'];

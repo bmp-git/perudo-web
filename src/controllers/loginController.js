@@ -15,22 +15,6 @@ var saltPassword = function(password, salt){
 };
 var validator = require("email-validator");
 
-exports.show_login = function(req, res) {
-	if(req.session.loggedin) {
-		res.redirect('/');
-	} else {
-		res.sendFile(appRoot  + '/www/login.html');
-	}
-};
-
-exports.show_signup = function(req, res) {
-	if(req.session.loggedin) {
-		res.redirect('/');
-	} else {
-		res.sendFile(appRoot  + '/www/signup.html');
-	}
-};
-
 exports.user_signup = function(req, res) {
 	var username = req.body.username;
 	var email = req.body.email;
