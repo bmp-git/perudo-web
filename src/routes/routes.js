@@ -35,6 +35,10 @@ module.exports = function(app) {
 			res.send("Hello " + req.user.email + "!");
 		});
 
+	app.use(function(req, res) {
+            res.sendFile(appRoot  + '/www/index.html');
+	});
+	
 	function autheticate(req, res, next) {
 		const bearerHeader = req.headers['authorization'];
 		if(typeof bearerHeader !== 'undefined') {
