@@ -16,7 +16,7 @@ const Profile = {
                         <img src="static/img/avatar.png" class="ig-avatar">
                     </div>
                     <div class="col-md-4">
-                        <h2>{{this.$store.state.user.username}}</h2>
+                        <h2>{{user.username}}</h2>
                         <h4>Italy</h4>
                     </div>
                 </div>
@@ -31,7 +31,7 @@ const Profile = {
                     <div class="col-md-3">
                         Global ranking: 2039 <br>
                         Country ranking: 234 <br>
-                        Points: 32 <br>                                     
+                        Points: {{user.points}} <br>                                     
                     </div>
                 </div>
                 
@@ -41,14 +41,14 @@ const Profile = {
                 <div class="row">
                     <div class="col-md-6 offset-md-3">
                         <h2>Stats</h2>
-                        Member since: 20/07/18 <br>
-                        Last stat reset: 18/09/18 <br>
-                        Total play time: 29 hours <br>
-                        Play time since reset: 15 hours <br>
-                        Play count: 56 <br>
-                        Wins: 31 <br>
-                        Losses: 25 <br>
-                        Win/Loss ratio: 1.24 <br>                                   
+                        Member since: {{user.registeredDate}} <br>
+                        Last stat reset: {{user.lastReset}} <br>
+                        Total play time: {{user.totalPlayTime}} hours <br>
+                        Play time since reset: {{user.playTime}} hours <br>
+                        Play count: {{user.wins + user.losses}} <br>
+                        Wins: {{user.wins}} <br>
+                        Losses: {{user.losses}} <br>
+                        Win/Loss ratio: {{user.wins / user.losses}} <br>                                   
                     </div>           
                          
                 </div>
@@ -66,9 +66,23 @@ const Profile = {
         </div>
 `,
     data() {
+        return {
+            user: {
+                username: "",
+                registeredDate: "",
+                lastReset: "",
+                points: 0,
+                wins: 11,
+                losses: 3,
+                playTime: 0,
+                totalPlayTime: 0,
+                avatar: ""
+            }
+
+        }
     },
-    methods: {
-    },
+    methods: {},
     mounted: function () {
+
     }
 };

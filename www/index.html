@@ -34,7 +34,7 @@
 						{{this.$store.state.user.username}}
 					</a>
 					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-						<router-link class="dropdown-item" to="/profile">My profile</router-link>
+						<router-link class="dropdown-item" :to="{ name: 'profile', params: { id: this.$store.state.user._id }}">My profile</router-link>
 						<router-link class="dropdown-item" to="/setting">Setting</router-link>
 						<div class="dropdown-divider"></div>
 						<router-link class="dropdown-item" to="/signout">Sign Out</router-link>
