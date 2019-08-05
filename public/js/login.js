@@ -40,14 +40,11 @@ const Login = { template: `<div class="row">
                 axios.defaults.headers.common['Authorization'] = "Bearer"+  response.data.token;
             })
 			.catch(error => (console.log(error)));
-			
 		},
-		init: function(){
-			//
-		}
-	},
-	mounted(){
-		this.init()
+    },
+	mounted: function(){
+        //console.log(this);
+        //console.log(this.a.parent.token);
 	},
 	filters: {
 		limit: function(text, length) {

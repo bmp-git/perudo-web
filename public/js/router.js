@@ -3,6 +3,7 @@ const router = new VueRouter({
     routes: [
       { path: '/', component: Home },
       { path: '/login', component: Login },
+      { path: '/signout', component: Logout },
       
       { path: '/movies', component: Movies },
       { path: '/crud', component: Crud },

@@ -69,7 +69,7 @@
 
 <script src="/static/js/home.js"></script>
 <script src="/static/js/login.js"></script>
-
+<script src="/static/js/logout.js"></script>
 <script src="/static/js/movies.js"></script>
 <script src="/static/js/crud.js"></script>
 <script src="/static/js/404.js"></script>
@@ -79,6 +79,7 @@
   var app = new Vue({
 		router,
 		el: "#perudo",
+		//store,
 		data: {
 			user : {
 				_id : "",
@@ -89,24 +90,28 @@
     		token: ""
 		},
 		methods: {
-			setTokenData: function (token) {
-				this.authenticated = true;
-				tokenData = JSON.parse(atob(this.token.split('.')[1]));
-				this.user = tokenData.user;
+			setTokenData: function (t) {
+				console.log("New token "+ t);
+				if(t != 'null') {
+					this.authenticated = true;
+					tokenData = JSON.parse(atob(this.token.split('.')[1]));
+					this.user = tokenData.user;
+				} else {
+					this.authenticated = false;
+				}
 			}
 		},
 		mounted() {
-    		if (localStorage.token) {
-				  this.token = localStorage.token;
-				  this.setTokenData(this.token);
-    		}
-  		},
-  		watch: {
-    		token(newToken) {
-				  localStorage.token = newToken;
-				  this.setTokenData(this.token);
-			}
-		}
+            if (localStorage.token) {
+                this.token = localStorage.token;
+            }
+          },
+          watch: {
+            token(newToken) {
+                localStorage.token = newToken;
+                this.setTokenData(this.token);
+            }
+        }
 	});
 </script>
 
