@@ -9,14 +9,14 @@ const Login = {
                             <div class="input-group-prepend">
                                 <div class="input-group-text"><i class="fas fa-envelope"></i></div>
                             </div>
-                            <input v-model="email" type="email" class="form-control" placeholder="Email" value="">
+                            <input v-model="email" type="email" class="form-control" placeholder="Email" required>
                         </div>
                         <label class="sr-only" for="txbPasswordTmp">Password</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
                                 <div class="input-group-text"><i class="fas fa-key"></i></div>
                             </div>
-                            <input v-model="login_request.password" type="password" class="form-control" placeholder="Password">
+                            <input v-model="login_request.password" type="password" class="form-control" placeholder="Password" required>
                         </div>
                         <small class="text-danger" v-if="show_error">
                             {{error_message}}
@@ -44,17 +44,23 @@ const Login = {
     },
     methods: {
         login: function () {
-            axios.post("http://localhost:3000/api/users/" + this.email + "/token", this.login_request)
-                .then(response => {
-                    store.commit('setToken', response.data.token);
-                    localStorage.token = response.data.token;
-                    axios.defaults.headers.common['Authorization'] = "Bearer" + response.data.token;
-                    router.push("/");
-                })
-                .catch(error => {
-                    this.show_error = true;
-                    this.error_message = error.response.data.message;
-                });
+            this.show_error = false;
+            if (this.email && this.login_request.password) {
+                axios.post("http://localhost:3000/api/users/" + this.email + "/token", this.login_request)
+                    .then(response => {
+                        store.commit('setToken', response.data.token);
+                        localStorage.token = response.data.token;
+                        axios.defaults.headers.common['Authorization'] = "Bearer" + response.data.token;
+                        router.push("/");
+                    })
+                    .catch(error => {
+                        this.show_error = true;
+                        this.error_message = error.response.data.message;                    
+                    });
+            } else {
+                this.show_error = true;
+                this.error_message = "Please enter Email and Password!";
+            }
         },
     },
     mounted: function () {
