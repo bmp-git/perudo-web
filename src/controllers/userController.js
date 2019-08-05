@@ -23,5 +23,20 @@ exports.change_user_username = function(req, res) {
 }
 
 exports.change_user_avatar = function(req, res) {
-
+    var avatar = req.body.avatar;
+    var id = req.params.id;
+    var tokenId = req.authData.user._id;
+    if(tokenId != id) {
+        res.status(400).send({message: "Id and token aren't compatible."}).end();
+    } else {
+        User.findByIdAndUpdate(id, {avatar : avatar}, function(err, result){
+            if(err) {
+              res.status(500).send({message: err}).end();
+            } else if(result) {
+              res.status(200).send({message: "New avatar set."}).end();
+            } else {
+              res.status(401).send({message: "Incorrect user id."}).end();
+            }
+        });
+    }
 }
