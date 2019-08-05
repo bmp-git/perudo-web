@@ -7,8 +7,9 @@ const Logout = { template: `<div class="row">
 	},
 	methods: {
 		init: function(){
-            app.token = null;
-            axios.defaults.headers.common['Authorization'] = null;
+			store.commit('unsetToken');
+			localStorage.token = null;
+			axios.defaults.headers.common['Authorization'] = null;
             router.push("/login");
 		}
 	},

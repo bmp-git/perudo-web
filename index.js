@@ -1,30 +1,25 @@
-var express = require('express');
-var app = express();
-var mongoose = require('mongoose');
+const express = require('express');
+const app = express();
+const mongoose = require('mongoose');
 require('./src/models/moviesModel');
 require('./src/models/user');
-var bodyParser = require('body-parser');
-var session = require('express-session');
+const bodyParser = require('body-parser');
+const session = require('express-session');
 
 
-mongoose.connect('mongodb://localhost/dbmovies', { useNewUrlParser: true, useFindAndModify: false });
+mongoose.connect('mongodb://localhost/perudo', { useNewUrlParser: true, useFindAndModify: false });
 
 
-app.use(session({
-	secret: 'secret',
-	resave: true,
-	saveUninitialized: true
-}));
 //Per gestire i parametri passati nel corpo della richiesta http.
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use('/static', express.static(__dirname + '/public'));
 
 
-var path = require('path');
+const path = require('path');
 global.appRoot = path.resolve(__dirname);
 
-var routes = require('./src/routes/routes');
+const routes = require('./src/routes/routes');
 routes(app); 
 
 app.use(function(req, res) {

@@ -28,10 +28,10 @@
 		</li>
 	  </ul>
 	  <ul class="navbar-nav ml-auto">
-			<template v-if="authenticated">  
+			<template v-if="this.$store.state.authenticated">
 				<li class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-						{{user.username}}
+						{{this.$store.state.user.username}}
 					</a>
 					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
 						<router-link class="dropdown-item" to="/profile">My profile</router-link>
@@ -39,6 +39,9 @@
 						<div class="dropdown-divider"></div>
 						<router-link class="dropdown-item" to="/signout">Sign Out</router-link>
 					</div>
+				</li>
+				<li class="nav-item">
+					<router-link class="nav-link" to="/gamerules"><i class="fas fa-book"></i> Game Rules</router-link>
 				</li>
 			</template>
 			<template v-else>
@@ -60,6 +63,7 @@
   </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script src="https://unpkg.com/vuex@2.0.0"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script src="https://npmcdn.com/vue-router/dist/vue-router.js"></script>
 <!--Bootstrap-->
@@ -76,42 +80,48 @@
 <script src="/static/js/router.js"></script>
 
 <script>
-  var app = new Vue({
-		router,
-		el: "#perudo",
-		//store,
-		data: {
+	const store = new Vuex.Store( {
+		state: {
 			user : {
 				_id : "",
 				username : "",
 				email : "",
 			},
 			authenticated : false,
-    		token: ""
+			token: ""
 		},
-		methods: {
-			setTokenData: function (t) {
-				console.log("New token "+ t);
-				if(t != 'null') {
-					this.authenticated = true;
-					tokenData = JSON.parse(atob(this.token.split('.')[1]));
-					this.user = tokenData.user;
-				} else {
-					this.authenticated = false;
+		mutations: {
+			setToken(state, token) {
+				if(token !== 'null') {
+					state.authenticated = true;
+					tokenData = JSON.parse(atob(token.split('.')[1]));
+					state.user = tokenData.user;
+					state.token = token;
 				}
+			},
+			unsetToken(state) {
+				state.authenticated = false;
+				state.user = {
+					_id : "",
+					username : "",
+					email : "",
+				};
+				state.token = "";
 			}
+		}
+	});
+  var app = new Vue({
+		router,
+		el: "#perudo",
+		store,
+		methods: {
 		},
 		mounted() {
-            if (localStorage.token) {
-                this.token = localStorage.token;
+            if (localStorage.token !== 'null') {
+            	console.log("Loaded token from localstorage " + localStorage.token);
+				store.commit('setToken', localStorage.token);
             }
-          },
-          watch: {
-            token(newToken) {
-                localStorage.token = newToken;
-                this.setTokenData(this.token);
-            }
-        }
+          }
 	});
 </script>
 

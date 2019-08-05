@@ -36,14 +36,15 @@ const Login = { template: `<div class="row">
 		login: function () {
             axios.post("http://localhost:3000/api/users/" + this.email + "/token", this.login_request)
 			.then(response => {
-                app.token = response.data.token;
+				store.commit('setToken', response.data.token);
+				localStorage.token = response.data.token;
                 axios.defaults.headers.common['Authorization'] = "Bearer"+  response.data.token;
             })
 			.catch(error => (console.log(error)));
 		},
     },
 	mounted: function(){
-        //console.log(this);
+		//console.log(this);
         //console.log(this.a.parent.token);
 	},
 	filters: {
