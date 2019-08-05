@@ -45,14 +45,14 @@ const Signup = {
     data() {
         return {
             signup_request: {
-                username: "Edo",
-                email: "asd@asd.com",
-                password: "asdasd"
+                username: "",
+                email: "",
+                password: ""
             },
             error_message: "",
             show_error: false,
-            show_success: false,
-            success_message: ""
+            success_message: "",
+            show_success: false
         }
     },
     methods: {
