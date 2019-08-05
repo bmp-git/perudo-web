@@ -1,4 +1,5 @@
-const Login = { template: `<div class="row">
+const Login = {
+    template: `<div class="row">
                         <form class="form-group" method="post">
                         <!-- divider Accesso -->
 
@@ -13,6 +14,9 @@ const Login = { template: `<div class="row">
                             <div class="input-group-addon"><div class="fa fa-lock fa-fw"></div></div>
                             <input v-model="login_request.password" type="password" class="form-control" placeholder="Password">
                         </div>
+                        <small class="text-danger" v-if="show_error">
+                            {{error_message}}
+                        </small>
                         <div class="form-group">
                             <input type="button" @click.prevent="login" class="btn btn-primary btn-lg btn-block" value="Accedi">
                         </div>
@@ -24,32 +28,39 @@ const Login = { template: `<div class="row">
                         <button type="button" class="btn btn-primary btn-lg btn-block login-button" onclick="">Registrati</button>
                         </div>
 	</div>`,
-	data() {
-		return {
+    data() {
+        return {
             email: "",
             login_request: {
-                "password" : ""
-            }
-		}
-	},
-	methods: {
-		login: function () {
-            axios.post("http://localhost:3000/api/users/" + this.email + "/token", this.login_request)
-			.then(response => {
-				store.commit('setToken', response.data.token);
-				localStorage.token = response.data.token;
-                axios.defaults.headers.common['Authorization'] = "Bearer"+  response.data.token;
-            })
-			.catch(error => (console.log(error)));
-		},
+                password: ""
+            },
+            show_error: false,
+            error_message: ""
+        }
     },
-	mounted: function(){
-		//console.log(this);
-        //console.log(this.a.parent.token);
-	},
-	filters: {
-		limit: function(text, length) {
-			return text.substring(0, length); 
-		}
-	},
+    methods: {
+        login: function () {
+            axios.post("http://localhost:3000/api/users/" + this.email + "/token", this.login_request)
+                .then(response => {
+                    store.commit('setToken', response.data.token);
+                    localStorage.token = response.data.token;
+                    axios.defaults.headers.common['Authorization'] = "Bearer" + response.data.token;
+                    router.push("/");
+                })
+                .catch(error => {
+                    this.show_error = true;
+                    this.error_message = error.response.data.message;
+                });
+        },
+    },
+    mounted: function () {
+        if (tmp_email) {
+            this.email = tmp_email; //Retrive email from signup page
+        }
+    },
+    filters: {
+        limit: function (text, length) {
+            return text.substring(0, length);
+        }
+    },
 }

@@ -3,6 +3,7 @@ const router = new VueRouter({
     routes: [
         {path: '/', component: Home},
         {path: '/login', component: Login, meta: {requiresNotAuth: true}},
+        {path: '/signup', component: Signup, meta : {requiresNotAuth : true}},
         {path: '/signout', component: Logout, meta: {requiresAuth: true}},
         {path: '/profile', component: Profile, meta: {requiresAuth: true}},
         {path: '/movies', component: Movies},
