@@ -79,51 +79,8 @@
 <script src="/static/js/404.js"></script>
 <script src="/static/js/router.js"></script>
 
-<script>
-	const store = new Vuex.Store( {
-		state: {
-			user : {
-				_id : "",
-				username : "",
-				email : "",
-			},
-			authenticated : false,
-			token: ""
-		},
-		mutations: {
-			setToken(state, token) {
-				if(token !== 'null') {
-					state.authenticated = true;
-					tokenData = JSON.parse(atob(token.split('.')[1]));
-					state.user = tokenData.user;
-					state.token = token;
-				}
-			},
-			unsetToken(state) {
-				state.authenticated = false;
-				state.user = {
-					_id : "",
-					username : "",
-					email : "",
-				};
-				state.token = "";
-			}
-		}
-	});
-  var app = new Vue({
-		router,
-		el: "#perudo",
-		store,
-		methods: {
-		},
-		mounted() {
-            if (localStorage.token !== 'null') {
-            	console.log("Loaded token from localstorage " + localStorage.token);
-				store.commit('setToken', localStorage.token);
-            }
-          }
-	});
-</script>
+<script src="/static/js/store.js"></script>
+<script src="/static/js/vueMain.js"></script>
 
 </body>
 </html>
