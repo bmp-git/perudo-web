@@ -28,26 +28,30 @@
 		</li>
 	  </ul>
 	  <ul class="navbar-nav ml-auto">
-			<li class="nav-item dropdown">
-				<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-					Username
-				</a>
-				<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-					<router-link class="dropdown-item" to="/profile">My profile</router-link>
-					<router-link class="dropdown-item" to="/setting">Setting</router-link>
-					<div class="dropdown-divider"></div>
-					<router-link class="dropdown-item" to="/signout">Sign Out</router-link>
-				</div>
-			</li>
-			<li class="nav-item">
-				<router-link class="nav-link" to="/signup"><i class="fas fa-user-plus"></i> Sign Up</router-link>
-			</li>
-      		<li class="nav-item">
-				  <router-link class="nav-link" to="/login"><i class="fas fa-sign-in-alt"></i> Login</router-link>
-			</li>
-			<li class="nav-item">
-				<router-link class="nav-link" to="/gamerules"><i class="fas fa-book"></i> Game Rules</router-link>
-			</li>
+			<template v-if="authenticated">  
+				<li class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						{{user.username}}
+					</a>
+					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+						<router-link class="dropdown-item" to="/profile">My profile</router-link>
+						<router-link class="dropdown-item" to="/setting">Setting</router-link>
+						<div class="dropdown-divider"></div>
+						<router-link class="dropdown-item" to="/signout">Sign Out</router-link>
+					</div>
+				</li>
+			</template>
+			<template v-else>
+				<li class="nav-item">
+					<router-link class="nav-link" to="/signup"><i class="fas fa-user-plus"></i> Sign Up</router-link>
+				</li>
+				<li class="nav-item">
+					<router-link class="nav-link" to="/login"><i class="fas fa-sign-in-alt"></i> Login</router-link>
+				</li>
+				<li class="nav-item">
+					<router-link class="nav-link" to="/gamerules"><i class="fas fa-book"></i> Game Rules</router-link>
+				</li>
+			</template>
 	</ul>
 	</div>
   </nav>
@@ -64,6 +68,8 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
 <script src="/static/js/home.js"></script>
+<script src="/static/js/login.js"></script>
+
 <script src="/static/js/movies.js"></script>
 <script src="/static/js/crud.js"></script>
 <script src="/static/js/404.js"></script>
@@ -72,7 +78,35 @@
 <script>
   var app = new Vue({
 		router,
-		el: "#perudo"
+		el: "#perudo",
+		data: {
+			user : {
+				_id : "",
+				username : "",
+				email : "",
+			},
+			authenticated : false,
+    		token: ""
+		},
+		methods: {
+			setTokenData: function (token) {
+				this.authenticated = true;
+				tokenData = JSON.parse(atob(this.token.split('.')[1]));
+				this.user = tokenData.user;
+			}
+		},
+		mounted() {
+    		if (localStorage.token) {
+				  this.token = localStorage.token;
+				  this.setTokenData(this.token);
+    		}
+  		},
+  		watch: {
+    		token(newToken) {
+				  localStorage.token = newToken;
+				  this.setTokenData(this.token);
+			}
+		}
 	});
 </script>
 

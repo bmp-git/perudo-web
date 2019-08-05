@@ -75,7 +75,7 @@ exports.user_login = function(req, res) {
 				var hashedPassword = saltPassword(password, user.salt);
 				if(hashedPassword == user.password) {
                     console.log('[user_auth] Auth of: ' + email + ' success!');
-                    jwt.sign({user: {_id: user._id, email: user.email}}, 'secretkey', { expiresIn: '2 days' }, (err, token) => {
+                    jwt.sign({user: {_id: user._id, email: user.email, username: user.username}}, 'secretkey', { expiresIn: '2 days' }, (err, token) => {
                         res.json({ token: token }).end();
                     });
 				} else {

@@ -7,13 +7,8 @@ module.exports = function(app) {
 	app.route('/')
 		.get(moviesController.show_index);
 
-	/* Login / Signup */
-	app.route('/login').get(loginController.show_login);
-	app.route('/signup').get(loginController.show_signup);
-	
-
 	app.route('/api/users').post(loginController.user_signup)
-	app.route('/api/users/:email/token').get(loginController.user_login)
+	app.route('/api/users/:email/token').post(loginController.user_login)
 	//Logout non server più: il token scade da solo dopo 2 giorni
 
 	
