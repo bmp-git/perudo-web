@@ -24,6 +24,9 @@ module.exports = function(app) {
 
 	app.route('/api/users/:id/avatar')
 		.put(autheticate, userController.change_user_avatar);
+
+    app.route('/api/users/:id/info')
+        .get(userController.get_user_info);
 	
 	//Esempio: per richiedere la lista delle lobby non server l'authentication code.
 	//		   per aggiungere una lobby invece serve, quindi: "autheticate"

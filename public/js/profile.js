@@ -72,8 +72,8 @@ const Profile = {
                 registeredDate: "",
                 lastReset: "",
                 points: 0,
-                wins: 11,
-                losses: 3,
+                wins: 0,
+                losses: 0,
                 playTime: 0,
                 totalPlayTime: 0,
                 avatar: ""
@@ -83,6 +83,12 @@ const Profile = {
     },
     methods: {},
     mounted: function () {
-
+        axios.get("http://localhost:3000/api/users/" + this.$route.params.id + "/info")
+            .then(response => {
+                this.user = response.data.user
+            })
+            .catch(error => {
+                router.push("/404")
+            });
     }
 };
