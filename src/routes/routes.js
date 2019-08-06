@@ -14,6 +14,9 @@ module.exports = function(app) {
 		.post(loginController.user_signup);
 	app.route('/api/users/:email/token')
 		.post(loginController.user_login);
+
+	app.route('/api/users/:id/token')
+		.get(autheticate, loginController.refresh_token);
 	//Logout non server più: il token scade da solo dopo 2 giorni
 
 	

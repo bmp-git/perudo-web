@@ -157,8 +157,13 @@ const ProfileSettings = {
             axios.put("http://localhost:3000/api/users/" + this.$store.state.user._id + "/username", {username: this.user.username}, {headers: { Authorization: authHeader}})
                 .then(response => {
                     this.$refs.userNotifier.showSuccess("Username changed successfully!");
-                    store.commit('setUsername', this.user.username);
                     this.usernameFormDisabled = !this.usernameFormDisabled;
+                    axios.get("http://localhost:3000/api/users/" + this.$store.state.user._id + "/token", {headers: { Authorization: authHeader}})
+                        .then(
+                          tokenRes => {
+                              store.commit('setToken', tokenRes.data.token);
+                          }
+                        );
                 })
                 .catch(error => {
                     this.$refs.userNotifier.showError(error.response.data.message);
