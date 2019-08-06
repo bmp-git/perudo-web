@@ -107,13 +107,11 @@ change_turn = function (game, user_id) {
 
     turnTimeouts.set(game.id, setTimeout(function () {
         console.log(user_id + " in game " + game.id + " is to slow, random bid and next turn.");
-
         if (game.current_bid) {
             make_bid(game, user_id, game.current_bid.dice, game.current_bid.quantity + 1);
         } else {
             make_bid(game, user_id, Math.floor(Math.random() * 6) + 1, 1);
         }
-
         tick_game(game);
     }, game.turn_time * 1000));
 }
@@ -143,16 +141,13 @@ tick_game = function (game) {
 
 exports.get_games = function (req, res) {
     const allGames = Array.from(games.values());
-    console.log("[get_games] sent: " + allGames.length);
     res.status(200).send({ result: allGames }).end();
 }
 
 exports.get_game = function (req, res) {
     const id = parseInt(req.params.id);
     const game = games.get(id);
-    if (!game) {
-        res.status(400).send({ message: "Game does not exists." }).end();
-    } else {
+    if (assert_game_exists(game, req, res)) {
         res.status(200).send({ result: game }).end();
     }
 }
@@ -160,9 +155,7 @@ exports.get_game = function (req, res) {
 exports.get_game_tick = function (req, res) {
     const id = parseInt(req.params.id);
     const game = games.get(id);
-    if (!game) {
-        res.status(400).send({ message: "Game does not exists." }).end();
-    } else {
+    if (assert_game_exists(game, req, res)) {
         res.status(200).send({ tick: game.tick }).end();
     }
 }
@@ -192,10 +185,8 @@ exports.create_game = function (req, res) {
             if (success) {
                 games.set(id, new_game);
                 res.status(200).send({ result: new_game }).end();
-                console.log("[create_game] " + new_game.name + " created");
             } else {
                 res.status(500).send({ message: "[create_game] failed on adding owner." }).end();
-                console.log("[create_game] failed on adding owner.");
             }
         });
     }
@@ -205,7 +196,6 @@ exports.join_start_game = function (req, res) {
     const op = req.body.operation;
     const id = parseInt(req.params.id);
     const game = games.get(id);
-    console.log("[join_start_game] " + req.user._id + " want to " + op + " game " + id);
     if (!game) {
         res.status(400).send({ message: "Game does not exists." }).end();
     } else if (game.started) {
@@ -251,8 +241,6 @@ exports.join_start_game = function (req, res) {
 exports.leave_game = function (req, res) {
     const id = parseInt(req.params.id);
     const game = games.get(id);
-
-    console.log("[leave_game] " + req.user._id + " want to leave game " + id);
     if (assert_in_game(game, req, res)) {
         game.users = game.users.filter(u => u.id !== req.user._id);
         if (game.users.length === 0) {
@@ -266,6 +254,7 @@ exports.leave_game = function (req, res) {
             if (game.current_turn_user_id === req.user._id || game.last_turn_user_id === req.user._id) {
                 next_round(game, false, null);
             }
+            //TODO check for win
         }
         tick_game(game);
         res.status(200).send({ message: "Removed from game." }).end();
@@ -286,32 +275,22 @@ exports.action_doubt = function (req, res) {
     const id = parseInt(req.params.id);
     const game = games.get(id);
 
-    if (assert_in_game(game, req, res)) {
-
-        if (game.current_turn_user_id !== req.user._id) {
-            res.status(400).send({ message: "It is not your turn." }).end();
-        } else {
-            //TODO doubt logic
-            actions_add_doubt(game.id, req.user._id);
-            res.status(200).send({ message: "Doubt done.", result: game }).end();
-            tick_game(game);
-        }
+    if (assert_is_my_turn(game, req, res)) {
+        //TODO doubt logic
+        actions_add_doubt(game.id, req.user._id);
+        res.status(200).send({ message: "Doubt done.", result: game }).end();
+        tick_game(game);
     }
 }
 exports.action_bid = function (req, res) {
     const id = parseInt(req.params.id);
     const game = games.get(id);
 
-    if (assert_in_game(game, req, res)) {
-
-        if (game.current_turn_user_id !== req.user._id) {
-            res.status(400).send({ message: "It is not your turn." }).end();
-        } else {
-            //TODO bid logic
-            actions_add_bid(game.id, req.user._id);
-            res.status(200).send({ message: "Bid done.", result: game }).end();
-            tick_game(game);
-        }
+    if (assert_is_my_turn(game, req, res)) {
+        //TODO bid logic
+        actions_add_bid(game.id, req.user._id);
+        res.status(200).send({ message: "Bid done.", result: game }).end();
+        tick_game(game);
     }
 }
 exports.action_spoton = function (req, res) {
@@ -354,13 +333,9 @@ exports.get_actions = function (req, res) {
     const id = parseInt(req.params.id);
     const game = games.get(id);
 
-    if (assert_game_exists(game, req, res)) {
+    if (assert_game_started(game, req, res)) {
         const from = req.body.from_index;
-        if (game.started) {
-            res.status(200).send({ result: actions.get(game.id).filter(a => a.index >= from) }).end();
-        } else {
-            res.status(400).send({ message: "Game is not started yet." }).end();
-        }
+        res.status(200).send({ result: actions.get(game.id).filter(a => a.index >= from) }).end();
     }
 }
 
@@ -369,24 +344,28 @@ exports.get_dice = function (req, res) {
     const id = parseInt(req.params.id);
     const game = games.get(id);
 
-    if (assert_game_exists(game, req, res)) {
-        if (!game.started) {
-            res.status(400).send({ message: "Game is not started yet." }).end();
+    if (assert_game_started(game, req, res)) {
+        const round = req.body.round;
+        if (round === game.round && assert_in_game(game, req, res)) {
+            res.status(200).send({ result: currentDice.get(game.id).get(req.user._id) }).end();
+        } else if (round < game.round) {
+            res.status(200).send({ result: oldDice.get(game.id).get(round) }).end();
         } else {
-            const round = req.body.round;
-            if (round === game.round && assert_in_game(game, req, res)) {
-                res.status(200).send({ result: currentDice.get(game.id).get(req.user._id) }).end();
-            } else if (round < game.round) {
-                res.status(200).send({ result: oldDice.get(game.id).get(round) }).end();
-            } else {
-                res.status(400).send({ message: "Round does not exists yet." }).end();
-            }
+            res.status(400).send({ message: "Round does not exists yet." }).end();
         }
     }
 }
 
 
-
+assert_game_started = function (game, req, res) {
+    if (!assert_game_exists(game)) {
+        return false;
+    } else if (!game.started) {
+        res.status(400).send({ message: "Game is not started yet." }).end();
+        return false;
+    }
+    return true;
+}
 assert_game_exists = function (game, req, res) {
     if (!game) {
         res.status(400).send({ message: "Game does not exists." }).end();
@@ -399,6 +378,15 @@ assert_in_game = function (game, req, res) {
         return false;
     } else if (!game.users.some(u => u.id === req.user._id)) {
         res.status(400).send({ message: "You are not in this game." }).end();
+        return false;
+    }
+    return true;
+}
+assert_is_my_turn = function (game, req, res) {
+    if (!assert_in_game(game)) {
+        return false;
+    } else if (game.current_turn_user_id !== req.user._id) {
+        res.status(400).send({ message: "It is not your turn." }).end();
         return false;
     }
     return true;
