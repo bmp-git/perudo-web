@@ -41,6 +41,31 @@ exports.change_user_avatar = function (req, res) {
     }
 };
 
+exports.get_user_personal_info = function (req, res) {
+    var id = req.params.id;
+    var tokenId = req.authData.user._id;
+    if (tokenId != id) {
+        res.status(400).send({message: "Id and token aren't compatible."}).end();
+    } else {
+        User.findById(id, function (err, user) {
+            if (err) {
+                res.status(500).send({message: err});
+            } else if (user) {
+                res.json({
+                    user: {
+                        _id: user._id,
+                        email: user.email,
+                        username: user.username,
+                        avatar: user.avatar
+                    }
+                }).end();
+            } else {
+                res.status(401).send({message: 'Incorrect user id'}).end();
+            }
+        });
+    }
+};
+
 exports.get_user_info = function (req, res) {
     var id = req.params.id;
     User.findById(id, function (err, user) {
