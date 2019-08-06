@@ -22,7 +22,7 @@ const ProfileSettings = {
                             </div>
                         </div>
                         
-                        
+                        <errorSuccessNotifier ref="userNotifier"></errorSuccessNotifier>
                         
                         <div class="input-group mb-2 mt-2">
                             <div class="input-group-prepend">
@@ -130,13 +130,13 @@ const ProfileSettings = {
 
         },
         toggleUsernameEdit: function(event) {
+            let res = true;
             if(!this.usernameFormDisabled) {
-
+                //toggle delegated
+                this.changeUsername();
             } else {
-
+                this.usernameFormDisabled = !this.usernameFormDisabled;
             }
-            this.usernameFormDisabled = !this.usernameFormDisabled;
-
         },
         toggleNationalityEdit: function(event) {
             if(!this.nationalityFormDisabled) {
@@ -146,6 +146,23 @@ const ProfileSettings = {
             }
             this.nationalityFormDisabled = !this.nationalityFormDisabled;
 
+        },
+        changeUsername: function() {
+            if (this.user.username === '') {
+                this.$refs.userNotifier.showError("The new username is empty!");
+                return false;
+            }
+
+            const authHeader = 'bearer '.concat(this.$store.state.token);
+            axios.put("http://localhost:3000/api/users/" + this.$store.state.user._id + "/username", {username: this.user.username}, {headers: { Authorization: authHeader}})
+                .then(response => {
+                    this.$refs.userNotifier.showSuccess("Username changed successfully!");
+                    store.commit('setUsername', this.user.username);
+                    this.usernameFormDisabled = !this.usernameFormDisabled;
+                })
+                .catch(error => {
+                    this.$refs.userNotifier.showError(error.response.data.message);
+                });
         },
         changePassword: function() {
             if (this.newPassword === '') {
@@ -172,8 +189,8 @@ const ProfileSettings = {
     filters: {
     },
     mounted: function () {
-        const authHeader = 'bearer '.concat(this.$store.state.token);
-        axios.get("http://localhost:3000/api/users/" + this.$store.state.user._id, { headers: { Authorization: authHeader } })
+        console.log(this.$store.state);
+        axios.get("http://localhost:3000/api/users/" + this.$store.state.user._id, { headers: { Authorization: 'bearer '.concat(this.$store.state.token) } })
             .then(response => {
                 this.user = response.data.user;
                 console.log(response)
