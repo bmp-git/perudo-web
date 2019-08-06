@@ -62,7 +62,6 @@ const Profile = {
     data() {
         return {
             user: {
-                /*
                 username: "",
                 registeredDate: "",
                 lastReset: "",
@@ -72,7 +71,6 @@ const Profile = {
                 playTime: 0,
                 totalPlayTime: 0,
                 avatar: ""
-                 */
             }
 
         }
@@ -93,7 +91,6 @@ const Profile = {
         }
     },
     mounted: function () {
-        console.log("Activated called!");
         axios.get("http://localhost:3000/api/users/" + this.$route.params.id + "/info")
             .then(response => {
                 this.user = response.data.user
