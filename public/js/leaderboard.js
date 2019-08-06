@@ -1,0 +1,1 @@
+const Leaderboard = { template: `<div>Leaderboard</div>` }

@@ -33,7 +33,7 @@ const Signup = {
         </form>
         <div class="form-group" style="padding-top:10px">
             <hr class="hr-text" data-content="Already one of us?">
-            <router-link class="btn btn-primary btn-lg btn-block login-button" to="/login"><i class="fas fa-sign-in-alt"></i> Sign in</router-link>
+            <router-link class="btn btn-primary btn-lg btn-block login-button" to="/signin"><i class="fas fa-sign-in-alt"></i> Sign in</router-link>
         </div>
     </div>`,
     components: {
