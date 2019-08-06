@@ -4,7 +4,6 @@ const User = mongoose.model('User');
 var games = new Map(); // game id -> game
 var actions = new Map(); //game id -> [actions]
 var currentDice = new Map(); //game id -> {user id -> [dice values]}
-var startedGames = []; //games
 var currentId = 0;
 var turnTimeouts = new Map(); //game id -> timer
 
@@ -48,6 +47,7 @@ add_user_to_game = function (game, userId, next) {
 start_game = function (game) {
     actions.set(game.id, []);
     actions_add_event(game.id, "Welcome! The game is started!");
+    actions_add_round(game.id, 1);
     reroll_dice(game);
 
     game.started = true;
@@ -55,10 +55,21 @@ start_game = function (game) {
     game.last_turn_user_id = null;
     game.current_bid = null;
     game.is_palifico_round = false;
-    game.round = 0;
+    game.round = 1;
     change_turn(game, game.users[Math.floor(Math.random() * game.users.length)].id);
+}
 
-    startedGames.push(game);
+next_round = function (game, palifico, turn_user_id) {
+    reroll_dice(game);
+    game.current_bid = null;
+    game.round++;
+    actions_add_round(game.id, game.round);
+    game.is_palifico_round = palifico;
+    if (turn_user_id) {
+        change_turn(game, turn_user_id);
+    } else {
+        go_next_turn(game);
+    }
 }
 
 actions_add_message = function (game_id, user_id, message) {
@@ -81,9 +92,17 @@ actions_add_spoton = function (game_id, user_id) {
     const actionsList = actions.get(game_id);
     actionsList.push({ type: "spoton", user_id: user_id, date: new Date(), index: actionsList.length })
 }
+actions_add_round = function (game_id, number) {
+    const actionsList = actions.get(game_id);
+    actionsList.push({ type: "round", round: number, date: new Date(), index: actionsList.length })
+}
 actions_add_turn = function (game_id, user_id) {
     const actionsList = actions.get(game_id);
     actionsList.push({ type: "turn", user_id: user_id, date: new Date(), index: actionsList.length })
+}
+actions_add_left_game = function (game_id, user_id) {
+    const actionsList = actions.get(game_id);
+    actionsList.push({ type: "left", user_id: user_id, date: new Date(), index: actionsList.length })
 }
 
 reroll_dice = function (game) {
@@ -111,7 +130,7 @@ change_turn = function (game, user_id) {
     turnTimeouts.set(game.id, setTimeout(function () {
         console.log(user_id + " in game " + game.id + " is to slow, random bid and next turn.");
         go_next_turn(game);
-        if(game.current_bid) {
+        if (game.current_bid) {
             game.current_bid.quantity++;
         } else {
             game.current_bid = { dice: Math.floor(Math.random() * 6) + 1, quantity: 1 };
@@ -119,10 +138,10 @@ change_turn = function (game, user_id) {
         tick_game(game);
     }, game.turn_time * 1000));
 }
-go_next_turn = function(game) {
+go_next_turn = function (game) {
     var t = -1;
-    for(i = 0; i < game.users.length; i++) {
-        if(game.users[i].id === game.current_turn_user_id) {
+    for (i = 0; i < game.users.length; i++) {
+        if (game.users[i].id === game.current_turn_user_id) {
             t = (i + 1) % game.users.length;
             break;
         }
@@ -135,6 +154,34 @@ tick_game = function (game) {
     //Notify all user in this game that the current tick in now 'game.tick'
     //If their local 'game.tick' is lower they should refresh with '/api/games/:id'
     //Or the clients can do polling on '/api/games/:id/tick'
+}
+
+
+
+exports.get_games = function (req, res) {
+    const allGames = Array.from(games.values());
+    console.log("[get_games] sent: " + allGames.length);
+    res.status(200).send({ result: allGames }).end();
+}
+
+exports.get_game = function (req, res) {
+    const id = parseInt(req.params.id);
+    const game = games.get(id);
+    if (!game) {
+        res.status(400).send({ message: "Game does not exists." }).end();
+    } else {
+        res.status(200).send({ result: game }).end();
+    }
+}
+
+exports.get_game_tick = function (req, res) {
+    const id = parseInt(req.params.id);
+    const game = games.get(id);
+    if (!game) {
+        res.status(400).send({ message: "Game does not exists." }).end();
+    } else {
+        res.status(200).send({ tick: game.tick }).end();
+    }
 }
 
 exports.create_game = function (req, res) {
@@ -168,33 +215,6 @@ exports.create_game = function (req, res) {
                 console.log("[create_game] failed on adding owner.");
             }
         });
-    }
-}
-
-
-exports.get_games = function (req, res) {
-    const allGames = Array.from(games.values());
-    console.log("[get_games] sent: " + allGames.length);
-    res.status(200).send({ result: allGames }).end();
-}
-
-exports.get_game = function (req, res) {
-    const id = parseInt(req.params.id);
-    const game = games.get(id);
-    if (!game) {
-        res.status(400).send({ message: "Game does not exists." }).end();
-    } else {
-        res.status(200).send({ result: game }).end();
-    }
-}
-
-exports.get_game_tick = function (req, res) {
-    const id = parseInt(req.params.id);
-    const game = games.get(id);
-    if (!game) {
-        res.status(400).send({ message: "Game does not exists." }).end();
-    } else {
-        res.status(200).send({ tick: game.tick }).end();
     }
 }
 
@@ -249,22 +269,104 @@ exports.leave_game = function (req, res) {
     const id = parseInt(req.params.id);
     const game = games.get(id);
     console.log("[leave_game] " + req.user._id + " want to leave game " + id);
-    if (!game) {
-        res.status(400).send({ message: "Game does not exists." }).end();
-    } else if (!game.users.some(u => u.id === req.user._id)) {
-        res.status(400).send({ message: "You are not in this game." }).end();
-    } else {
+    if (assert_in_game(req)) {
         game.users = game.users.filter(u => u.id !== req.user._id);
         if (game.users.length === 0) {
             game.empty_from_date = new Date();
             game.owner_id = "";
-            if(game.started) {
+            if (game.started) {
                 remove_game(game.id);
             }
-        } else if(game.started) {
-            //TODO
+        } else if (game.started) {
+            actions_add_left_game(game.id, req.user._id);
+            if (game.current_turn_user_id === req.user._id || game.last_turn_user_id === req.user._id) {
+                next_round(game, false, null);
+            }
         }
         tick_game(game);
         res.status(200).send({ message: "Removed from game." }).end();
     }
+}
+
+/* ACTIONS */
+exports.action_message = function (req, res) {
+    if (assert_in_game(req)) {
+        const id = parseInt(req.params.id);
+        const game = games.get(id);
+
+        actions_add_message(game.id, req.user._id, req.body.message);
+        res.status(200).send({ message: "Message posted." }).end();
+    }
+}
+exports.action_doubt = function (req, res) {
+    if (assert_in_game(req)) {
+        const id = parseInt(req.params.id);
+        const game = games.get(id);
+
+        if(game.current_turn_user_id !== req.user._id) {
+            res.status(400).send({ message: "It is not your turn." }).end();
+        } else {
+            //TODO doubt logic
+            actions_add_doubt(game.id, req.user._id);
+            res.status(200).send({ message: "Doubt done.", result: game }).end();
+        }
+    }
+}
+exports.action_bid = function (req, res) {
+    if (assert_in_game(req)) {
+        const id = parseInt(req.params.id);
+        const game = games.get(id);
+
+        if(game.current_turn_user_id !== req.user._id) {
+            res.status(400).send({ message: "It is not your turn." }).end();
+        } else {
+            //TODO bid logic
+            actions_add_bid(game.id, req.user._id);
+            res.status(200).send({ message: "Bid done.", result: game }).end();
+        }
+    }
+}
+exports.action_spoton = function (req, res) {
+    if (assert_in_game(req)) {
+        const id = parseInt(req.params.id);
+        const game = games.get(id);
+
+        if(game.current_turn_user_id === req.user._id || game.last_turn_user_id === req.user._id) {
+            res.status(400).send({ message: "You cannot spoton now." }).end();
+        } else {
+            //TODO spoton logic
+            actions_add_spoton(game.id, req.user._id);
+            res.status(200).send({ message: "Spoton done.", result: game }).end();
+        }
+    }
+}
+
+exports.action_palifico = function (req, res) {
+    if (assert_in_game(req)) {
+        const id = parseInt(req.params.id);
+        const game = games.get(id);
+
+        if(game.last_turn_user_id) {
+            res.status(400).send({ message: "You cannot palifico now." }).end();
+        } else {
+            //TODO palifico logic
+            actions_add_palifico(game.id, req.user._id);
+            res.status(200).send({ message: "Palifico done.", result: game }).end();
+        }
+    }
+}
+
+
+assert_in_game = function (req) {
+    const id = parseInt(req.params.id);
+    const game = games.get(id);
+    console.log("[leave_game] " + req.user._id + " want to leave game " + id);
+    if (!game) {
+        res.status(400).send({ message: "Game does not exists." }).end();
+        return false;
+    } else if (!game.users.some(u => u.id === req.user._id)) {
+        res.status(400).send({ message: "You are not in this game." }).end();
+        return false;
+    }
+    return true;
 }
