@@ -18,9 +18,7 @@ const Login = {
                             </div>
                             <input v-model="login_request.password" type="password" class="form-control" placeholder="Password" required>
                         </div>
-                        <small class="text-danger" v-if="show_error">
-                            {{error_message}}
-                        </small>
+                        <errorSuccessNotifier ref="errorNotifier"></errorSuccessNotifier>
                         <div class="form-group" style="padding-top:10px">
                             <input type="button" @click.prevent="login" class="btn btn-primary btn-lg btn-block" value="Sign in">
                         </div>
@@ -31,20 +29,20 @@ const Login = {
                         <hr class="hr-text" data-content="Are you new?">
                         <router-link class="btn btn-primary btn-lg btn-block login-button" to="/signup"><i class="fas fa-user-plus"></i> Sign Up</router-link>
                         </div>
-	</div>`,
+    </div>`,
+    components: {
+        'errorSuccessNotifier': errorSuccessNotifier
+    },
     data() {
         return {
             email: "",
             login_request: {
                 password: ""
-            },
-            show_error: false,
-            error_message: ""
+            }
         }
     },
     methods: {
         login: function () {
-            this.show_error = false;
             if (this.email && this.login_request.password) {
                 axios.post("http://localhost:3000/api/users/" + this.email + "/token", this.login_request)
                     .then(response => {
@@ -54,12 +52,10 @@ const Login = {
                         router.push("/");
                     })
                     .catch(error => {
-                        this.show_error = true;
-                        this.error_message = error.response.data.message;                    
+                        this.$refs.errorNotifier.showError(error.response.data.message);                
                     });
             } else {
-                this.show_error = true;
-                this.error_message = "Please enter Email and Password!";
+                this.$refs.errorNotifier.showError("Please enter Email and Password!");                
             }
         },
     },

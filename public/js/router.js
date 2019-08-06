@@ -2,7 +2,7 @@ const router = new VueRouter({
     mode: 'history',
     routes: [
         {path: '/', component: Home},
-        {path: '/login', component: Login, meta: {requiresNotAuth: true}},
+        {path: '/signin', component: Login, meta: {requiresNotAuth: true}},
         {path: '/signup', component: Signup, meta : {requiresNotAuth : true}},
         {path: '/signout', component: Logout, meta: {requiresAuth: true}},
         {path: '/settings', component: ProfileSettings, meta: {requiresAuth: true}},
