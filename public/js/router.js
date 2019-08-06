@@ -6,8 +6,6 @@ const router = new VueRouter({
         {path: '/signup', component: Signup, meta : {requiresNotAuth : true}},
         {path: '/signout', component: Logout, meta: {requiresAuth: true}},
         {path: '/profile/:id', component: Profile, name: "profile"},
-        {path: '/movies', component: Movies},
-        {path: '/crud', component: Crud},
         {path: '/404', component: NotFound},
         {path: '*', redirect: '/404'}
     ]
