@@ -3,6 +3,7 @@ var jwt = require('jsonwebtoken');
 module.exports = function(app) {
 	var loginController = require('../controllers/loginController');
 	var userController = require('../controllers/userController');
+	var gameController = require('../controllers/gameController');
 
 	app.route('/').get(function(req, res) {
 			res.sendFile(appRoot  + '/www/index.html');
@@ -28,6 +29,16 @@ module.exports = function(app) {
     app.route('/api/users/:id/info')
         .get(userController.get_user_info);
 	
+
+	app.route('/api/games')
+		.post(autheticate, gameController.create_game)
+		.get(gameController.get_games);
+
+	app.route('/api/games/:id')
+		.get(gameController.get_game)
+		.put(autheticate, gameController.join_game)
+		.delete(autheticate, gameController.leave_game);
+		
 	//Esempio: per richiedere la lista delle lobby non server l'authentication code.
 	//		   per aggiungere una lobby invece serve, quindi: "autheticate"
 	app.route('/api/lobby')
