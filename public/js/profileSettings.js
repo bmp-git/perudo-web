@@ -60,25 +60,33 @@ const ProfileSettings = {
                 
                 
                 
-                <label class="sr-only" for="txbEmail">Email</label>
+                
                 <div class="input-group mb-2 mt-2">
                     <div class="input-group-prepend">
                         <div class="input-group-text"><i class="fas fa-key"></i></div>
                     </div>
                     <input v-model="newPassword" type="password" class="form-control" placeholder="New Password" required>
                 </div>
-                <label class="sr-only" for="txbPasswordTmp">Password</label>
-                <div class="input-group">
+                
+                
+                <div class="input-group mb-2 mt-2">
                     <div class="input-group-prepend">
-                        <div class="input-group-text"><i class="fas fa-key"></i></div>
+                        <div class="input-group-text"><i class="fas fa-check-double"></i></div>
                     </div>
-                    <input type="password" class="form-control" placeholder="Confirm Password" required>
+                    <input v-model="confirmNewPassword" type="password" class="form-control" placeholder="Confirm Password" required>
                 </div>
+                
+                
                 <small class="text-danger" v-if="show_error">
                     {{error_message}}
                 </small>
+                <small class="text-success" v-if="show_success">
+                    {{success_message}}
+                </small>
+                
+                
                 <div class="form-group" style="padding-top:10px">
-                    <input type="button" @click.prevent="" class="btn btn-primary btn-lg btn-block" value="Update password">
+                    <input type="button" @click.prevent="changePassword" class="btn btn-primary btn-lg btn-block" value="Update password">
                 </div>
                 
                 
@@ -102,13 +110,16 @@ const ProfileSettings = {
                 avatar: ''
             },
             newPassword: '',
+            confirmNewPassword: '',
             usernameFormDisabled: true,
             emailFormDisabled: true,
             nationalityFormDisabled: true,
 
 
             show_error: false,
-            error_message: ""
+            show_success: false,
+            error_message: "",
+            success_message: ""
         }
     },
     computed: {
@@ -143,6 +154,31 @@ const ProfileSettings = {
             }
             this.nationalityFormDisabled = !this.nationalityFormDisabled;
 
+        },
+        changePassword: function() {
+            if (this.newPassword === '') {
+                this.show_error = true;
+                this.error_message = "Password is empty!";
+                return;
+            }
+            if (this.newPassword !== this.confirmNewPassword) {
+                this.show_error = true;
+                this.error_message = "Password does not match!";
+                return;
+            }
+
+            const authHeader = 'bearer '.concat(this.$store.state.token);
+            axios.put("http://localhost:3000/api/users/" + this.$store.state.user._id + "/password", {password: this.newPassword}, {headers: { Authorization: authHeader}})
+                .then(response => {
+                    console.log(response);
+                    this.success_message = "Password changed successfully!";
+                    this.show_success = true;
+                    this.show_error = false;
+                })
+                .catch(error => {
+                    this.show_error = true;
+                    this.error_message = error.response.data.message;
+                });
         }
     },
     filters: {
