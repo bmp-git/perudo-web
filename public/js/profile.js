@@ -41,14 +41,14 @@ const Profile = {
                 <div class="row">
                     <div class="col-md-6 offset-md-3">
                         <h2>Stats</h2>
-                        Member since: {{user.registeredDate}} <br>
-                        Last stat reset: {{user.lastReset}} <br>
+                        Member since: {{user.registeredDate | formatDate}} <br>
+                        Last stat reset: {{user.lastReset | formatDate}} <br>
                         Total play time: {{user.totalPlayTime}} hours <br>
                         Play time since reset: {{user.playTime}} hours <br>
                         Play count: {{user.wins + user.losses}} <br>
                         Wins: {{user.wins}} <br>
                         Losses: {{user.losses}} <br>
-                        Win/Loss ratio: {{user.wins / user.losses}} <br>                                   
+                        Win/Loss ratio: {{user.wins | ratio(user.losses)}} <br>                                   
                     </div>           
                          
                 </div>
@@ -82,6 +82,20 @@ const Profile = {
         }
     },
     methods: {},
+    filters: {
+        formatDate: function(value) {
+            if (value) {
+                return moment(String(value)).format("MM/DD/YYYY");
+            }
+        },
+        ratio: function(wins, losses) {
+            if (losses > 0) {
+                return (wins / losses).toFixed(2);
+            } else {
+                return '*';
+            }
+        }
+    },
     mounted: function () {
         axios.get("http://localhost:3000/api/users/" + this.$route.params.id + "/info")
             .then(response => {
