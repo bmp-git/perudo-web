@@ -33,8 +33,17 @@ add_user_to_game = function (game, userId, next) {
 
 start_game = function (game) {
     game.started = true;
-    //TODO
+    //TODO start game logic
+
+    tick_game(game);
     startedGames.push(game);
+}
+
+tick_game = function (game) {
+    game.tick++;
+    //Notify all user in this game that the current tick in now 'game.tick'
+    //If their local 'game.tick' is lower they should refresh with '/api/games/:id'
+    //Or the clients can do polling on '/api/games/:id/tick'
 }
 
 exports.create_game = function (req, res) {
@@ -57,6 +66,7 @@ exports.create_game = function (req, res) {
         new_game.started = false;
         new_game.game_creation_time = new Date();
         new_game.users = [];
+        new_game.tick = 0;
         add_user_to_game(new_game, req.user._id, function (success) {
             if (success) {
                 games.set(id, new_game);
@@ -87,6 +97,16 @@ exports.get_game = function (req, res) {
     }
 }
 
+exports.get_game_tick = function (req, res) {
+    const id = parseInt(req.params.id);
+    const game = games.get(id);
+    if (!game) {
+        res.status(400).send({ message: "Game does not exists." }).end();
+    } else {
+        res.status(200).send({ tick: game.tick }).end();
+    }
+}
+
 exports.join_start_game = function (req, res) {
     const op = req.body.operation;
     const id = parseInt(req.params.id);
@@ -112,6 +132,7 @@ exports.join_start_game = function (req, res) {
                         game.owner_id = req.user._id;
                     }
                     delete game.empty_from_date;
+                    tick_game(game);
                     res.status(200).send({ message: "Game joined.", result: game }).end();
                 } else {
                     res.status(500).send({ message: "Failed on adding user." }).end();
@@ -146,6 +167,7 @@ exports.leave_game = function (req, res) {
             game.empty_from_date = new Date();
             game.owner_id = "";
         }
+        tick_game(game);
         res.status(200).send({ message: "Removed from game." }).end();
     }
 }

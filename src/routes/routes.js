@@ -46,6 +46,9 @@ module.exports = function(app) {
 		.get(gameController.get_game)
 		.put(autheticate, gameController.join_start_game)
 		.delete(autheticate, gameController.leave_game);
+
+	app.route('/api/games/:id/tick')
+		.get(gameController.get_game_tick);
 		
 	//Esempio: per richiedere la lista delle lobby non server l'authentication code.
 	//		   per aggiungere una lobby invece serve, quindi: "autheticate"
