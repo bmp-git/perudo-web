@@ -4,12 +4,13 @@ const User = mongoose.model('User');
 var games = new Map();
 var currentId = 0;
 
-var updater = setInterval(function() {
+var updater = setInterval(function () {
     const EXPIRATION_DATE = 60 * 1000; //1 minute
     var toRemove = [];
-    games.forEach((v,k,m) => {
-        if(v.users.length == 0 && ((new Date) - v.empty_from_date) > EXPIRATION_DATE) {
+    games.forEach((v, k, m) => {
+        if (v.users.length === 0 && ((new Date) - v.empty_from_date) > EXPIRATION_DATE) {
             toRemove.push(k);
+            console.log("Game " + v.id + " is empty and expired.");
         }
     });
 
@@ -87,15 +88,16 @@ exports.join_game = function (req, res) {
         res.status(400).send({ message: "Game does not exists." }).end();
     } else if (game.started) {
         res.status(400).send({ message: "This game is already started." }).end();
-    } else if (game.users.length == game.players) {
+    } else if (game.users.length === game.players) {
         res.status(400).send({ message: "This game is full." }).end();
     } else if (game.users.some(u => u.id === req.user._id)) {
         res.status(400).send({ message: "You are already in thin game." }).end();
+    } else if (Array.from(games.values()).some(g => g.id !== game.id && g.users.some(u => u.id === req.user._id))) {
+        res.status(400).send({ message: "You are already in another game." }).end();
     } else {
-
         add_user_to_game(game, req.user._id, success => {
-            if(success) {
-                if(!game.owner_id) {
+            if (success) {
+                if (!game.owner_id) {
                     game.owner_id = req.user._id;
                 }
                 delete game.empty_from_date;
@@ -104,13 +106,6 @@ exports.join_game = function (req, res) {
                 res.status(500).send({ message: "Failed on adding user." }).end();
             }
         })
-
-        game.users = game.users.filter(u => u.id !== req.user._id);
-        if(game.users.length == 0) {
-            game.empty_from_date = new Date();
-            game.owner_id = "";
-        }
-        
     }
 }
 
@@ -124,7 +119,7 @@ exports.leave_game = function (req, res) {
         res.status(400).send({ message: "You are not in this game." }).end();
     } else {
         game.users = game.users.filter(u => u.id !== req.user._id);
-        if(game.users.length == 0) {
+        if (game.users.length === 0) {
             game.empty_from_date = new Date();
             game.owner_id = "";
         }
