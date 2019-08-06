@@ -36,7 +36,7 @@
 					</a>
 					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
 						<router-link class="dropdown-item" :to="{ name: 'profile', params: { id: this.$store.state.user._id }}">My profile</router-link>
-						<router-link class="dropdown-item" to="/setting">Setting</router-link>
+						<router-link class="dropdown-item" to="/settings">Setting</router-link>
 						<div class="dropdown-divider"></div>
 						<router-link class="dropdown-item" to="/signout">Sign Out</router-link>
 					</div>
@@ -60,7 +60,9 @@
 	</div>
   </nav>
   <div class="container-fluid">
-  	<router-view></router-view>
+	  <keep-alive>
+	  		<router-view :key="$route.fullPath"></router-view>
+	  </keep-alive>
   </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/vue"></script>
@@ -81,6 +83,7 @@
 <script src="/static/js/crud.js"></script>
 <script src="/static/js/404.js"></script>
 <script src="/static/js/profile.js"></script>
+<script src="/static/js/profileSettings.js"></script>
 <script src="/static/js/router.js"></script>
 
 
