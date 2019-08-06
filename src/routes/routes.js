@@ -16,6 +16,7 @@ module.exports = function(app) {
 		.post(loginController.user_login);
 	//Logout non server più: il token scade da solo dopo 2 giorni
 
+	
 	//User apis
 	app.route('/api/users/:id/password')
 		.put(autheticate, loginController.change_user_password);
@@ -31,6 +32,10 @@ module.exports = function(app) {
 	
     app.route('/api/users/:id/info')
 		.get(userController.get_user_info);
+
+	app.route('/api/leaderboard')
+		.get(userController.get_leaderboard);
+
 	
 
 	app.route('/api/games')
@@ -39,8 +44,11 @@ module.exports = function(app) {
 
 	app.route('/api/games/:id')
 		.get(gameController.get_game)
-		.put(autheticate, gameController.join_game)
+		.put(autheticate, gameController.join_start_game)
 		.delete(autheticate, gameController.leave_game);
+
+	app.route('/api/games/:id/tick')
+		.get(gameController.get_game_tick);
 		
 	//Esempio: per richiedere la lista delle lobby non server l'authentication code.
 	//		   per aggiungere una lobby invece serve, quindi: "autheticate"

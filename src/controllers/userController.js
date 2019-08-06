@@ -90,3 +90,24 @@ exports.get_user_info = function (req, res) {
         }
     });
 };
+
+exports.get_leaderboard = function (req, res) {
+    var page = req.query.page;
+    var pageLenght = req.query.pageLenght;
+    if(page && pageLenght && /^[1-9]\d*$/.test(page) && /^[1-9]\d*$/.test(pageLenght)) {
+        User.paginate({}, {page : parseInt(page, 10), limit: parseInt(pageLenght, 10), sort : {points : -1}}, function(err, result) {
+            if (err) {
+                res.status(500).send({message: err});
+            } else {
+                var leaderboard = {result : []};
+                var i = 1;
+                result.docs.forEach(function(user) {
+                    leaderboard.result.push({rank: i++, userId: user._id, username: user.username, points : user.points});
+                });
+                res.json(leaderboard).end();
+            }
+        });
+    } else {
+        res.status(401).send({message: 'Incorrect parameters'}).end();
+    }
+}
