@@ -39,7 +39,7 @@ module.exports = function(app) {
 
 	app.route('/api/games/:id')
 		.get(gameController.get_game)
-		.put(autheticate, gameController.join_game)
+		.put(autheticate, gameController.join_start_game)
 		.delete(autheticate, gameController.leave_game);
 		
 	//Esempio: per richiedere la lista delle lobby non server l'authentication code.

@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const User = mongoose.model('User');
 
 var games = new Map();
+var startedGames = [];
 var currentId = 0;
 
 var updater = setInterval(function () {
@@ -28,6 +29,12 @@ add_user_to_game = function (game, userId, next) {
             next(true);
         }
     });
+}
+
+start_game = function (game) {
+    game.started = true;
+    //TODO
+    startedGames.push(game);
 }
 
 exports.create_game = function (req, res) {
@@ -80,32 +87,48 @@ exports.get_game = function (req, res) {
     }
 }
 
-exports.join_game = function (req, res) {
+exports.join_start_game = function (req, res) {
+    const op = req.body.operation;
     const id = parseInt(req.params.id);
     const game = games.get(id);
-    console.log("[join_game] " + req.user._id + " want to join game " + id);
+    console.log("[join_start_game] " + req.user._id + " want to " + op + " game " + id);
     if (!game) {
         res.status(400).send({ message: "Game does not exists." }).end();
     } else if (game.started) {
         res.status(400).send({ message: "This game is already started." }).end();
-    } else if (game.users.length === game.players) {
-        res.status(400).send({ message: "This game is full." }).end();
-    } else if (game.users.some(u => u.id === req.user._id)) {
-        res.status(400).send({ message: "You are already in thin game." }).end();
-    } else if (Array.from(games.values()).some(g => g.id !== game.id && g.users.some(u => u.id === req.user._id))) {
-        res.status(400).send({ message: "You are already in another game." }).end();
-    } else {
-        add_user_to_game(game, req.user._id, success => {
-            if (success) {
-                if (!game.owner_id) {
-                    game.owner_id = req.user._id;
+    } else if (op === "join") {
+        if (game.users.length === game.players) {
+            res.status(400).send({ message: "This game is full." }).end();
+        } else if (game.users.some(u => u.id === req.user._id)) {
+            res.status(400).send({ message: "You are already in thin game." }).end();
+        } else if (Array.from(games.values()).some(g => g.id !== game.id && g.users.some(u => u.id === req.user._id))) {
+            res.status(400).send({ message: "You are already in another game." }).end();
+        } else if (game.password && game.password !== req.body.password) {
+            res.status(403).send({ message: "Invalid password." }).end();
+        } else {
+            add_user_to_game(game, req.user._id, success => {
+                if (success) {
+                    if (!game.owner_id) {
+                        game.owner_id = req.user._id;
+                    }
+                    delete game.empty_from_date;
+                    res.status(200).send({ message: "Game joined.", result: game }).end();
+                } else {
+                    res.status(500).send({ message: "Failed on adding user." }).end();
                 }
-                delete game.empty_from_date;
-                res.status(200).send({ message: "Game joined.", result: game }).end();
-            } else {
-                res.status(500).send({ message: "Failed on adding user." }).end();
-            }
-        })
+            })
+        }
+    } else if (op === "start") {
+        if (game.owner_id !== req.user._id) {
+            res.status(400).send({ message: "Only the owner of the game can start." }).end();
+        } else if (game.users.length < 2) {
+            res.status(400).send({ message: "Need at least 2 user to start." }).end();
+        } else {
+            start_game(game);
+            res.status(200).send({ message: "Game started.", result: game }).end();
+        }
+    } else {
+        res.status(400).send({ message: "'operation' must be start or join." }).end();
     }
 }
 
