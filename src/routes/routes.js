@@ -49,6 +49,27 @@ module.exports = function(app) {
 
 	app.route('/api/games/:id/tick')
 		.get(gameController.get_game_tick);
+
+	app.route('/api/games/:id/actions/messages')
+		.post(autheticate, gameController.action_message);
+
+	app.route('/api/games/:id/actions/bids')
+		.post(autheticate, gameController.action_bid);
+
+	app.route('/api/games/:id/actions/doubt')
+		.post(autheticate, gameController.action_doubt);
+
+	app.route('/api/games/:id/actions/palifico')
+		.post(autheticate, gameController.action_palifico);
+
+	app.route('/api/games/:id/actions/spoton')
+		.post(autheticate, gameController.action_spoton);
+
+	app.route('/api/games/:id/actions')
+		.get(autheticate, gameController.get_actions);
+
+	app.route('/api/games/:id/dice')
+		.get(autheticate, gameController.get_dice);
 		
 	//Esempio: per richiedere la lista delle lobby non server l'authentication code.
 	//		   per aggiungere una lobby invece serve, quindi: "autheticate"
