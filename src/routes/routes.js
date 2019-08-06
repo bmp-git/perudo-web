@@ -26,8 +26,11 @@ module.exports = function(app) {
 	app.route('/api/users/:id/avatar')
 		.put(autheticate, userController.change_user_avatar);
 
+	app.route('/api/users/:id')
+		.get(autheticate, userController.get_user_personal_info)
+	
     app.route('/api/users/:id/info')
-        .get(userController.get_user_info);
+		.get(userController.get_user_info);
 	
 
 	app.route('/api/games')
