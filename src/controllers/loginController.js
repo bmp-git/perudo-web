@@ -76,6 +76,30 @@ exports.user_login = function (req, res) {
 	}
 }
 
+exports.refresh_token = function (req, res) {
+	var id = req.params.id;
+	var tokenId = req.authData.user._id;
+	if (tokenId !== id) {
+		res.status(400).send({message: "Id and token aren't compatible."}).end();
+	} else {
+		User.findById(id, function (err, user) {
+			if (err) {
+				res.status(500).send({message: err});
+			} else if (user) {
+				jwt.sign({ user: { _id: user._id, email: user.email, username: user.username } }, 'secretkey', { expiresIn: '2 days' }, (err, token) => {
+					if(err) {
+						res.status(500).send({ message: err });
+					} else {
+						res.json({token: token}).end();
+					}
+				});
+			} else {
+				res.status(401).send({message: 'Incorrect user id'}).end();
+			}
+		});
+	}
+};
+
 exports.change_user_password = function (req, res) {
 	const id = req.params.id;
 	const tokenId = req.authData.user._id;
@@ -98,3 +122,4 @@ exports.change_user_password = function (req, res) {
 		});
 	}
 }
+

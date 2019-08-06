@@ -15,6 +15,7 @@ const store = new Vuex.Store( {
                 tokenData = JSON.parse(atob(token.split('.')[1]));
                 state.user = tokenData.user;
                 state.token = token;
+                localStorage.token = token;
                 axios.defaults.headers.common['Authorization'] = "bearer" + token;
             }
         },
@@ -26,10 +27,8 @@ const store = new Vuex.Store( {
                 email : "",
             };
             state.token = "";
+            localStorage.token = "";
             axios.defaults.headers.common['Authorization'] = "";
-        },
-        setUsername(state, username) {
-            state.user.username = username;
         }
     }
 });
