@@ -111,6 +111,9 @@ const ProfileSettings = {
             },
             newPassword: '',
             confirmNewPassword: '',
+
+            oldUsername: '',
+
             usernameFormDisabled: true,
             emailFormDisabled: true,
             nationalityFormDisabled: true,
@@ -130,12 +133,12 @@ const ProfileSettings = {
 
         },
         toggleUsernameEdit: function(event) {
-            let res = true;
             if(!this.usernameFormDisabled) {
                 //toggle delegated
                 this.changeUsername();
             } else {
-                this.usernameFormDisabled = !this.usernameFormDisabled;
+                this.oldUsername = this.user.username;
+                this.usernameFormDisabled = false;
             }
         },
         toggleNationalityEdit: function(event) {
@@ -148,9 +151,13 @@ const ProfileSettings = {
 
         },
         changeUsername: function() {
+            if(this.oldUsername === this.user.username) {
+                this.usernameFormDisabled = !this.usernameFormDisabled;
+                return;
+            }
             if (this.user.username === '') {
                 this.$refs.userNotifier.showError("The new username is empty!");
-                return false;
+                return;
             }
 
             const authHeader = 'bearer '.concat(this.$store.state.token);
