@@ -77,12 +77,7 @@ const ProfileSettings = {
                 </div>
                 
                 
-                <small class="text-danger" v-if="show_error">
-                    {{error_message}}
-                </small>
-                <small class="text-success" v-if="show_success">
-                    {{success_message}}
-                </small>
+                <errorSuccessNotifier ref="passwordNotifier"></errorSuccessNotifier>
                 
                 
                 <div class="form-group" style="padding-top:10px">
@@ -96,10 +91,15 @@ const ProfileSettings = {
                 
                 <div class="form-group" style="padding-top:10px">
                     <input type="button" @click.prevent="" class="btn btn-danger btn-lg btn-block" value="Reset my stats">
-                </div>    
+                </div>
+                
+             
                 
         </div>
 `,
+    components: {
+        'errorSuccessNotifier': errorSuccessNotifier
+    },
     data() {
         return {
             user: {
@@ -115,17 +115,9 @@ const ProfileSettings = {
             emailFormDisabled: true,
             nationalityFormDisabled: true,
 
-
-            show_error: false,
-            show_success: false,
-            error_message: "",
-            success_message: ""
         }
     },
     computed: {
-        toggleEditButton: function(disabled) {
-            return disabled ? "fas fa fa-edit" : "fas fa fa-check";
-        }
     },
     methods: {
         toggleEmailEdit: function(event) {
@@ -157,27 +149,23 @@ const ProfileSettings = {
         },
         changePassword: function() {
             if (this.newPassword === '') {
-                this.show_error = true;
-                this.error_message = "Password is empty!";
+                this.$refs.passwordNotifier.showError("Password is empty!");
                 return;
             }
             if (this.newPassword !== this.confirmNewPassword) {
-                this.show_error = true;
-                this.error_message = "Password does not match!";
+                this.$refs.passwordNotifier.showError("Password does not match!");
                 return;
             }
 
             const authHeader = 'bearer '.concat(this.$store.state.token);
             axios.put("http://localhost:3000/api/users/" + this.$store.state.user._id + "/password", {password: this.newPassword}, {headers: { Authorization: authHeader}})
                 .then(response => {
-                    console.log(response);
-                    this.success_message = "Password changed successfully!";
-                    this.show_success = true;
-                    this.show_error = false;
+                    this.$refs.passwordNotifier.showSuccess("Password changed successfully!");
+                    this.newPassword = '';
+                    this.confirmNewPassword = '';
                 })
                 .catch(error => {
-                    this.show_error = true;
-                    this.error_message = error.response.data.message;
+                    this.$refs.passwordNotifier.showError(error.response.data.message);
                 });
         }
     },
