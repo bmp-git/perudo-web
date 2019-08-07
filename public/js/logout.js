@@ -6,14 +6,19 @@ const Logout = { template: `<div class="row">
 		}
 	},
 	methods: {
-		init: function(){
+		logout: function(){
 			store.commit('unsetToken');
-			localStorage.token = null;
-			axios.defaults.headers.common['Authorization'] = null;
-            router.push("/login");
+            router.push("/signin");
+		}
+	},
+	watch: {
+		$route: function(to, from) {
+			if(to.name === 'logout') {
+				this.logout();
+			}
 		}
 	},
 	mounted(){
-		this.init()
+		this.logout();
 	}
-}
+};

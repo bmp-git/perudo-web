@@ -75,7 +75,24 @@ const Profile = {
 
         }
     },
-    methods: {},
+    methods: {
+        reload: function () {
+            axios.get("/api/users/" + this.$route.params.id + "/info")
+                .then(response => {
+                    this.user = response.data.user
+                })
+                .catch(error => {
+                    router.push("/404")
+                });
+        }
+    },
+    watch: {
+        $route: function(to, from) {
+            if(to.name === 'profile') {
+                this.reload();
+            }
+        }
+    },
     filters: {
         formatDate: function(value) {
             if (value) {
@@ -91,12 +108,6 @@ const Profile = {
         }
     },
     mounted: function () {
-        axios.get("http://localhost:3000/api/users/" + this.$route.params.id + "/info")
-            .then(response => {
-                this.user = response.data.user
-            })
-            .catch(error => {
-                router.push("/404")
-            });
+        this.reload();
     }
 };
