@@ -13,18 +13,19 @@ const router = new VueRouter({
     ]
 });
 
+
 router.beforeEach((to, from, next) => {
     console.log("Called beforeEach. requiresAuth: " + to.meta.requiresAuth + " requiresNotAuth: " + to.meta.requiresNotAuth)
 
     if (to.meta.requiresAuth) { // check the meta field
-        if (localStorage.token !== 'null') { // check if the user is authenticated
+        if (localStorage.token) { // check if the user is authenticated
             next() // the next method allow the user to continue to the router
         } else {
             next('/') // Redirect the user to the main page
         }
     } else if (to.meta.requiresNotAuth) {
         console.log("Called beforeEach. requiresNotAuth and authenticated " + store.state.authenticated + localStorage.token);
-        if (localStorage.token === 'null') {
+        if (!localStorage.token) {
             next()
         } else {
             next('/')
