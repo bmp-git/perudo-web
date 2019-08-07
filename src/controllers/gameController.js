@@ -100,6 +100,17 @@ reroll_dice = function (game) {
     });
     currentDice.set(game.id, game_dice);
 };
+count_dice = function (game) {
+    var total_dice = 0;
+    currentDice.get(game.id).forEach((v, k, m) => {
+        if (k === game.last_turn_user_id) {
+            total_dice += v.filter(d => d === game.current_bid.dice || d === 1).length;
+        } else {
+            total_dice += v.filter(d => d === game.current_bid.dice).length;
+        }
+    });
+    return total_dice;
+};
 change_turn = function (game, user_id) {
     turnTimeouts.delete(game.id);
     if (game.current_turn_user_id) {
@@ -208,6 +219,9 @@ exports.create_game = function (req, res) {
     } else if (Array.from(games.values()).some(g => g.users.some(u => u.id === req.user._id))) {
         res.status(400).send({ message: "Cannot create a new game while in another game." }).end();
     } else {
+        if (!new_game.password) {
+            new_game.password = null;
+        }
         var id = currentId;
         currentId++;
         new_game.id = id;
@@ -313,14 +327,7 @@ exports.action_doubt = function (req, res) {
     if (assert_is_my_turn(game, req, res)) {
         if (game.current_bid) {
             actions_add_doubt(game.id, req.user._id);
-            var total_dice = 0;
-            currentDice.get(game.id).forEach((v, k, m) => {
-                if (k === game.last_turn_user_id) {
-                    total_dice += v.filter(d => d === game.current_bid.dice || d === 1).length;
-                } else {
-                    total_dice += v.filter(d => d === game.current_bid.dice).length;
-                }
-            });
+            const total_dice = count_dice(game);
             var lose_user_id = null;
             if (total_dice >= game.current_bid.quantity) {
                 lose_user_id = game.current_turn_user_id;
@@ -354,16 +361,28 @@ exports.action_bid = function (req, res) {
 exports.action_spoton = function (req, res) {
     const id = parseInt(req.params.id);
     const game = games.get(id);
-
     if (assert_in_game(game, req, res)) {
-
-        if (game.current_turn_user_id === req.user._id || game.last_turn_user_id === req.user._id) {
+        if (game.current_turn_user_id === req.user._id || game.last_turn_user_id === req.user._id || 
+            !game.current_bid || game.users.find(u => u.id === req.user._id).remaining_dice >= 5) {
             res.status(400).send({ message: "You cannot spoton now." }).end();
         } else if (game.users.find(u => u.id === req.user._id).remaining_dice === 0) {
             res.status(400).send({ message: "Deads cannot spoton." }).end();
         } else {
-            //TODO spoton logic
             actions_add_spoton(game.id, req.user._id);
+            const total_dice = count_dice(game);
+            if (total_dice === game.current_bid.quantity) {
+                game.users.forEach(u => {
+                    if(u.id !== req.user._id) {
+                        remove_one_dice(game, u.id);
+                    }
+                    actions_add_take_one_dice(game.id, user_id);
+                    game.users.find(u => u.id === req.user._id).remaining_dice++;
+                })
+                next_round(game, false, req.user._id);
+            } else {
+                remove_one_dice(game, req.user._id);
+                next_round(game, false, req.user._id);
+            }
             res.status(200).send({ message: "Spoton done.", result: game }).end();
             tick_game(game);
         }
@@ -493,40 +512,44 @@ assert_is_my_turn = function (game, req, res) {
 actions_add_message = function (game_id, user_id, message) {
     const actionsList = actions.get(game_id);
     actionsList.push({ type: "message", user_id: user_id, date: new Date(), content: message, index: actionsList.length })
-}
+};
 actions_add_event = function (game_id, message) {
     const actionsList = actions.get(game_id);
     actionsList.push({ type: "event", date: new Date(), content: message, index: actionsList.length })
-}
+};
 actions_add_palifico = function (game_id, user_id) {
     const actionsList = actions.get(game_id);
     actionsList.push({ type: "palifico", user_id: user_id, date: new Date(), index: actionsList.length })
-}
+};
 actions_add_bid = function (game_id, user_id, bid) {
     const actionsList = actions.get(game_id);
     actionsList.push({ type: "bid", user_id: user_id, bid: bid, date: new Date(), index: actionsList.length })
-}
+};
 actions_add_doubt = function (game_id, user_id) {
     const actionsList = actions.get(game_id);
     actionsList.push({ type: "doubt", user_id: user_id, date: new Date(), index: actionsList.length })
-}
+};
 actions_add_spoton = function (game_id, user_id) {
     const actionsList = actions.get(game_id);
     actionsList.push({ type: "spoton", user_id: user_id, date: new Date(), index: actionsList.length })
-}
+};
 actions_add_round = function (game_id, number) {
     const actionsList = actions.get(game_id);
     actionsList.push({ type: "round", round: number, date: new Date(), index: actionsList.length })
-}
+};
 actions_add_turn = function (game_id, user_id) {
     const actionsList = actions.get(game_id);
     actionsList.push({ type: "turn", user_id: user_id, date: new Date(), index: actionsList.length })
-}
+};
 actions_add_left_game = function (game_id, user_id) {
     const actionsList = actions.get(game_id);
     actionsList.push({ type: "left", user_id: user_id, date: new Date(), index: actionsList.length })
-}
+};
 actions_add_loses_one_dice = function (game_id, user_id) {
     const actionsList = actions.get(game_id);
     actionsList.push({ type: "dice_lost", user_id: user_id, date: new Date(), index: actionsList.length })
-}
+};
+actions_add_take_one_dice = function (game_id, user_id) {
+    const actionsList = actions.get(game_id);
+    actionsList.push({ type: "dice_win", user_id: user_id, date: new Date(), index: actionsList.length })
+};
