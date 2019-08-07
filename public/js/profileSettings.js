@@ -9,33 +9,13 @@ const ProfileSettings = {
                         <img src="/static/img/avatar.png" class="ig-avatar">
                     </div>
                     <div class="col-md-4">
-                        
-                        
-                        
-                        <div class="input-group mb-2 mt-2">
-                            <div class="input-group-prepend">
-                                <div class="input-group-text"><i class="fas fa-user"></i></div>
-                            </div>
-                            <input v-model="user.username" class="form-control" placeholder="Username" v-bind:disabled="usernameFormDisabled">
-                            <div class="input-group-append">
-                                <div class="input-group-text"><a href="" title="edit" @click.prevent="toggleUsernameEdit"><i v-bind:class="usernameFormDisabled ? 'fas fa fa-edit' : 'fas fa fa-check'"></i></a></div>
-                            </div>
-                        </div>
-                        
-                        <errorSuccessNotifier ref="userNotifier"></errorSuccessNotifier>
-                        
-                        <div class="input-group mb-2 mt-2">
-                            <div class="input-group-prepend">
-                                <div class="input-group-text"><i class="fas fa-flag"></i></div>
-                            </div>
-                            <input v-model="user.nationality" class="form-control" placeholder="Nationality" v-bind:disabled="nationalityFormDisabled">
-                            <div class="input-group-append">
-                                <div class="input-group-text"><a href="" title="edit" @click.prevent="toggleNationalityEdit"><i v-bind:class="nationalityFormDisabled ? 'fas fa fa-edit' : 'fas fa fa-check'"></i></a></div>
-                            </div>
-                        </div>                                                  
 
-                    
-                    
+                        
+                        <editableForm icon="user" type="" placeholder="Username" :value="user.username" :onchangeconfirm="changeUsername"></editableForm>
+                        
+                        <editableForm icon="flag" type="" placeholder="Nationality" :value="user.nationality" :onchangeconfirm="changeNationality"></editableForm>
+
+
                     </div>
                 </div>
                               
@@ -43,19 +23,7 @@ const ProfileSettings = {
                 <hr class="hr-text" data-content="E-mail" />
                 
                 
-                <label class="sr-only" for="txbEmail">Email</label>
-                <div class="input-group mb-2 mt-2">
-                    <div class="input-group-prepend">
-                        <div class="input-group-text"><i class="fas fa-envelope"></i></div>
-                    </div>
-                    <input v-model="user.email" type="email" class="form-control" placeholder="Email" v-bind:disabled="emailFormDisabled">
-                    <div class="input-group-append">
-                        <div class="input-group-text"><a href="" title="edit" @click.prevent="toggleEmailEdit"><i v-bind:class="emailFormDisabled ? 'fas fa fa-edit' : 'fas fa fa-check'"></i></a></div>
-                    </div>
-                </div>
-                
-                
-                <errorSuccessNotifier ref="emailNotifier"></errorSuccessNotifier>   
+                <editableForm icon="envelope" type="email" placeholder="Email" :value="user.email" :onchangeconfirm="changeEmail"></editableForm>
                 
                 
                 <hr class="hr-text" data-content="Change password" />    
@@ -97,8 +65,6 @@ const ProfileSettings = {
                 </div>
                 
                 
-                <hr class="hr-text" data-content="Test" />
-                <editableForm ref="testform" icon="user" type="" placeholder="Username" :value="user.username" :onchangeconfirm="changeUsernameTest"></editableForm>
              
                 
         </div>
@@ -119,69 +85,12 @@ const ProfileSettings = {
             newPassword: '',
             confirmNewPassword: '',
 
-            oldUsername: '',
-            oldEmail: '',
-
-            usernameFormDisabled: true,
-            emailFormDisabled: true,
-            nationalityFormDisabled: true,
-
-            testvalue: "ASDF"
-
         }
     },
     computed: {
     },
     methods: {
-        toggleEmailEdit: function(event) {
-            if(!this.emailFormDisabled) {
-                //toggle delegated
-                this.changeEmail();
-            } else {
-                this.oldEmail = this.user.email;
-                this.emailFormDisabled = !this.emailFormDisabled;
-            }
-        },
-        toggleUsernameEdit: function(event) {
-            if(!this.usernameFormDisabled) {
-                //toggle delegated
-                this.changeUsername();
-            } else {
-                this.oldUsername = this.user.username;
-                this.usernameFormDisabled = !this.usernameFormDisabled;
-            }
-        },
-        toggleNationalityEdit: function(event) {
-            if(!this.nationalityFormDisabled) {
-
-            } else {
-
-            }
-            this.nationalityFormDisabled = !this.nationalityFormDisabled;
-
-        },
-        changeUsername: function() {
-            if(this.oldUsername === this.user.username) {
-                this.usernameFormDisabled = !this.usernameFormDisabled;
-                return;
-            }
-            if (this.user.username === '') {
-                this.$refs.userNotifier.showError("The new username is empty!");
-                return;
-            }
-
-            const authHeader = 'bearer '.concat(this.$store.state.token);
-            axios.put("/api/users/" + this.$store.state.user._id + "/username", {username: this.user.username}, {headers: { Authorization: authHeader}})
-                .then(response => {
-                    this.$refs.userNotifier.showSuccess("Username changed successfully!");
-                    this.usernameFormDisabled = !this.usernameFormDisabled;
-                    this.refreshToken();
-                })
-                .catch(error => {
-                    this.$refs.userNotifier.showError(error.response.data.message);
-                });
-        },
-        changeUsernameTest: function(username, succ, err) {
+        changeUsername: function(username, succ, err) {
             const authHeader = 'bearer '.concat(this.$store.state.token);
             axios.put("/api/users/" + this.$store.state.user._id + "/username", {username: username}, {headers: { Authorization: authHeader}})
                 .then(response => {
@@ -192,28 +101,19 @@ const ProfileSettings = {
                     err(error.response.data.message);
                 });
         },
-        changeEmail: function() {
-            if(this.oldEmail === this.user.email) {
-                this.emailFormDisabled = !this.emailFormDisabled;
-                return;
-            }
-            if (this.user.email === '') {
-                this.$refs.userNotifier.showError("The new email is empty!");
-                return;
-            }
-
+        changeNationality: function(username, succ, err) {
+            succ("Nationality changed successfully!");
+        },
+        changeEmail: function(email, succ, err) {
             const authHeader = 'bearer '.concat(this.$store.state.token);
-            axios.put("/api/users/" + this.$store.state.user._id + "/email", {email: this.user.email}, {headers: { Authorization: authHeader}})
+            axios.put("/api/users/" + this.$store.state.user._id + "/email", {email: email}, {headers: { Authorization: authHeader}})
                 .then(response => {
-                    this.$refs.emailNotifier.showSuccess("Email changed successfully!");
-                    this.emailFormDisabled = !this.emailFormDisabled;
+                    succ("Email changed successfully!");
                     this.refreshToken();
                 })
                 .catch(error => {
-                    this.$refs.emailNotifier.showError(error.response.data.message);
+                    err(error.response.data.message);
                 });
-
-
         },
         refreshToken: function() {
             const authHeader = 'bearer '.concat(this.$store.state.token);
@@ -248,7 +148,7 @@ const ProfileSettings = {
     },
     filters: {
     },
-    created: function () {
+    mounted: function () {
         axios.get("/api/users/" + this.$store.state.user._id, { headers: { Authorization: 'bearer '.concat(this.$store.state.token) } })
             .then(response => {
                 this.user = response.data.user;
