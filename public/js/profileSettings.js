@@ -98,7 +98,7 @@ const ProfileSettings = {
                 
                 
                 <hr class="hr-text" data-content="Test" />
-                <editableForm ref="testform" icon="user" type="email" placeholder="Test Password" :value="user.email"></editableForm>
+                <editableForm ref="testform" icon="user" type="" placeholder="Username" :value="user.username" :onchangeconfirm="changeUsernameTest"></editableForm>
              
                 
         </div>
@@ -179,6 +179,17 @@ const ProfileSettings = {
                 })
                 .catch(error => {
                     this.$refs.userNotifier.showError(error.response.data.message);
+                });
+        },
+        changeUsernameTest: function(username, succ, err) {
+            const authHeader = 'bearer '.concat(this.$store.state.token);
+            axios.put("/api/users/" + this.$store.state.user._id + "/username", {username: username}, {headers: { Authorization: authHeader}})
+                .then(response => {
+                    succ("Username changed successfully!");
+                    this.refreshToken();
+                })
+                .catch(error => {
+                    err(error.response.data.message);
                 });
         },
         changeEmail: function() {
