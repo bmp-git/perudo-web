@@ -47,8 +47,6 @@ const Login = {
                 axios.post("http://localhost:3000/api/users/" + this.email + "/token", this.login_request)
                     .then(response => {
                         store.commit('setToken', response.data.token);
-                        localStorage.token = response.data.token;
-                        axios.defaults.headers.common['Authorization'] = "bearer" + response.data.token;
                         router.push("/");
                     })
                     .catch(error => {
@@ -69,4 +67,4 @@ const Login = {
             return text.substring(0, length);
         }
     },
-}
+};

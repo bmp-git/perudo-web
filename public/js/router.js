@@ -5,7 +5,7 @@ const router = new VueRouter({
         {path: '/leaderboard', component: Leaderboard},
         {path: '/signin', component: Login, meta: {requiresNotAuth: true}},
         {path: '/signup', component: Signup, meta : {requiresNotAuth : true}},
-        {path: '/signout', component: Logout, meta: {requiresAuth: true}},
+        {path: '/signout', component: Logout, name: "logout", meta: {requiresAuth: true}},
         {path: '/settings', component: ProfileSettings, meta: {requiresAuth: true}},
         {path: '/profile/:id', component: Profile, name: "profile"},
         {path: '/404', component: NotFound},
@@ -13,18 +13,19 @@ const router = new VueRouter({
     ]
 });
 
+
 router.beforeEach((to, from, next) => {
     console.log("Called beforeEach. requiresAuth: " + to.meta.requiresAuth + " requiresNotAuth: " + to.meta.requiresNotAuth)
 
     if (to.meta.requiresAuth) { // check the meta field
-        if (localStorage.token !== 'null') { // check if the user is authenticated
+        if (localStorage.token) { // check if the user is authenticated
             next() // the next method allow the user to continue to the router
         } else {
             next('/') // Redirect the user to the main page
         }
     } else if (to.meta.requiresNotAuth) {
         console.log("Called beforeEach. requiresNotAuth and authenticated " + store.state.authenticated + localStorage.token);
-        if (localStorage.token === 'null') {
+        if (!localStorage.token) {
             next()
         } else {
             next('/')
