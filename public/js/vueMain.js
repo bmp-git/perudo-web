@@ -38,3 +38,5 @@ socket.on('new action', function (game_id) {
 
 socket.emit('watch game', 0);
 //socket.emit('unwatch game', 0);
+
+//socket.off('game added');
