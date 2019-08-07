@@ -52,7 +52,10 @@ const ProfileSettings = {
                     <div class="input-group-append">
                         <div class="input-group-text"><a href="" title="edit" @click.prevent="toggleEmailEdit"><i v-bind:class="emailFormDisabled ? 'fas fa fa-edit' : 'fas fa fa-check'"></i></a></div>
                     </div>
-                </div>   
+                </div>
+                
+                
+                <errorSuccessNotifier ref="emailNotifier"></errorSuccessNotifier>   
                 
                 
                 <hr class="hr-text" data-content="Change password" />    
@@ -113,6 +116,7 @@ const ProfileSettings = {
             confirmNewPassword: '',
 
             oldUsername: '',
+            oldEmail: '',
 
             usernameFormDisabled: true,
             emailFormDisabled: true,
@@ -125,12 +129,12 @@ const ProfileSettings = {
     methods: {
         toggleEmailEdit: function(event) {
             if(!this.emailFormDisabled) {
-
+                //toggle delegated
+                this.changeEmail();
             } else {
-
+                this.oldEmail = this.user.email;
+                this.emailFormDisabled = !this.emailFormDisabled;
             }
-            this.emailFormDisabled = !this.emailFormDisabled;
-
         },
         toggleUsernameEdit: function(event) {
             if(!this.usernameFormDisabled) {
@@ -138,7 +142,7 @@ const ProfileSettings = {
                 this.changeUsername();
             } else {
                 this.oldUsername = this.user.username;
-                this.usernameFormDisabled = false;
+                this.usernameFormDisabled = !this.usernameFormDisabled;
             }
         },
         toggleNationalityEdit: function(event) {
@@ -165,16 +169,43 @@ const ProfileSettings = {
                 .then(response => {
                     this.$refs.userNotifier.showSuccess("Username changed successfully!");
                     this.usernameFormDisabled = !this.usernameFormDisabled;
-                    axios.get("http://localhost:3000/api/users/" + this.$store.state.user._id + "/token", {headers: { Authorization: authHeader}})
-                        .then(
-                          tokenRes => {
-                              store.commit('setToken', tokenRes.data.token);
-                          }
-                        );
+                    this.refreshToken();
                 })
                 .catch(error => {
                     this.$refs.userNotifier.showError(error.response.data.message);
                 });
+        },
+        changeEmail: function() {
+            if(this.oldEmail === this.user.email) {
+                this.emailFormDisabled = !this.emailFormDisabled;
+                return;
+            }
+            if (this.user.email === '') {
+                this.$refs.userNotifier.showError("The new email is empty!");
+                return;
+            }
+
+            const authHeader = 'bearer '.concat(this.$store.state.token);
+            axios.put("http://localhost:3000/api/users/" + this.$store.state.user._id + "/email", {email: this.user.email}, {headers: { Authorization: authHeader}})
+                .then(response => {
+                    this.$refs.emailNotifier.showSuccess("Email changed successfully!");
+                    this.emailFormDisabled = !this.emailFormDisabled;
+                    this.refreshToken();
+                })
+                .catch(error => {
+                    this.$refs.emailNotifier.showError(error.response.data.message);
+                });
+
+
+        },
+        refreshToken: function() {
+            const authHeader = 'bearer '.concat(this.$store.state.token);
+            axios.get("http://localhost:3000/api/users/" + this.$store.state.user._id + "/token", {headers: { Authorization: authHeader}})
+                .then(
+                    tokenRes => {
+                        store.commit('setToken', tokenRes.data.token);
+                    }
+                );
         },
         changePassword: function() {
             if (this.newPassword === '') {
