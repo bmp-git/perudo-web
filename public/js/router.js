@@ -1,17 +1,17 @@
 const router = new VueRouter({
     mode: 'history',
     routes: [
-        { path: '/', component: Home },
-        { path: '/leaderboard', component: Leaderboard },
-        { path: '/games', component: Games },
+        {path: '/', component: Home},
+        {path: '/leaderboard', component: Leaderboard},
+        {path: '/games', component: Games},
         { path: '/new_game', component: NewGame },
-        { path: '/signin', component: Login, meta: { requiresNotAuth: true } },
-        { path: '/signup', component: Signup, meta: { requiresNotAuth: true } },
-        { path: '/signout', component: Logout, name: "logout", meta: { requiresAuth: true } },
-        { path: '/settings', component: ProfileSettings, meta: { requiresAuth: true } },
-        { path: '/profile/:id', component: Profile, name: "profile" },
-        { path: '/404', component: NotFound },
-        { path: '*', redirect: '/404' }
+        {path: '/signin', component: Login, meta: {requiresNotAuth: true}},
+        {path: '/signup', component: Signup, meta : {requiresNotAuth : true}},
+        {path: '/signout', component: Logout, name: "logout", meta: {requiresAuth: true}},
+        {path: '/settings', component: ProfileSettings, name: "settings", meta: {requiresAuth: true}},
+        {path: '/profile/:id', component: Profile, name: "profile"},
+        {path: '/404', component: NotFound},
+        {path: '*', redirect: '/404'}
     ]
 });
 
