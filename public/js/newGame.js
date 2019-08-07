@@ -29,7 +29,7 @@ const NewGame = {
                 <div class="input-group-prepend">
                     <div class="input-group-text">Password</div>
                 </div>
-                <input v-model="game_info.password" type="passwrod" class="form-control" placeholder="Password">
+                <input v-model="game_info.password" type="password" class="form-control" placeholder="Password">
             </div>
 
             <errorSuccessNotifier ref="notifier"></errorSuccessNotifier>

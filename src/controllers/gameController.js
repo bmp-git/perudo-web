@@ -226,12 +226,12 @@ exports.get_game_tick = function (req, res) {
 exports.create_game = function (req, res) {
     var new_game = req.body;
     if (!new_game.name || new_game.name.length < 3 || new_game.name.length > 20) {
-        res.status(400).send({ message: "'name' must consist of 5 to 30 characters." }).end();
+        res.status(400).send({ message: "'name' must consist of 3 to 30 characters." }).end();
     } else if (!new_game.players || new_game.players < 2 || new_game.players > 8) {
         res.status(400).send({ message: "'players' must be between 2 and 8." }).end();
     } else if (!new_game.turn_time || new_game.turn_time < 10 || new_game.turn_time > 600) {
         res.status(400).send({ message: "'turn_time' must be between 10 and 600 (seconds)." }).end();
-    } else if (new_game.password && (new_game.password < 5 || new_game.password > 30)) {
+    } else if (new_game.password && (new_game.password.length < 5 || new_game.password.length > 30)) {
         res.status(400).send({ message: "'password' must consist of 5 to 30 characters." }).end();
     } else if (Array.from(games.values()).some(g => g.users.some(u => u.id === req.user._id))) {
         res.status(400).send({ message: "Cannot create a new game while in another game." }).end();
