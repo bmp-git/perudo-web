@@ -12,7 +12,7 @@ const Games = { template: `
     </h6>
     
     <p class="card-text"><small class="text-muted">Created by {{ownerUsername}} {{game.game_creation_time | formatTime}} ago</small></p>
-    <div class="row">
+    <div class="row" style="margin-bottom:25px">
         <template v-for="user in game.users">
             <div class="col">
                 <img v-bind:src="user.avatar_url" class="ig-avatar" width="48px" height="48px">
@@ -24,17 +24,19 @@ const Games = { template: `
     <template v-if="game.started">
         <button type="button" class="btn btn-primary btn-sm float-right" disabled>Game started</button>
     </template>
-    <!--<template v-else-if="userIsOwner">
-        <button type="button" class="btn btn-primary btn-sm float-right">Start game!</button>
-    </template>-->
+    <template v-else-if="userIsOwner">
+        <button type="button" @click.prevent="startGame" class="btn btn-primary btn-sm float-right">Start game!</button>
+    </template>
     <template v-else-if="!freeSpaceAvailable || currentUserInside">
         <button type="button" class="btn btn-primary btn-sm float-right" disabled>Join</button>
     </template>
     <template v-else>
+        <div class="input-group-append float-right">
         <template v-if="game.password != null">
             <input v-model="inserted_password" type="password" class="form-control" placeholder="Password" required>
         </template>
         <button type="button" @click.prevent="joinGame" class="btn btn-primary btn-sm float-right">Join</button>
+        </div>
     </template>
     </div>
     </div>
@@ -61,17 +63,25 @@ methods: {
     updateGame: function(game) {
         this.game = game;
     },
-    joinGame: function() {
+    operateInGame: function(operation) {
         const authHeader = 'bearer '.concat(this.$store.state.token);
-        var body = this.game.password != null ? {operation: "join"} : {operation: "join", password: this.inserted_password};
+        var body = this.game.password == null ? {operation: operation} : {operation: operation, password: this.inserted_password};
         axios.put("/api/games/" + this.game.id, body, {headers: { Authorization: authHeader}})
             .then(response => {
-                //reload page?
-                console.log("Join game");
+                //if start need to route in game
+                this.updateGame(response.data.result);
             })
             .catch(error => {
                 console.log(error.response.data.message);
             });
+    },
+    joinGame: function() {
+        this.operateInGame("join");
+    },
+    startGame: function() {
+        if(this.userIsOwner) {
+            this.operateInGame("start");
+        }
     }
 },
 mounted: function () {
