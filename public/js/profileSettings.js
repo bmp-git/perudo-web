@@ -165,7 +165,7 @@ const ProfileSettings = {
             }
 
             const authHeader = 'bearer '.concat(this.$store.state.token);
-            axios.put("http://localhost:3000/api/users/" + this.$store.state.user._id + "/username", {username: this.user.username}, {headers: { Authorization: authHeader}})
+            axios.put("/api/users/" + this.$store.state.user._id + "/username", {username: this.user.username}, {headers: { Authorization: authHeader}})
                 .then(response => {
                     this.$refs.userNotifier.showSuccess("Username changed successfully!");
                     this.usernameFormDisabled = !this.usernameFormDisabled;
@@ -186,7 +186,7 @@ const ProfileSettings = {
             }
 
             const authHeader = 'bearer '.concat(this.$store.state.token);
-            axios.put("http://localhost:3000/api/users/" + this.$store.state.user._id + "/email", {email: this.user.email}, {headers: { Authorization: authHeader}})
+            axios.put("/api/users/" + this.$store.state.user._id + "/email", {email: this.user.email}, {headers: { Authorization: authHeader}})
                 .then(response => {
                     this.$refs.emailNotifier.showSuccess("Email changed successfully!");
                     this.emailFormDisabled = !this.emailFormDisabled;
@@ -200,7 +200,7 @@ const ProfileSettings = {
         },
         refreshToken: function() {
             const authHeader = 'bearer '.concat(this.$store.state.token);
-            axios.get("http://localhost:3000/api/users/" + this.$store.state.user._id + "/token", {headers: { Authorization: authHeader}})
+            axios.get("/api/users/" + this.$store.state.user._id + "/token", {headers: { Authorization: authHeader}})
                 .then(
                     tokenRes => {
                         store.commit('setToken', tokenRes.data.token);
@@ -218,7 +218,7 @@ const ProfileSettings = {
             }
 
             const authHeader = 'bearer '.concat(this.$store.state.token);
-            axios.put("http://localhost:3000/api/users/" + this.$store.state.user._id + "/password", {password: this.newPassword}, {headers: { Authorization: authHeader}})
+            axios.put("/api/users/" + this.$store.state.user._id + "/password", {password: this.newPassword}, {headers: { Authorization: authHeader}})
                 .then(response => {
                     this.$refs.passwordNotifier.showSuccess("Password changed successfully!");
                     this.newPassword = '';
@@ -232,11 +232,9 @@ const ProfileSettings = {
     filters: {
     },
     mounted: function () {
-        console.log(this.$store.state);
-        axios.get("http://localhost:3000/api/users/" + this.$store.state.user._id, { headers: { Authorization: 'bearer '.concat(this.$store.state.token) } })
+        axios.get("/api/users/" + this.$store.state.user._id, { headers: { Authorization: 'bearer '.concat(this.$store.state.token) } })
             .then(response => {
                 this.user = response.data.user;
-                console.log(response)
             })
             .catch(error => {
                 router.push("/404")
