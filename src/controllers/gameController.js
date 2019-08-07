@@ -27,7 +27,11 @@ add_user_to_game = function (game, userId, next) {
         if (err || !user) {
             next(false);
         } else {
-            game.users.push({ id: userId, username: user.username, avatar: user.avatar, remaining_dice: 5, can_palifico: true });
+            game.users.push({
+                id: userId, username: user.username,
+                avatar_url: "/api/users/" + userId + "/avatar",
+                remaining_dice: 5, can_palifico: true
+            });
             next(true);
         }
     });
@@ -182,7 +186,7 @@ tick_game = function (game, force_broadcast) {
     //Notify all user that in this game the current tick in now 'game.tick'
     //If their local 'game.tick' is lower they should refresh with get '/api/games/:id'
     //Or the clients can do polling on get '/api/games/:id/tick'
-    if(game.started && !force_broadcast) { //notify only the player inside the game
+    if (game.started && !force_broadcast) { //notify only the player inside the game
         io.to('game ' + game.id).emit('game changed', { id: game.id, tick: game.tick });
     } else { //notify all ==> a user could have joined the game and this info is usefull for all
         io.emit('game changed', { id: game.id, tick: game.tick });
