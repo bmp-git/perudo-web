@@ -6,7 +6,7 @@ const Profile = {
                 
                 <div class="row">
                     <div class="col-md-2 offset-md-3">
-                        <img v-bind:src="user.avatar ? user.avatar : defaultAvatar" height="160" width="160"/>
+                        <img v-bind:src="'/api/users/'+this.$route.params.id+'/avatar'" height="160" width="160"/>
                     </div>
                     <div class="col-md-4">
                         <h2>{{user.username}}</h2>

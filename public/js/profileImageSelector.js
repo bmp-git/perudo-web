@@ -2,7 +2,7 @@ const profileImageSelector = {
     template: `
             <div>
                 <div class="profile-pic">
-                    <img v-bind:src="avatar ? avatar : defaultAvatar" height="160" width="160"/>
+                    <img v-bind:src="imageURL" height="160" width="160"/>
                     <div class="edit"><a href="#" @click.prevent="onEditClick"><i class="fas fa fa-edit"></i></a></div>
                 </div>
                 <input type="file" ref="inputFile" @change="loadImage" single hidden>
@@ -11,9 +11,10 @@ const profileImageSelector = {
 `,
     data() {
         return {
+            imageURL: '/api/users/' + this.$store.state.user._id + '/avatar'
         }
     },
-    props: ['avatar', 'onnewimage'],
+    props: ['onnewimage'],
     components: {
         'errorSuccessNotifier': errorSuccessNotifier
     },
@@ -28,8 +29,7 @@ const profileImageSelector = {
             const reader  = new FileReader();
 
             reader.onloadend = () => {
-                this.avatar = reader.result;
-                this.onnewimage(this.avatar, this.onSuccess, this.onError);
+                this.onnewimage(reader.result, this.onSuccess, this.onError);
             };
 
             reader.onabort = () => {
@@ -45,6 +45,7 @@ const profileImageSelector = {
         },
         onSuccess: function(message) {
             this.$refs.notifier.showSuccess(message);
+            this.imageURL = this.imageURL + ' '; //workaround to reload image
         },
         onError: function (message) {
             this.$refs.notifier.showError(message);

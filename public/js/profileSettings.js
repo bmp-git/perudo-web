@@ -7,7 +7,7 @@ const ProfileSettings = {
                 <div class="row">
                     
                     <div class="col-md-2 offset-md-3">
-                        <profileImageSelector :avatar="user.avatar" :onnewimage="changeAvatar"></profileImageSelector>
+                        <profileImageSelector :onnewimage="changeAvatar"></profileImageSelector>
                     </div>
                     
                     
@@ -82,7 +82,7 @@ const ProfileSettings = {
     data() {
         return {
             user: {
-                _id : '',
+                id : '',
                 nationality: 'Italy',
                 email: '',
                 username: '',
