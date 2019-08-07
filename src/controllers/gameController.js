@@ -27,7 +27,7 @@ add_user_to_game = function (game, userId, next) {
         if (err || !user) {
             next(false);
         } else {
-            game.users.push({ id: userId, username: user.username, avatar: user.avatar, remaining_dice: 5, can_palifico: true });
+            game.users.push({ id: userId, username: user.username, avatar_url: "/api/users/" + userId + "/avatar" , remaining_dice: 5, can_palifico: true });
             next(true);
         }
     });
