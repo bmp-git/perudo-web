@@ -162,9 +162,13 @@ is_valid_bid = function (game, dice, quantity) {
 
 tick_game = function (game) {
     game.tick++;
-    //Notify all user in this game that the current tick in now 'game.tick'
-    //If their local 'game.tick' is lower they should refresh with '/api/games/:id'
-    //Or the clients can do polling on '/api/games/:id/tick'
+    //Notify all user that in the 'game' the current tick in now 'game.tick'
+    //If their local 'game.tick' is lower they should refresh with get '/api/games/:id'
+    //Or the clients can do polling on get '/api/games/:id/tick'
+};
+actions_notification = function (game) {
+    //Notify all user in that game that an actions has been added to 'game'.
+    //They should refresh with get '/api/games/:id/actions' from the index they are.
 };
 
 
@@ -217,6 +221,7 @@ exports.create_game = function (req, res) {
         add_user_to_game(new_game, req.user._id, function (success) {
             if (success) {
                 games.set(id, new_game);
+                tick_game(new_game);
                 res.status(200).send({ result: new_game }).end();
             } else {
                 res.status(500).send({ message: "[create_game] failed on adding owner." }).end();
@@ -330,8 +335,8 @@ exports.action_doubt = function (req, res) {
             }
             remove_one_dice(game, lose_user_id);
             next_round(game, false, lose_user_id);
-            res.status(200).send({ message: "Doubt done.", result: game }).end();
             tick_game(game);
+            res.status(200).send({ message: "Doubt done.", result: game }).end();
         } else {
             res.status(400).send({ message: "Cannot doubt now." }).end();
         }
@@ -342,11 +347,9 @@ exports.action_bid = function (req, res) {
     const game = games.get(id);
     if (assert_is_my_turn(game, req, res)) {
         if (is_valid_bid(game, req.body.dice, req.body.quantity)) {
-            game.current_bid = { dice: req.body.dice, quantity: req.body.quantity };
-            actions_add_bid(game.id, req.user._id);
-            go_next_turn(game);
-            res.status(200).send({ message: "Bid done.", result: game }).end();
+            make_bid(game, req.user._id, req.body.dice, req.body.quantity);
             tick_game(game);
+            res.status(200).send({ message: "Bid done.", result: game }).end();
         } else {
             res.status(400).send({ message: "Invalid bid." }).end();
         }
@@ -377,8 +380,8 @@ exports.action_spoton = function (req, res) {
                 remove_one_dice(game, req.user._id);
                 next_round(game, false, req.user._id);
             }
-            res.status(200).send({ message: "Spoton done.", result: game }).end();
             tick_game(game);
+            res.status(200).send({ message: "Spoton done.", result: game }).end();
         }
     }
 };
@@ -394,8 +397,8 @@ exports.action_palifico = function (req, res) {
                 actions_add_palifico(game.id, req.user._id);
                 change_turn(game, req.user._id);
                 game.is_palifico_round = true;
-                res.status(200).send({ message: "Palifico done.", result: game }).end();
                 tick_game(game);
+                res.status(200).send({ message: "Palifico done.", result: game }).end();
             } else {
                 res.status(400).send({ message: "You already call palifico." }).end();
             }
@@ -496,52 +499,45 @@ assert_is_my_turn = function (game, req, res) {
 
 
 
-
-
-
-
-
 actions_add_message = function (game_id, user_id, message) {
-    const actionsList = actions.get(game_id);
-    actionsList.push({ type: "message", user_id: user_id, date: new Date(), content: message, index: actionsList.length })
+    add_action(game_id, {  type: "message", user_id: user_id, content: message });
 };
 actions_add_event = function (game_id, message) {
-    const actionsList = actions.get(game_id);
-    actionsList.push({ type: "event", date: new Date(), content: message, index: actionsList.length })
+    add_action(game_id, { type: "event", content: message });
 };
 actions_add_palifico = function (game_id, user_id) {
-    const actionsList = actions.get(game_id);
-    actionsList.push({ type: "palifico", user_id: user_id, date: new Date(), index: actionsList.length })
+    add_action(game_id, { type: "palifico", user_id: user_id });
 };
 actions_add_bid = function (game_id, user_id, bid) {
-    const actionsList = actions.get(game_id);
-    actionsList.push({ type: "bid", user_id: user_id, bid: bid, date: new Date(), index: actionsList.length })
+    add_action(game_id, { type: "bid", user_id: user_id, bid: bid});
 };
 actions_add_doubt = function (game_id, user_id) {
-    const actionsList = actions.get(game_id);
-    actionsList.push({ type: "doubt", user_id: user_id, date: new Date(), index: actionsList.length })
+    add_action(game_id, { type: "doubt", user_id: user_id });
 };
 actions_add_spoton = function (game_id, user_id) {
-    const actionsList = actions.get(game_id);
-    actionsList.push({ type: "spoton", user_id: user_id, date: new Date(), index: actionsList.length })
+    add_action(game_id, { type: "spoton", user_id: user_id });
 };
 actions_add_round = function (game_id, number) {
-    const actionsList = actions.get(game_id);
-    actionsList.push({ type: "round", round: number, date: new Date(), index: actionsList.length })
+    add_action(game_id, { type: "round", round: number });
 };
 actions_add_turn = function (game_id, user_id) {
-    const actionsList = actions.get(game_id);
-    actionsList.push({ type: "turn", user_id: user_id, date: new Date(), index: actionsList.length })
+    add_action(game_id, { type: "turn", user_id: user_id });
 };
 actions_add_left_game = function (game_id, user_id) {
-    const actionsList = actions.get(game_id);
-    actionsList.push({ type: "left", user_id: user_id, date: new Date(), index: actionsList.length })
+    add_action(game_id, { type: "left", user_id: user_id });
 };
 actions_add_loses_one_dice = function (game_id, user_id) {
-    const actionsList = actions.get(game_id);
-    actionsList.push({ type: "dice_lost", user_id: user_id, date: new Date(), index: actionsList.length })
+    add_action(game_id, { type: "dice_lost", user_id: user_id });
 };
 actions_add_take_one_dice = function (game_id, user_id) {
+    add_action(game_id, { type: "dice_win", user_id: user_id });
+};
+
+
+add_action = function (game_id, action) {
     const actionsList = actions.get(game_id);
-    actionsList.push({ type: "dice_win", user_id: user_id, date: new Date(), index: actionsList.length })
+    action.date = new Date();
+    action.index = actionsList.length;
+    actionsList.push(action);
+    actions_notification(games.get(game_id));
 };
