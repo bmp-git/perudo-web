@@ -96,12 +96,16 @@ const ProfileSettings = {
                     <input type="button" @click.prevent="" class="btn btn-danger btn-lg btn-block" value="Reset my stats">
                 </div>
                 
+                
+                <hr class="hr-text" data-content="Test" />
+                <editableForm ref="testform" icon="user" type="email" placeholder="Test Password" :value="user.email"></editableForm>
              
                 
         </div>
 `,
     components: {
-        'errorSuccessNotifier': errorSuccessNotifier
+        'errorSuccessNotifier': errorSuccessNotifier,
+        'editableForm': editableForm
     },
     data() {
         return {
@@ -121,6 +125,8 @@ const ProfileSettings = {
             usernameFormDisabled: true,
             emailFormDisabled: true,
             nationalityFormDisabled: true,
+
+            testvalue: "ASDF"
 
         }
     },
@@ -231,7 +237,7 @@ const ProfileSettings = {
     },
     filters: {
     },
-    mounted: function () {
+    created: function () {
         axios.get("/api/users/" + this.$store.state.user._id, { headers: { Authorization: 'bearer '.concat(this.$store.state.token) } })
             .then(response => {
                 this.user = response.data.user;
