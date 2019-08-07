@@ -5,7 +5,7 @@ const router = new VueRouter({
         {path: '/leaderboard', component: Leaderboard},
         {path: '/signin', component: Login, meta: {requiresNotAuth: true}},
         {path: '/signup', component: Signup, meta : {requiresNotAuth : true}},
-        {path: '/signout', component: Logout, meta: {requiresAuth: true}},
+        {path: '/signout', component: Logout, name: "logout", meta: {requiresAuth: true}},
         {path: '/settings', component: ProfileSettings, meta: {requiresAuth: true}},
         {path: '/profile/:id', component: Profile, name: "profile"},
         {path: '/404', component: NotFound},
