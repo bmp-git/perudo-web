@@ -5,9 +5,12 @@ const ProfileSettings = {
                 <hr class="hr-text" data-content="Edit my profile" />
                 
                 <div class="row">
+                    
                     <div class="col-md-2 offset-md-3">
-                        <img src="/static/img/avatar.png" class="ig-avatar">
+                        <profileImageSelector :avatar="user.avatar" :onnewimage="changeAvatar"></profileImageSelector>
                     </div>
+                    
+                    
                     <div class="col-md-4">
 
                         
@@ -73,7 +76,8 @@ const ProfileSettings = {
 `,
     components: {
         'errorSuccessNotifier': errorSuccessNotifier,
-        'editableForm': editableForm
+        'editableForm': editableForm,
+        'profileImageSelector': profileImageSelector
     },
     data() {
         return {
@@ -91,7 +95,23 @@ const ProfileSettings = {
     },
     computed: {
     },
+    watch: {
+        $route: function(to, from) {
+            if(to.name === 'settings') {
+                this.reload();
+            }
+        }
+    },
     methods: {
+        reload: function() {
+            axios.get("/api/users/" + this.$store.state.user._id, { headers: { Authorization: 'bearer '.concat(this.$store.state.token) } })
+                .then(response => {
+                    this.user = response.data.user;
+                })
+                .catch(error => {
+                    router.push("/404")
+                });
+        },
         changeUsername: function(username, succ, err) {
             const authHeader = 'bearer '.concat(this.$store.state.token);
             axios.put("/api/users/" + this.$store.state.user._id + "/username", {username: username}, {headers: { Authorization: authHeader}})
@@ -112,6 +132,16 @@ const ProfileSettings = {
                 .then(response => {
                     succ("Email changed successfully!");
                     this.refreshToken();
+                })
+                .catch(error => {
+                    err(error.response.data.message);
+                });
+        },
+        changeAvatar: function(avatar, succ, err) {
+            const authHeader = 'bearer '.concat(this.$store.state.token);
+            axios.put("/api/users/" + this.$store.state.user._id + "/avatar", {avatar: avatar}, {headers: { Authorization: authHeader}})
+                .then(response => {
+                    succ("Avatar changed successfully!");
                 })
                 .catch(error => {
                     err(error.response.data.message);
@@ -167,12 +197,6 @@ const ProfileSettings = {
     filters: {
     },
     mounted: function () {
-        axios.get("/api/users/" + this.$store.state.user._id, { headers: { Authorization: 'bearer '.concat(this.$store.state.token) } })
-            .then(response => {
-                this.user = response.data.user;
-            })
-            .catch(error => {
-                router.push("/404")
-            });
+        this.reload();
     }
 };
