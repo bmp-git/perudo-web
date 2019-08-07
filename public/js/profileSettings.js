@@ -61,8 +61,10 @@ const ProfileSettings = {
                 <hr class="hr-text" data-content="Reset my stats and rankings" />   
                 
                 <div class="form-group" style="padding-top:10px">
-                    <input type="button" @click.prevent="" class="btn btn-danger btn-lg btn-block" value="Reset my stats">
+                    <input type="button" @click.prevent="resetStats" class="btn btn-danger btn-lg btn-block" value="Reset my stats">
                 </div>
+                
+                <errorSuccessNotifier ref="resetNotifier"></errorSuccessNotifier>
                 
                 
              
@@ -101,7 +103,7 @@ const ProfileSettings = {
                     err(error.response.data.message);
                 });
         },
-        changeNationality: function(username, succ, err) {
+        changeNationality: function(nationality, succ, err) {
             succ("Nationality changed successfully!");
         },
         changeEmail: function(email, succ, err) {
@@ -143,6 +145,22 @@ const ProfileSettings = {
                 })
                 .catch(error => {
                     this.$refs.passwordNotifier.showError(error.response.data.message);
+                });
+        },
+        resetStats: function() {
+            if(!confirm("Are you sure? All your stats and ranking will be erased.")) {
+                return;
+            }
+            if(!confirm("Really?")) {
+                return;
+            }
+            const authHeader = 'bearer '.concat(this.$store.state.token);
+            axios.delete("/api/users/" + this.$store.state.user._id + "/info", {headers: { Authorization: authHeader}})
+                .then(response => {
+                    this.$refs.resetNotifier.showSuccess("User stats reset successfully!");
+                })
+                .catch(error => {
+                    this.$refs.resetNotifier.showError(error.response.data.message);
                 });
         }
     },
