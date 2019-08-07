@@ -15,17 +15,26 @@ const Games = { template: `
     <div class="row">
         <template v-for="user in game.users">
             <div class="col">
+                <img v-bind:src="user.avatar_url" class="ig-avatar" width="48px" height="48px">
                 <a v-bind:href="'/profile/'+user.id" style="margin-bottom:0px">{{user.username}} </a>
                 <!--<p class="card-text" style="margin-bottom:0px">{{user.username}} </p>-->
-                <img v-bind:src="user.avatar_url" class="ig-avatar" width="48px" height="48px">
             </div>
         </template>
     </div>
-    <template v-if="game.started && freeSpaceAvailable">
+    <template v-if="game.started">
+        <button type="button" class="btn btn-primary btn-sm float-right" disabled>Game started</button>
+    </template>
+    <!--<template v-else-if="userIsOwner">
+        <button type="button" class="btn btn-primary btn-sm float-right">Start game!</button>
+    </template>-->
+    <template v-else-if="!freeSpaceAvailable || currentUserInside">
         <button type="button" class="btn btn-primary btn-sm float-right" disabled>Join</button>
     </template>
     <template v-else>
-        <button type="button" class="btn btn-primary btn-sm float-right">Join</button>
+        <template v-if="game.password != null">
+            <input v-model="inserted_password" type="password" class="form-control" placeholder="Password" required>
+        </template>
+        <button type="button" @click.prevent="joinGame" class="btn btn-primary btn-sm float-right">Join</button>
     </template>
     </div>
     </div>
@@ -33,6 +42,7 @@ const Games = { template: `
 </div>`, 
 data() {
     return {
+        inserted_password : "",
         game: {
             name: "",
             players: 0,
@@ -50,6 +60,18 @@ data() {
 methods: {
     updateGame: function(game) {
         this.game = game;
+    },
+    joinGame: function() {
+        const authHeader = 'bearer '.concat(this.$store.state.token);
+        var body = this.game.password != null ? {operation: "join"} : {operation: "join", password: this.inserted_password};
+        axios.put("/api/games/" + this.game.id, body, {headers: { Authorization: authHeader}})
+            .then(response => {
+                //reload page?
+                console.log("Join game");
+            })
+            .catch(error => {
+                console.log(error.response.data.message);
+            });
     }
 },
 mounted: function () {
@@ -67,8 +89,22 @@ filters: {
     }
 },
 computed: {
+    currentUserInside: function () {
+        var id = this.$store.state.user._id;
+        for(var user_index in this.game.users) {
+            console.log(this.game.users[user_index].id);
+            console.log("mio" + id)
+            if(this.game.users[user_index].id === id) {
+                return true;
+            }
+         }
+         return false;
+    },
     freeSpaceAvailable: function () {
-      return Object.keys(this.game.users).length < this.game.players;
+        return Object.keys(this.game.users).length < this.game.players;
+    },
+    userIsOwner: function () {
+        return this.game.owner_id === this.$store.state.user._id;
     },
     usedSpaces: function () {
       return Object.keys(this.game.users).length + "/" + this.game.players;
@@ -88,7 +124,6 @@ computed: {
          }
     },
     turnTime : function () {
-        console.log(this.game)
         if(this.game.turn_time) {
             return this.game.turn_time + " s";
         } else {
