@@ -7,23 +7,7 @@ var currentDice = new Map(); //game id -> {user id -> [dice values]}
 var oldDice = new Map(); //game id -> { round -> {user id -> [dice values]}}
 var currentId = 0;
 var turnTimeouts = new Map(); //game id -> timer
-
-
-
-var updater = setInterval(function () {
-    const EXPIRATION_DATE = 60 * 1000; //1 minute
-    var toRemove = [];
-    games.forEach((v, k, m) => {
-        if (v.users.length === 0 && ((new Date) - v.empty_from_date) > EXPIRATION_DATE) {
-            toRemove.push(k);
-            console.log("Game " + v.id + " is expired.");
-        }
-    });
-
-    toRemove.forEach(v => {
-        remove_game(v);
-    });
-}, 5000);
+var gameTimeouts = new Map(); //game id -> timer
 
 remove_game = function (game_id) {
     games.delete(game_id);
@@ -35,7 +19,7 @@ remove_game = function (game_id) {
     }
     turnTimeouts.delete(game_id);
     console.log("Game " + game_id + " removed.");
-}
+};
 
 add_user_to_game = function (game, userId, next) {
     User.findById(userId, function (err, user) {
@@ -265,6 +249,10 @@ exports.join_start_game = function (req, res) {
                         game.owner_id = req.user._id;
                     }
                     delete game.empty_from_date;
+                    if (gameTimeouts.get(game.id)) {
+                        clearTimeout(gameTimeouts.get(game.id));
+                    }
+                    gameTimeouts.delete(game.id);
                     tick_game(game);
                     res.status(200).send({ message: "Game joined.", result: game }).end();
                 } else {
@@ -297,6 +285,12 @@ exports.leave_game = function (req, res) {
             game.owner_id = "";
             if (game.started) {
                 remove_game(game.id);
+            } else {
+                gameTimeouts.set(game.id, setTimeout(function () {
+                    console.log("Game " + game.id + " is expired.");
+                    remove_game(game.id);
+                    gameTimeouts.delete(game.id);
+                }, 60 * 1000));
             }
         } else if (game.started) {
             actions_add_left_game(game.id, req.user._id);
@@ -362,7 +356,7 @@ exports.action_spoton = function (req, res) {
     const id = parseInt(req.params.id);
     const game = games.get(id);
     if (assert_in_game(game, req, res)) {
-        if (game.current_turn_user_id === req.user._id || game.last_turn_user_id === req.user._id || 
+        if (game.current_turn_user_id === req.user._id || game.last_turn_user_id === req.user._id ||
             !game.current_bid || game.users.find(u => u.id === req.user._id).remaining_dice >= 5) {
             res.status(400).send({ message: "You cannot spoton now." }).end();
         } else if (game.users.find(u => u.id === req.user._id).remaining_dice === 0) {
@@ -372,7 +366,7 @@ exports.action_spoton = function (req, res) {
             const total_dice = count_dice(game);
             if (total_dice === game.current_bid.quantity) {
                 game.users.forEach(u => {
-                    if(u.id !== req.user._id) {
+                    if (u.id !== req.user._id) {
                         remove_one_dice(game, u.id);
                     }
                     actions_add_take_one_dice(game.id, user_id);
@@ -475,8 +469,6 @@ assert_is_my_turn = function (game, req, res) {
     }
     return true;
 };
-
-//TODO check wins
 
 
 
