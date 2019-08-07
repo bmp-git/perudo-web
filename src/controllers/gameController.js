@@ -8,6 +8,8 @@ var oldDice = new Map(); //game id -> { round -> {user id -> [dice values]}}
 var currentId = 0;
 var turnTimeouts = new Map(); //game id -> timer
 
+
+
 var updater = setInterval(function () {
     const EXPIRATION_DATE = 60 * 1000; //1 minute
     var toRemove = [];
@@ -132,6 +134,35 @@ go_next_turn = function (game) {
         }
     }
     change_turn(game, game.users[t].id);
+}
+is_valid_bid = function(game, dice, quantity) {
+    if(dice < 1 || dice > 6 || quantity < 1) {
+        return false;
+    }
+    if(game.current_bid) {
+        if(quantity - game.current_bid.quantity > 100) { //avoid that a user bid with max int value
+            return false;
+        }
+        if(game.is_palifico_round) {
+            return game.current_bid.dice === dice && game.current_bid.quantity < quantity;
+        } else {
+            if(game.current_bid.dice === 1 && dice === 1) {
+                return game.current_bid.quantity < quantity;
+            } else if(game.current_bid.dice === 1 && dice !== 1) {
+                return (game.current_bid.quantity * 2) < quantity;
+            } else if(game.current_bid.dice !== 1 && dice === 1) {
+                return game.current_bid.quantity <= (quantity * 2);
+            } else if(game.current_bid.dice > dice) {
+                return game.current_bid.quantity < quantity;
+            } else if(game.current_bid.dice < dice) {
+                return game.current_bid.quantity <= quantity;
+            } else if(game.current_bid.dice === dice) {
+                return game.current_bid.quantity < quantity;
+            }
+        }
+    } else {
+        return true;
+    }
 }
 
 tick_game = function (game) {
@@ -308,12 +339,16 @@ exports.action_doubt = function (req, res) {
 exports.action_bid = function (req, res) {
     const id = parseInt(req.params.id);
     const game = games.get(id);
-
     if (assert_is_my_turn(game, req, res)) {
-        //TODO bid logic
-        actions_add_bid(game.id, req.user._id);
-        res.status(200).send({ message: "Bid done.", result: game }).end();
-        tick_game(game);
+        if(is_valid_bid(game, req.body.dice, req.body.quantity)) {
+            game.current_bid = { dice: req.body.dice, quantity: req.body.quantity };
+            actions_add_bid(game.id, req.user._id);
+            go_next_turn(game);
+            res.status(200).send({ message: "Bid done.", result: game }).end();
+            tick_game(game);
+        } else {
+            res.status(400).send({ message: "Invalid bid." }).end();
+        }
     }
 }
 exports.action_spoton = function (req, res) {
