@@ -15,36 +15,51 @@ const errorSuccessNotifier = {
             show_success: false,
             error_message: "",
             success_message: "",
-            showTimeSpan: 5000
+            showTimeSpan: 5000,
+            old_timeout: null
         }
     },
     computed: {
     },
     methods: {
         showError: function(message, timeout = this.showTimeSpan) {
+            if(this.old_timeout) {
+                clearTimeout(this.old_timeout);
+            }
             this.error_message = message;
             this.show_error = true;
             if(timeout !== null) {
-                setTimeout(() => {
-                    this.show_error = false;
-                    this.error_message = "";
+                this.old_timeout = setTimeout(() => {
+                    this.disappear();
                 }, this.showTimeSpan);
             }
         },
         showPersistentError: function(message) {
+            if(this.old_timeout) {
+                clearTimeout(this.old_timeout);
+            }
             this.showError(message, null);
         },
+        disappear: function() {
+            this.show_error = false;
+            this.error_message = "";
+        },
         showSuccess: function(message, timeout = this.showTimeSpan) {
+            if(this.old_timeout) {
+                clearTimeout(this.old_timeout);
+            }
             this.success_message = message;
             this.show_success = true;
             if(timeout !== null) {
-                setTimeout(() => {
-                    this.show_success = false;
-                    this.success_message = "";
+                this.old_timeout = setTimeout(() => {
+                    this.disappear();
                 }, this.showTimeSpan);
             }
         },
         showPersistentSuccess: function(message) {
+            if(this.old_timeout) {
+                clearTimeout(this.old_timeout);
+            }
             this.showSuccess(message, null);
         },
     },

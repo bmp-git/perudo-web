@@ -2,7 +2,7 @@ const profileImageSelector = {
     template: `
             <div>
                 <div class="profile-pic">
-                    <img v-bind:src="imageURL" height="160" width="160"/>
+                    <img v-bind:src="imageURL" height="160" width="160" style="object-fit: cover;"/>
                     <div class="edit"><a href="#" @click.prevent="onEditClick"><i class="fas fa fa-edit"></i></a></div>
                 </div>
                 <input type="file" ref="inputFile" @change="loadImage" single hidden>

@@ -15,7 +15,9 @@ const Games = { template: `
     <div class="row" style="margin-bottom:25px">
         <template v-for="user in game.users">
             <div class="col">
-                <img v-bind:src="user.avatar_url" class="ig-avatar" width="48px" height="48px">
+                <a v-bind:href="'/profile/'+user.id" style="margin-bottom:0px">
+                    <img v-bind:src="user.avatar_url" class="ig-avatar" width="48px" height="48px" style="object-fit: cover; border-radius: 50%;">
+                </a>
                 <a v-bind:href="'/profile/'+user.id" style="margin-bottom:0px">{{user.username}} </a>
                 <!--<p class="card-text" style="margin-bottom:0px">{{user.username}} </p>-->
             </div>
