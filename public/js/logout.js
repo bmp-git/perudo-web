@@ -8,7 +8,7 @@ const Logout = { template: `<div class="row">
 	methods: {
 		logout: function(){
 			store.commit('unsetToken');
-            router.push("/login");
+            router.push("/signin");
 		}
 	},
 	watch: {

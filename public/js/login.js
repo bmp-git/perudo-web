@@ -47,6 +47,7 @@ const Login = {
                 axios.post("http://localhost:3000/api/users/" + this.email + "/token", this.login_request)
                     .then(response => {
                         store.commit('setToken', response.data.token);
+                        this.login_request.password = "";
                         router.push("/");
                     })
                     .catch(error => {
