@@ -50,7 +50,7 @@ const Signup = {
     },
     methods: {
         login: function () {
-            axios.post("http://localhost:3000/api/users/", this.signup_request)
+            axios.post("/api/users/", this.signup_request)
                 .then(response => {
                     this.$refs.notifier.showSuccess("Sign up completed. You will be redirected soon.");                
                     tmp_email = (' ' + this.signup_request.email).slice(1); //to force the creation of a copy
