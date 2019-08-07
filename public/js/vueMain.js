@@ -1,4 +1,4 @@
-if (localStorage.token !== 'null') {
+if (localStorage.token) {
     console.log("Loaded token from localstorage " + localStorage.token);
     store.commit('setToken', localStorage.token);
 }
