@@ -113,6 +113,30 @@ exports.get_user_info = function (req, res) {
     });
 };
 
+exports.reset_user_stats = function (req, res) {
+    const id = req.params.id;
+    const tokenId = req.authData.user._id;
+    if (tokenId !== id) {
+        res.status(400).send({message: "Id and token aren't compatible."}).end();
+    } else {
+        User.findByIdAndUpdate(id, {
+            lastReset: new Date(),
+            points: 0,
+            wins: 0,
+            losses: 0,
+            playTime: 0
+        }, function (err, result) {
+            if (err) {
+                res.status(500).send({message: err}).end();
+            } else if (result) {
+                res.status(200).send({message: "User stats successfully reset."}).end();
+            } else {
+                res.status(401).send({message: "Incorrect user id."}).end();
+            }
+        });
+    }
+};
+
 exports.get_leaderboard = function (req, res) {
     const page = req.query.page;
     const pageLenght = req.query.pageLenght;
