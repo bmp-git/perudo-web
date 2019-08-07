@@ -83,10 +83,14 @@ make_bid = function (game, user_id, dice, quantity) {
     go_next_turn(game);
 }
 
+remove_one_dice = function (game, user_id) {
+    game.users.find(u => u.id == user_id).remaining_dice--;
+    actions_add_loses_one_dice(game.id, user_id);
+}
 reroll_dice = function (game) {
     const game_dice = new Map(); //user_id -> [dice values]
     game.users.forEach(u => {
-        const user_dice = [];
+        const user_dice = []; //what if u.remaining_dice == 0?
         for (i = 0; i < u.remaining_dice; i++) {
             user_dice.push(Math.floor(Math.random() * 6) + 1);
         }
@@ -276,10 +280,29 @@ exports.action_doubt = function (req, res) {
     const game = games.get(id);
 
     if (assert_is_my_turn(game, req, res)) {
-        //TODO doubt logic
-        actions_add_doubt(game.id, req.user._id);
-        res.status(200).send({ message: "Doubt done.", result: game }).end();
-        tick_game(game);
+        if (game.current_bid) {
+            actions_add_doubt(game.id, req.user._id);
+            var total_dice = 0;
+            currentDice.get(game.id).forEach((v, k, m) => {
+                if (k === game.last_turn_user_id) {
+                    total_dice += v.filter(d => d === game.current_bid.dice || d === 1).length;
+                } else {
+                    total_dice += v.filter(d => d === game.current_bid.dice).length;
+                }
+            });
+            var lose_user_id = null;
+            if (total_dice >= game.current_bid.quantity) {
+                lose_user_id = game.current_turn_user_id;
+            } else {
+                lose_user_id = game.last_turn_user_id;
+            }
+            remove_one_dice(game, lose_user_id);
+            next_round(game, false, lose_user_id);
+            res.status(200).send({ message: "Doubt done.", result: game }).end();
+            tick_game(game);
+        } else {
+            res.status(400).send({ message: "Cannot doubt now." }).end();
+        }
     }
 }
 exports.action_bid = function (req, res) {
@@ -347,9 +370,13 @@ exports.get_dice = function (req, res) {
     if (assert_game_started(game, req, res)) {
         const round = req.body.round;
         if (round === game.round && assert_in_game(game, req, res)) {
-            res.status(200).send({ result: currentDice.get(game.id).get(req.user._id) }).end();
+            res.status(200).send({ result: [{ user: req.user._id, dice: currentDice.get(game.id).get(req.user._id) }] }).end();
         } else if (round < game.round) {
-            res.status(200).send({ result: oldDice.get(game.id).get(round) }).end();
+            var result = [];
+            oldDice.get(game.id).get(round).forEach((v, k, m) => {
+                result.push({ user: k, dice: v });
+            });
+            res.status(200).send({ result: result }).end();
         } else {
             res.status(400).send({ message: "Round does not exists yet." }).end();
         }
@@ -358,7 +385,7 @@ exports.get_dice = function (req, res) {
 
 
 assert_game_started = function (game, req, res) {
-    if (!assert_game_exists(game)) {
+    if (!assert_game_exists(game, req, res)) {
         return false;
     } else if (!game.started) {
         res.status(400).send({ message: "Game is not started yet." }).end();
@@ -374,7 +401,7 @@ assert_game_exists = function (game, req, res) {
     return true;
 }
 assert_in_game = function (game, req, res) {
-    if (!assert_game_exists(game)) {
+    if (!assert_game_exists(game, req, res)) {
         return false;
     } else if (!game.users.some(u => u.id === req.user._id)) {
         res.status(400).send({ message: "You are not in this game." }).end();
@@ -383,7 +410,7 @@ assert_in_game = function (game, req, res) {
     return true;
 }
 assert_is_my_turn = function (game, req, res) {
-    if (!assert_in_game(game)) {
+    if (!assert_game_started(game, req, res)) {
         return false;
     } else if (game.current_turn_user_id !== req.user._id) {
         res.status(400).send({ message: "It is not your turn." }).end();
@@ -460,4 +487,8 @@ actions_add_turn = function (game_id, user_id) {
 actions_add_left_game = function (game_id, user_id) {
     const actionsList = actions.get(game_id);
     actionsList.push({ type: "left", user_id: user_id, date: new Date(), index: actionsList.length })
+}
+actions_add_loses_one_dice = function (game_id, user_id) {
+    const actionsList = actions.get(game_id);
+    actionsList.push({ type: "dice_lost", user_id: user_id, date: new Date(), index: actionsList.length })
 }
