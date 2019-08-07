@@ -1,3 +1,4 @@
+const games = new Map(); //game id -> game
 const Games = { template: `
 <div class="row">
     <div class="col-md-4 offset-md-4">
