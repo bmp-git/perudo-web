@@ -53,8 +53,13 @@ const Signup = {
             axios.post("http://localhost:3000/api/users/", this.signup_request)
                 .then(response => {
                     this.$refs.notifier.showSuccess("Sign up completed. You will be redirected soon.");                
-                    tmp_email = this.signup_request.email;
-                    setTimeout(function () { router.push("/login"); }, 2000);
+                    tmp_email = (' ' + this.signup_request.email).slice(1); //to force the creation of a copy
+
+                    this.signup_request.username = "";
+                    this.signup_request.email = "";
+                    this.signup_request.password = "";
+
+                    setTimeout(function () { router.push("/signin"); }, 2000);
                 })
                 .catch(error => {
                     this.$refs.notifier.showError(error.response.data.message);                
