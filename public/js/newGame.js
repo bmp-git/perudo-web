@@ -61,8 +61,8 @@ const NewGame = {
                     this.game_info.name = "";
                     this.game_info.password = "";
 
-                    router.push("/game/" + response.data.result.id);
                     games.set(response.data.result.id, response.data.result);
+                    router.push("/game/" + response.data.result.id);
                 })
                 .catch(error => {
                     this.$refs.notifier.showError(error.response.data.message);
