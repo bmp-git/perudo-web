@@ -18,6 +18,7 @@ remove_game = function (game_id) {
         clearTimeout(turnTimeouts.get(game_id));
     }
     turnTimeouts.delete(game_id);
+    remove_game_io_notification(game_id);
     console.log("Game " + game_id + " removed.");
 };
 
@@ -160,16 +161,44 @@ is_valid_bid = function (game, dice, quantity) {
     }
 };
 
-tick_game = function (game) {
+var io = require('../../index.js').get_io();
+io.on('connection', function (socket) {
+    console.log('a user connected');
+    socket.on('disconnect', function () {
+        console.log('user disconnected');
+    });
+
+    socket.on('watch game', function (game_id) {
+        console.log('watch game: ' + game_id);
+        socket.join('game ' + game_id);
+    });
+    socket.on('unwatch game', function (game_id) {
+        console.log('unwatch game: ' + game_id);
+        socket.leave('game ' + game_id);
+    });
+});
+tick_game = function (game, force_broadcast) {
     game.tick++;
-    //Notify all user that in the 'game' the current tick in now 'game.tick'
+    //Notify all user that in this game the current tick in now 'game.tick'
     //If their local 'game.tick' is lower they should refresh with get '/api/games/:id'
     //Or the clients can do polling on get '/api/games/:id/tick'
+    if(game.started && !force_broadcast) { //notify only the player inside the game
+        io.to('game ' + game.id).emit('game changed', { id: game.id, tick: game.tick });
+    } else { //notify all ==> a user could have joined the game and this info is usefull for all
+        io.emit('game changed', { id: game.id, tick: game.tick });
+    }
 };
 actions_notification = function (game) {
     //Notify all user in that game that an actions has been added to 'game'.
     //They should refresh with get '/api/games/:id/actions' from the index they are.
+    io.to('game ' + game.id).emit('new action', game.id);
 };
+new_game_io_notification = function (game_id) {
+    io.emit('game added', game_id);
+}
+remove_game_io_notification = function (game_id) {
+    io.emit('game removed', game_id);
+}
 
 
 
@@ -221,7 +250,7 @@ exports.create_game = function (req, res) {
         add_user_to_game(new_game, req.user._id, function (success) {
             if (success) {
                 games.set(id, new_game);
-                tick_game(new_game);
+                new_game_io_notification(new_game.id);
                 res.status(200).send({ result: new_game }).end();
             } else {
                 res.status(500).send({ message: "[create_game] failed on adding owner." }).end();
@@ -272,7 +301,7 @@ exports.join_start_game = function (req, res) {
             res.status(400).send({ message: "Need at least 2 user to start." }).end();
         } else {
             start_game(game);
-            tick_game(game);
+            tick_game(game, true);
             res.status(200).send({ message: "Game started.", result: game }).end();
         }
     } else {
@@ -500,7 +529,7 @@ assert_is_my_turn = function (game, req, res) {
 
 
 actions_add_message = function (game_id, user_id, message) {
-    add_action(game_id, {  type: "message", user_id: user_id, content: message });
+    add_action(game_id, { type: "message", user_id: user_id, content: message });
 };
 actions_add_event = function (game_id, message) {
     add_action(game_id, { type: "event", content: message });
@@ -509,7 +538,7 @@ actions_add_palifico = function (game_id, user_id) {
     add_action(game_id, { type: "palifico", user_id: user_id });
 };
 actions_add_bid = function (game_id, user_id, bid) {
-    add_action(game_id, { type: "bid", user_id: user_id, bid: bid});
+    add_action(game_id, { type: "bid", user_id: user_id, bid: bid });
 };
 actions_add_doubt = function (game_id, user_id) {
     add_action(game_id, { type: "doubt", user_id: user_id });
