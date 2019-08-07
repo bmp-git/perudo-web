@@ -6,17 +6,17 @@ exports.change_user_username = function (req, res) {
     const id = req.params.id;
     const tokenId = req.authData.user._id;
     if (tokenId !== id) {
-        res.status(400).send({message: "Id and token aren't compatible."}).end();
+        res.status(400).send({ message: "Id and token aren't compatible." }).end();
     } else if (!username || username.length < 3 || username.length > 15) {
-        res.status(400).send({message: "The username must consist of 3 to 15 characters."}).end();
+        res.status(400).send({ message: "The username must consist of 3 to 15 characters." }).end();
     } else {
-        User.findByIdAndUpdate(id, {username: username}, function (err, result) {
+        User.findByIdAndUpdate(id, { username: username }, function (err, result) {
             if (err) {
-                res.status(500).send({message: err}).end();
+                res.status(500).send({ message: err }).end();
             } else if (result) {
-                res.status(200).send({message: "New username set."}).end();
+                res.status(200).send({ message: "New username set." }).end();
             } else {
-                res.status(401).send({message: "Incorrect user id."}).end();
+                res.status(401).send({ message: "Incorrect user id." }).end();
             }
         });
     }
@@ -28,17 +28,17 @@ exports.change_user_email = function (req, res) {
     const id = req.params.id;
     const tokenId = req.authData.user._id;
     if (tokenId !== id) {
-        res.status(400).send({message: "Id and token aren't compatible."}).end();
+        res.status(400).send({ message: "Id and token aren't compatible." }).end();
     } else if (!validator.validate(email)) {
-        res.status(400).send({message: "Email not valid."}).end();
+        res.status(400).send({ message: "Email not valid." }).end();
     } else {
         User.findByIdAndUpdate(id, { email: email }, function (err, result) {
             if (err) {
-                res.status(500).send({message: err}).end();
+                res.status(500).send({ message: err }).end();
             } else if (result) {
-                res.status(200).send({message: "New email set."}).end();
+                res.status(200).send({ message: "New email set." }).end();
             } else {
-                res.status(401).send({message: "Incorrect user id."}).end();
+                res.status(401).send({ message: "Incorrect user id." }).end();
             }
         });
     }
@@ -49,29 +49,54 @@ exports.change_user_avatar = function (req, res) {
     const id = req.params.id;
     const tokenId = req.authData.user._id;
     if (tokenId !== id) {
-        res.status(400).send({message: "Id and token aren't compatible."}).end();
+        res.status(400).send({ message: "Id and token aren't compatible." }).end();
     } else {
-        User.findByIdAndUpdate(id, {avatar: avatar}, function (err, result) {
+        User.findByIdAndUpdate(id, { avatar: avatar }, function (err, result) {
             if (err) {
-                res.status(500).send({message: err}).end();
+                res.status(500).send({ message: err }).end();
             } else if (result) {
-                res.status(200).send({message: "New avatar set."}).end();
+                res.status(200).send({ message: "New avatar set." }).end();
             } else {
-                res.status(401).send({message: "Incorrect user id."}).end();
+                res.status(401).send({ message: "Incorrect user id." }).end();
             }
         });
     }
+};
+
+exports.get_user_avatar = function (req, res) {
+    const id = req.params.id;
+
+    User.findById(id, function (err, result) {
+        if (err) {
+            res.status(500).send({ message: err }).end();
+        } else if (result) {
+            if (result.avatar) {
+                var data = result.avatar.split(',');
+                var img = Buffer.from(data[1], 'base64');
+                res.writeHead(200, {
+                    'Content-Type': data[0].split(';')[0].split(':')[1],
+                    'Content-Length': img.length
+                });
+                res.end(img);
+            } else {
+                res.sendFile(appRoot + '/www/img/avatar.png');
+            }
+
+        } else {
+            res.status(401).send({ message: "Incorrect user id." }).end();
+        }
+    });
 };
 
 exports.get_user_personal_info = function (req, res) {
     const id = req.params.id;
     const tokenId = req.authData.user._id;
     if (tokenId !== id) {
-        res.status(400).send({message: "Id and token aren't compatible."}).end();
+        res.status(400).send({ message: "Id and token aren't compatible." }).end();
     } else {
         User.findById(id, function (err, user) {
             if (err) {
-                res.status(500).send({message: err});
+                res.status(500).send({ message: err });
             } else if (user) {
                 res.json({
                     user: {
@@ -82,7 +107,7 @@ exports.get_user_personal_info = function (req, res) {
                     }
                 }).end();
             } else {
-                res.status(401).send({message: 'Incorrect user id'}).end();
+                res.status(401).send({ message: 'Incorrect user id' }).end();
             }
         });
     }
@@ -92,7 +117,7 @@ exports.get_user_info = function (req, res) {
     const id = req.params.id;
     User.findById(id, function (err, user) {
         if (err) {
-            res.status(500).send({message: err});
+            res.status(500).send({ message: err });
         } else if (user) {
             res.json({
                 user: {
@@ -108,7 +133,7 @@ exports.get_user_info = function (req, res) {
                 }
             }).end();
         } else {
-            res.status(401).send({message: 'Incorrect user id'}).end();
+            res.status(401).send({ message: 'Incorrect user id' }).end();
         }
     });
 };
@@ -117,7 +142,7 @@ exports.reset_user_stats = function (req, res) {
     const id = req.params.id;
     const tokenId = req.authData.user._id;
     if (tokenId !== id) {
-        res.status(400).send({message: "Id and token aren't compatible."}).end();
+        res.status(400).send({ message: "Id and token aren't compatible." }).end();
     } else {
         User.findByIdAndUpdate(id, {
             lastReset: new Date(),
@@ -127,11 +152,11 @@ exports.reset_user_stats = function (req, res) {
             playTime: 0
         }, function (err, result) {
             if (err) {
-                res.status(500).send({message: err}).end();
+                res.status(500).send({ message: err }).end();
             } else if (result) {
-                res.status(200).send({message: "User stats successfully reset."}).end();
+                res.status(200).send({ message: "User stats successfully reset." }).end();
             } else {
-                res.status(401).send({message: "Incorrect user id."}).end();
+                res.status(401).send({ message: "Incorrect user id." }).end();
             }
         });
     }
@@ -140,20 +165,20 @@ exports.reset_user_stats = function (req, res) {
 exports.get_leaderboard = function (req, res) {
     const page = req.query.page;
     const pageLenght = req.query.pageLenght;
-    if(page && pageLenght && /^[1-9]\d*$/.test(page) && /^[1-9]\d*$/.test(pageLenght)) {
-        User.paginate({}, {page : parseInt(page, 10), limit: parseInt(pageLenght, 10), sort : {points : -1}}, function(err, result) {
+    if (page && pageLenght && /^[1-9]\d*$/.test(page) && /^[1-9]\d*$/.test(pageLenght)) {
+        User.paginate({}, { page: parseInt(page, 10), limit: parseInt(pageLenght, 10), sort: { points: -1 } }, function (err, result) {
             if (err) {
-                res.status(500).send({message: err});
+                res.status(500).send({ message: err });
             } else {
-                let leaderboard = {result : []};
+                let leaderboard = { result: [] };
                 let i = 1;
-                result.docs.forEach(function(user) {
-                    leaderboard.result.push({rank: i++, userId: user._id, username: user.username, points : user.points});
+                result.docs.forEach(function (user) {
+                    leaderboard.result.push({ rank: i++, userId: user._id, username: user.username, points: user.points });
                 });
                 res.json(leaderboard).end();
             }
         });
     } else {
-        res.status(401).send({message: 'Incorrect parameters'}).end();
+        res.status(401).send({ message: 'Incorrect parameters' }).end();
     }
 };

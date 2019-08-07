@@ -36,4 +36,4 @@ http.listen(3000, function () {
   console.log('Node API server started on port 3000!');
 });
 
-
+global.appRoot = path.resolve(__dirname);
