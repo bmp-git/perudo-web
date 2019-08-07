@@ -27,6 +27,9 @@ module.exports = function(app) {
 	app.route('/api/users/:id/username')
 		.put(autheticate, userController.change_user_username);
 
+	app.route('/api/users/:id/email')
+		.put(autheticate, userController.change_user_email);
+
 	app.route('/api/users/:id/avatar')
 		.put(autheticate, userController.change_user_avatar);
 
