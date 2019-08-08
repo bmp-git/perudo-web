@@ -7,7 +7,7 @@ const ProfileSettings = {
                 <div class="row">
                     
                     <div class="col-md-3 offset-md-3">
-                        <profileImageSelector :onnewimage="changeAvatar"></profileImageSelector>
+                        <profileImageSelector :userid="this.$store.state.user._id" canedit="true" :onnewimage="changeAvatar"></profileImageSelector>
                     </div>
                     
                     
