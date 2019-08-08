@@ -2,14 +2,20 @@ const profileImage = {
     template: `
             <div>
                 <div class="profileImage">
-                    <img v-bind:src="imageURL"/>
+                    <a v-bind:href="profileURL">
+                        <img v-bind:src="imageURL"/>
+                    </a>
                 </div>
                 
                 <input type="file" ref="inputFile" @change="loadImage" single hidden>
                 
                 <template v-if="canedit">
                     <button class="mt-1 btn btn-primary btn-block" @click.prevent="onEditClick">
-                        <i class="fas fa fa-edit"></i>Change Avatar
+                        <i class="fas fa fa-edit"></i> Change Avatar
+                    </button>
+                    
+                    <button class="mt-1 btn btn-danger btn-block" @click.prevent="deleteAvatar">
+                        <i class="fas fa fa-trash"></i> Delete Avatar
                     </button>
                 
                     <errorSuccessNotifier ref="notifier"></errorSuccessNotifier>
@@ -21,6 +27,7 @@ const profileImage = {
     data() {
         return {
             imageURL: '/api/users/' + this.userid + '/avatar',
+            profileURL: '/profile/' + this.userid
         }
     },
     props: ['userid', 'canedit', 'onnewimage'],
@@ -35,6 +42,12 @@ const profileImage = {
         },
         onEditClick: function() {
             this.$refs.inputFile.click();
+        },
+        deleteAvatar: function() {
+            if(!confirm("Are you sure? Your profile image will be reset to default picture.")) {
+                return;
+            }
+            this.onnewimage('', this.onSuccess, this.onError);
         },
         loadImage: function() {
             const img = this.$refs.inputFile.files[0];

@@ -41,6 +41,8 @@ const errorSuccessNotifier = {
             this.showError(message, null);
         },
         disappear: function() {
+            this.show_success = false;
+            this.error_success = "";
             this.show_error = false;
             this.error_message = "";
         },
