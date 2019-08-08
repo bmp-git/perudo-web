@@ -1,0 +1,12 @@
+.profileImage {
+    position:relative;
+    overflow:hidden;
+    padding-bottom:100%;
+}
+.profileImage img{
+    position:absolute;
+    object-fit: cover;
+    width: 100%;
+    height: auto;
+    border-radius: 25%;
+}
