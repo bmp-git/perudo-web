@@ -17,10 +17,14 @@ const Games = {
     <div class="row" style="margin-bottom:25px">
         <template v-for="user in game.users">
             <div class="col">
-                <a v-bind:href="'/profile/'+user.id" style="margin-bottom:0px">
+                <router-link :to="{ name: 'profile', params: { id: user.id }}">
                     <img v-bind:src="user.avatar_url" class="ig-avatar" width="48px" height="48px" style="object-fit: cover; border-radius: 50%;">
-                </a>
-                <a v-bind:href="'/profile/'+user.id" style="margin-bottom:0px">{{user.username}} </a>
+                </router-link>
+                
+                <router-link :to="{ name: 'profile', params: { id: user.id }}" style="margin-bottom:0px">
+                    {{user.username}} 
+                </router-link>
+    
                 <!--<p class="card-text" style="margin-bottom:0px">{{user.username}} </p>-->
             </div>
         </template>

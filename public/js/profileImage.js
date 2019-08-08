@@ -2,9 +2,9 @@ const profileImage = {
     template: `
             <div>
                 <div class="profileImage">
-                    <a v-bind:href="profileURL">
+                    <router-link :to="{ name: 'profile', params: { id: this.userid }}">
                         <img v-bind:src="imageURL"/>
-                    </a>
+                    </router-link>
                 </div>
                 
                 <input type="file" ref="inputFile" @change="loadImage" single hidden>
