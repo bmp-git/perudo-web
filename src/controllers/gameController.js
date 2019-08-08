@@ -23,6 +23,7 @@ remove_game = function (game_id) {
     remove_game_io_notification(game_id);
     freeIds.push(game_id);
     console.log("Game " + game_id + " removed.");
+    //TODO destroy room watch game_id
 };
 
 add_user_to_game = function (game, userId, next) {
@@ -458,14 +459,9 @@ exports.get_actions = function (req, res) {
     const game = games.get(id);
 
     if (assert_game_exists(game, req, res)) {
-        const from = req.body.from_index;
-        const type = req.body.type;
-        if(type) {
-            res.status(200).send({ result: actions.get(game.id).filter(a => a.index >= from && a.type === type) }).end();
-        } else {
-            res.status(200).send({ result: actions.get(game.id).filter(a => a.index >= from) }).end();
-        }
-       
+        const from = req.query.from_index;
+        const type = req.query.type;
+        res.status(200).send({ result: actions.get(game.id).filter(a => (!from || a.index >= from) && (!type || a.type === type)) }).end();
     }
 };
 
