@@ -7,7 +7,7 @@ const gameLobby = {
             <gameComponent :gameid="game.id"></gameComponent>
             
             <hr class="hr-text" data-content="Chat" />
-            <chat></chat>
+            <chat :gameid="game.id"></chat>
 
             </div>     
 `,
@@ -17,10 +17,9 @@ const gameLobby = {
     },
     data() {
         return {
-            game : {
-                id: ''
-            }
+            game: null
         }
+
     },
     props: [],
     computed: {
