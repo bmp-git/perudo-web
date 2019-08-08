@@ -6,8 +6,10 @@ var actions = new Map(); //game id -> [actions]
 var currentDice = new Map(); //game id -> {user id -> [dice values]}
 var oldDice = new Map(); //game id -> { round -> {user id -> [dice values]}}
 var currentId = 0;
+var freeIds = [];
 var turnTimeouts = new Map(); //game id -> timer
 var gameTimeouts = new Map(); //game id -> timer
+
 
 remove_game = function (game_id) {
     games.delete(game_id);
@@ -19,6 +21,7 @@ remove_game = function (game_id) {
     }
     turnTimeouts.delete(game_id);
     remove_game_io_notification(game_id);
+    freeIds.push(game_id);
     console.log("Game " + game_id + " removed.");
 };
 
@@ -230,21 +233,26 @@ exports.get_game_tick = function (req, res) {
 exports.create_game = function (req, res) {
     var new_game = req.body;
     if (!new_game.name || new_game.name.length < 3 || new_game.name.length > 20) {
-        res.status(400).send({ message: "'name' must consist of 3 to 30 characters.", code: 1 }).end();
+        res.status(400).send({ message: "'name' must consist of 3 to 30 characters." }).end();
     } else if (!new_game.players || new_game.players < 2 || new_game.players > 8) {
-        res.status(400).send({ message: "'players' must be between 2 and 8.", code: 2 }).end();
+        res.status(400).send({ message: "'players' must be between 2 and 8." }).end();
     } else if (!new_game.turn_time || new_game.turn_time < 10 || new_game.turn_time > 600) {
-        res.status(400).send({ message: "'turn_time' must be between 10 and 600 (seconds).", code: 3 }).end();
+        res.status(400).send({ message: "'turn_time' must be between 10 and 600 (seconds)." }).end();
     } else if (new_game.password && (new_game.password.length < 5 || new_game.password.length > 30)) {
-        res.status(400).send({ message: "'password' must consist of 5 to 30 characters.", code: 4 }).end();
+        res.status(400).send({ message: "'password' must consist of 5 to 30 characters." }).end();
     } else if (Array.from(games.values()).some(g => g.users.some(u => u.id === req.user._id))) {
-        res.status(400).send({ message: "Cannot create a new game while in another game.", code: 5 }).end();
+        res.status(400).send({ message: "Cannot create a new game while in another game." }).end();
     } else {
         if (!new_game.password) {
             new_game.password = null;
         }
-        var id = currentId;
-        currentId++;
+        var id = null;
+        if (freeIds.length > 128) {
+            id = freeIds.shift();
+        } else {
+            id = currentId;
+            currentId++;
+        }
         new_game.id = id;
         new_game.owner_id = req.user._id;
         new_game.started = false;
@@ -336,9 +344,13 @@ exports.leave_game = function (req, res) {
                 next_round(game, false, null);
             }
             //TODO check for win
+        } else { //not started and not empty
+            if (game.owner_id === req.user._id) {
+                game.owner_id = game.users[0].id;
+            }
         }
         tick_game(game);
-        res.status(200).send({ message: "Removed from game." }).end();
+        res.status(200).send({ message: "Removed from game.", result: game }).end();
     }
 };
 
