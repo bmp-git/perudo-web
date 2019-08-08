@@ -1,11 +1,10 @@
-var socket = io();
 const Game = {
     template: `
 <div class="row mt-2">
     <div class="col-12 col-sm-12 col-md-10 offset-md-1 col-lg-10 offset-lg-1 col-xl-8 offset-xl-2">
     <div class="card border-dark mb-3" style="border-radius:.99rem!important; border-width: 2px;">
     <div class="card-body text-dark">
-    <h6 class="card-title">{{game.name}} &emsp;
+    <h6 class="card-title"><a href="">{{game.name}}</a>&emsp;
         <template v-if="game.password != null"> <i class="fas fa-lock" data-toggle="tooltip" data-placement="bottom" title="Password needed"></i> </template> 
         <template v-else> <i class="fas fa-lock-open" data-toggle="tooltip" data-placement="bottom" title="No password needed"></i> </template>
         <i class="fas fa-stopwatch"></i> {{turnTime}}
