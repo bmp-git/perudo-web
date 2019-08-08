@@ -7,19 +7,23 @@ const profileImageSelector = {
                 
                 <input type="file" ref="inputFile" @change="loadImage" single hidden>
                 
-                <button class="mt-1 btn btn-primary btn-block" @click.prevent="onEditClick">
-                    <i class="fas fa fa-edit"></i>Change Avatar
-                </button>
+                <template v-if="canedit">
+                    <button class="mt-1 btn btn-primary btn-block" @click.prevent="onEditClick">
+                        <i class="fas fa fa-edit"></i>Change Avatar
+                    </button>
                 
-                <errorSuccessNotifier ref="notifier"></errorSuccessNotifier>
+                    <errorSuccessNotifier ref="notifier"></errorSuccessNotifier>
+                
+                </template>
+
             </div>     
 `,
     data() {
         return {
-            imageURL: '/api/users/' + this.$store.state.user._id + '/avatar'
+            imageURL: '/api/users/' + this.userid + '/avatar',
         }
     },
-    props: ['onnewimage'],
+    props: ['userid', 'canedit', 'onnewimage'],
     components: {
         'errorSuccessNotifier': errorSuccessNotifier
     },
@@ -60,6 +64,5 @@ const profileImageSelector = {
     filters: {
     },
     mounted: function () {
-
     }
 };
