@@ -6,7 +6,7 @@ const Chat = {
                     <div class="card border-dark mb-3" style="border-radius:.99rem!important; border-width: 2px;">
                         <div class="card-body text-dark">
                             
-                            <div class="chat-container">
+                            <div id="chat" class="chat-container">
                                 
                                 <template v-for="msg in messages">
                                     <template v-if="msg.type === 'message'">
@@ -27,9 +27,9 @@ const Chat = {
                                 <div class="input-group-prepend">
                                     <div class="input-group-text"><i class="fas fa-paper-plane"></i></div>
                                 </div>                                
-                              <input v-model="message" type="text" class="form-control" placeholder="Send message">
+                              <input v-model="message" type="text" class="form-control" placeholder="Send message" @keyup.enter="sendMessage">
                               <div class="input-group-append">
-                                <button class="btn btn-outline-secondary" @click.prevent="sendMessage" type="button">Send Message</button>
+                                <button class="btn btn-outline-secondary" @click.prevent="sendMessage" @keyup.enter="sendMessage" type="button">Send Message</button>
                               </div>
                             </div>
 
@@ -58,8 +58,7 @@ const Chat = {
             },
             messages : [],
             message : '',
-            index : 0,
-            my_game: null
+            index : 0
         }
     },
     props: ['gameid'],
@@ -67,6 +66,9 @@ const Chat = {
     },
     methods: {
         sendMessage: function() {
+            if(!this.message) {
+                return;
+            }
             const authHeader = 'bearer '.concat(this.$store.state.token);
             axios.post("/api/games/" + this.gameid + "/actions/messages", {message: this.message}, {headers: { Authorization: authHeader}})
                 .then(response => {
@@ -88,8 +90,12 @@ const Chat = {
                     console.log(error.response.data.message);
                 });
         },
+        scrollChatToBottom: function() {
+            const chatContainer = this.$el.querySelector("#chat");
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        },
         getUsername: function(userId) {
-            return this.my_game.users.find(u => u.id === userId).username;
+            return allGames.get(this.gameid).users.find(u => u.id === userId).username;
         }
 
     },
@@ -101,12 +107,14 @@ const Chat = {
         }
     },
     mounted: function () {
-        this.my_game = allGames.get(this.gameid);
         socket.emit('watch game', this.gameid);
         socket.on('new action', game_id => {
             if(game_id === this.gameid) {
                 this.update();
             }
         });
+    },
+    updated: function() {
+        this.scrollChatToBottom();
     }
 };
