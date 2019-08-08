@@ -284,12 +284,12 @@ exports.join_start_game = function (req, res) {
     } else if (op === "join") {
         if (game.users.length === game.players) {
             res.status(400).send({ message: "This game is full." }).end();
+        } else if (game.password && game.password !== req.body.password) {
+            res.status(403).send({ message: "Invalid password." }).end();
         } else if (game.users.some(u => u.id === req.user._id)) {
             res.status(400).send({ message: "You are already in thin game." }).end();
         } else if (Array.from(games.values()).some(g => g.id !== game.id && g.users.some(u => u.id === req.user._id))) {
             res.status(400).send({ message: "You are already in another game." }).end();
-        } else if (game.password && game.password !== req.body.password) {
-            res.status(403).send({ message: "Invalid password." }).end();
         } else {
             add_user_to_game(game, req.user._id, success => {
                 if (success) {
@@ -460,7 +460,12 @@ exports.get_actions = function (req, res) {
     if (assert_game_exists(game, req, res)) {
         const from = req.body.from_index;
         const type = req.body.type;
-        res.status(200).send({ result: actions.get(game.id).filter(a => a.index >= from && a.type === type) }).end();
+        if(type) {
+            res.status(200).send({ result: actions.get(game.id).filter(a => a.index >= from && a.type === type) }).end();
+        } else {
+            res.status(200).send({ result: actions.get(game.id).filter(a => a.index >= from) }).end();
+        }
+       
     }
 };
 
