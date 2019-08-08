@@ -117,7 +117,7 @@ const NewGame = {
                         this.game_info.turn_time = 0;
 
                         games.set(response.data.result.id, response.data.result);
-                        router.push("/game/" + response.data.result.id);
+                        router.push({ name: 'gamelobby', params: { id: response.data.result.id } });
                     })
                     .catch(error => {
                         this.$refs.notifier.showError(error.response.data.message);
