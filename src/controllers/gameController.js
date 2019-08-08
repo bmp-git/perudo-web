@@ -103,7 +103,9 @@ count_dice = function (game) {
     return total_dice;
 };
 change_turn = function (game, user_id) {
+    clearTimeout(turnTimeouts.get(game.id));
     turnTimeouts.delete(game.id);
+
     if (game.current_turn_user_id) {
         game.last_turn_user_id = game.current_turn_user_id;
     } else {
