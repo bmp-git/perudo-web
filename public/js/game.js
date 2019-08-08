@@ -2,9 +2,8 @@ const Game = {
     template: `
 <div class="row mt-2">
     <div class="col-12 col-sm-12 col-md-10 offset-md-1 col-lg-10 offset-lg-1 col-xl-8 offset-xl-2">
-    <div class="card border-dark mb-3" style="border-radius:.99rem!important; border-width: 2px;">
     <div class="card-body text-dark">
-    <h6 class="card-title"><a href="">{{game.name}}</a>&emsp;
+    <h6 class="card-title"><a v-bind:href="'/game/'+game.id">{{game.name}}</a>&emsp;
         <template v-if="game.password != null"> <i class="fas fa-lock" data-toggle="tooltip" data-placement="bottom" title="Password needed"></i> </template> 
         <template v-else> <i class="fas fa-lock-open" data-toggle="tooltip" data-placement="bottom" title="No password needed"></i> </template>
         <i class="fas fa-stopwatch"></i> {{turnTime}}
@@ -12,7 +11,7 @@ const Game = {
     </h6>
     
     <p class="card-text"><small class="text-muted">Created {{game.game_creation_time | formatTime}} ago</small></p>
-    <div class="row" style="margin-bottom:25px">
+    <div class="row" style="margin-bottom:0px">
         <template v-for="user in game.users">
         <div class="col-2 text-center">
 
@@ -59,10 +58,13 @@ const Game = {
         <button type="button" @click.prevent="leaveGame" class="btn btn-primary btn-sm float-right mr-2">Leave</button>
     </template>
     </div>
+    <template v-if="includedivisor">
+        <hr class="hr-text" data-content="">
+    </template>
     </div>
-    </div>
+   
 </div>`,
-    props: ['gameid'],
+    props: ['gameid', 'includedivisor'],
     data() {
         return {
             inserted_password: "",

@@ -10,6 +10,17 @@ const app = new Vue({
     methods: {
     },
     mounted() {
+        axios.get("http://localhost:3000/api/games")
+            .then(response => {
+                allGames = new Map();
+                response.data.result.forEach(g => {
+                    allGames.set(g.id, g);
+                });
+            })
+            .catch(error => {
+                console.log(error);
+            });
+
     }
 });
 
@@ -27,7 +38,7 @@ socket.on('game added', function (game_id) {
 //when game starts will receive last 'game changed',
 //if interested in receive 'game changed' furthermore ==> socket.emit('watch game', game_id);
 //on game finish ==> socket.emit('ununwatch game', game_id);
-socket.on('game changed', function (game) { 
+socket.on('game changed', function (game) {
     console.log("game changed: " + game.id + ", current tick: " + game.tick);
 });
 //if called socket.emit('watch game', game_id); this will fires

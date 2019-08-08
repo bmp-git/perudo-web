@@ -4,7 +4,7 @@ const Games = {
     template: `
     <div class="container">
         <template v-for="game in games" :key="game_changed">
-            <gameComponent :gameid="game.id"></gameComponent>
+            <gameComponent :gameid="game.id" includedivisor="true"></gameComponent>
         </template>
     </div>`,
     components: {
