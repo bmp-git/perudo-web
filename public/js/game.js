@@ -2,7 +2,7 @@ var socket = io();
 const Game = {
     template: `
 <div class="row mt-2">
-    <div class="col-12 col-sm-10 offset-sm-1 col-md-8 offset-md-2 col-lg-6 offset-lg-3 col-xl-4 offset-xl-4">
+    <div class="col-12 col-sm-12 col-md-10 offset-md-1 col-lg-10 offset-lg-1 col-xl-8 offset-xl-2">
     <div class="card border-dark mb-3" style="border-radius:.99rem!important; border-width: 2px;">
     <div class="card-body text-dark">
     <h6 class="card-title">{{game.name}} &emsp;
@@ -17,18 +17,25 @@ const Game = {
         <template v-for="user in game.users">
         <div class="col-2 text-center">
 
-               
-
                 <router-link :to="{ name: 'profile', params: { id: user.id }}">
-                    <img v-bind:src="user.avatar_url" class="ig-avatar" width="48px" height="48px" style="object-fit: cover; border-radius: 50%; border: 2px solid #007BFF;">
+                    <img v-bind:src="user.avatar_url" class="ig-avatar" width="64px" height="64px" style="object-fit: cover; border-radius: 50%; border: 2px solid #007BFF;">
                 </router-link>
 
                 <router-link :to="{ name: 'profile', params: { id: user.id }}" style="margin-bottom:0px">
-                    {{user.username}}   <template v-if="game.owner_id === user.id">
+                    {{user.username}}  
+                    <template v-if="game.owner_id === user.id">
                     <i class="fas fa-crown"></i>
-                </template>
+                    </template>
                 </router-link>
 
+            </div>
+        </template>
+        <template v-for="i in freeSpaces" :key="i">
+            <div class="col-2 text-center">
+                <a href="" @click.prevent="joinGame">
+                    <img src="/img/avatar"  class="ig-avatar" width="64px" height="64px" style="object-fit: cover; border-radius: 50%;">
+                </a>
+                <p>Empty</p>
             </div>
         </template>
     </div>
@@ -124,7 +131,9 @@ const Game = {
                 });
         },
         joinGame: function () {
-            this.joinStartGame("join");
+            if(!this.game.users.some(u => u.id == this.$store.state.user._id)) {
+                this.joinStartGame("join");
+            }
         },
         startGame: function () {
             if (this.userIsOwner) {
@@ -182,6 +191,9 @@ const Game = {
         },
         usedSpaces: function () {
             return Object.keys(this.game.users).length + "/" + this.game.players;
+        },
+        freeSpaces: function () {
+            return this.game.players - Object.keys(this.game.users).length;
         },
         users: function () {
             var res = "";

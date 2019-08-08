@@ -1,12 +1,12 @@
 var jwt = require('jsonwebtoken');
 
-module.exports = function(app) {
+module.exports = function (app) {
 	var loginController = require('../controllers/loginController');
 	var userController = require('../controllers/userController');
 	var gameController = require('../controllers/gameController');
 
-	app.route('/').get(function(req, res) {
-			res.sendFile(appRoot  + '/www/index.html');
+	app.route('/').get(function (req, res) {
+		res.sendFile(appRoot + '/www/index.html');
 	});
 
 	//Login apis
@@ -19,11 +19,11 @@ module.exports = function(app) {
 		.get(autheticate, loginController.refresh_token);
 	//Logout non server più: il token scade da solo dopo 2 giorni
 
-	
+
 	//User apis
 	app.route('/api/users/:id/password')
 		.put(autheticate, loginController.change_user_password);
-	
+
 	app.route('/api/users/:id/username')
 		.put(autheticate, userController.change_user_username);
 
@@ -36,8 +36,8 @@ module.exports = function(app) {
 
 	app.route('/api/users/:id')
 		.get(autheticate, userController.get_user_personal_info)
-	
-    app.route('/api/users/:id/info')
+
+	app.route('/api/users/:id/info')
 		.get(userController.get_user_info);
 
 	app.route('/api/users/:id/info')
@@ -47,7 +47,7 @@ module.exports = function(app) {
 	app.route('/api/leaderboard')
 		.get(userController.get_leaderboard);
 
-	
+
 
 	app.route('/api/games')
 		.post(autheticate, gameController.create_game)
@@ -81,7 +81,7 @@ module.exports = function(app) {
 
 	app.route('/api/games/:id/dice')
 		.get(autheticate, gameController.get_dice);
-		
+
 	//Esempio: per richiedere la lista delle lobby non server l'authentication code.
 	//		   per aggiungere una lobby invece serve, quindi: "autheticate"
 	app.route('/api/lobby')
@@ -92,19 +92,23 @@ module.exports = function(app) {
 			res.send("Hello " + req.user.email + "!");
 		});
 
-	app.use(function(req, res) {
-            res.sendFile(appRoot  + '/www/index.html');
+	app.route('/img/avatar').get((req, res) => {
+		res.sendFile(appRoot + '/www/img/avatar.png');
 	});
-	
+
+	app.use(function (req, res) {
+		res.sendFile(appRoot + '/www/index.html');
+	});
+
 	function autheticate(req, res, next) {
 		const bearerHeader = req.headers['authorization'];
-		if(typeof bearerHeader !== 'undefined') {
+		if (typeof bearerHeader !== 'undefined') {
 			const bearer = bearerHeader.split(' ');
 			const bearerToken = bearer[1];
 			req.token = bearerToken;
 			jwt.verify(req.token, 'secretkey', (err, authData) => {
-				if(err) {
-					res.status(403).send({message: 'Authentication token is not valid.'}).end();
+				if (err) {
+					res.status(403).send({ message: 'Authentication token is not valid.' }).end();
 				} else {
 					req.authData = authData;
 					req.user = authData.user;
@@ -112,7 +116,7 @@ module.exports = function(app) {
 				}
 			});
 		} else {
-		  res.status(403).send({message: 'Authentication token undefined.'}).end();
+			res.status(403).send({ message: 'Authentication token undefined.' }).end();
 		}
 	}
 };

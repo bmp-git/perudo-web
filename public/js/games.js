@@ -1,7 +1,7 @@
 var allGames = new Map(); //game id -> game
 const Games = {
     template: `
-    <div>
+    <div class="container">
         <template v-for="game in games" :key="game_changed">
             <gameComponent :gameid="game.id"></gameComponent>
         </template>
