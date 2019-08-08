@@ -1,4 +1,4 @@
-const profileImageSelector = {
+const profileImage = {
     template: `
             <div>
                 <div class="profileImage">
@@ -30,6 +30,9 @@ const profileImageSelector = {
     computed: {
     },
     methods: {
+        reload: function() {
+            this.imageURL = this.imageURL + ' '; //workaround to reload image
+        },
         onEditClick: function() {
             this.$refs.inputFile.click();
         },
@@ -54,7 +57,7 @@ const profileImageSelector = {
         },
         onSuccess: function(message) {
             this.$refs.notifier.showSuccess(message);
-            this.imageURL = this.imageURL + ' '; //workaround to reload image
+            this.reload();
         },
         onError: function (message) {
             this.$refs.notifier.showError(message);

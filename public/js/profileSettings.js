@@ -7,7 +7,7 @@ const ProfileSettings = {
                 <div class="row">
                     
                     <div class="col-md-3 offset-md-3">
-                        <profileImageSelector :userid="this.$store.state.user._id" canedit="true" :onnewimage="changeAvatar"></profileImageSelector>
+                        <profileImage ref="profileImage" :userid="this.$store.state.user._id" canedit="true" :onnewimage="changeAvatar"></profileImage>
                     </div>
                     
                     
@@ -77,7 +77,7 @@ const ProfileSettings = {
     components: {
         'errorSuccessNotifier': errorSuccessNotifier,
         'editableForm': editableForm,
-        'profileImageSelector': profileImageSelector
+        'profileImage': profileImage
     },
     data() {
         return {
@@ -111,6 +111,7 @@ const ProfileSettings = {
                 .catch(error => {
                     router.push("/404")
                 });
+            this.$refs.profileImage.reload();
         },
         changeUsername: function(username, succ, err) {
             const authHeader = 'bearer '.concat(this.$store.state.token);
