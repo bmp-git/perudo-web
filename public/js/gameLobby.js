@@ -3,17 +3,26 @@ const gameLobby = {
             <div class="container">
             
             <hr class="hr-text" v-bind:data-content="'Inside lobby: ' + game.name" />
+            
+            <gameComponent :gameid="game.id"></gameComponent>
+            
+            <hr class="hr-text" data-content="Chat" />
+            <chat></chat>
 
             </div>     
 `,
+    components: {
+        'gameComponent': Game,
+        'chat': Chat
+    },
     data() {
         return {
-            game : {}
+            game : {
+                id: ''
+            }
         }
     },
     props: [],
-    components: {
-    },
     computed: {
     },
     methods: {

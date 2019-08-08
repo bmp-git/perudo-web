@@ -116,7 +116,7 @@ const NewGame = {
                         this.game_info.players = 0;
                         this.game_info.turn_time = 0;
 
-                        games.set(response.data.result.id, response.data.result);
+                        allGames.set(response.data.result.id, response.data.result);
                         router.push({ name: 'gamelobby', params: { id: response.data.result.id } });
                     })
                     .catch(error => {
