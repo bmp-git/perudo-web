@@ -40,6 +40,7 @@ const editableForm = {
                     return;
                 }
 
+                this.$emit('update:value', this.value);
                 this.onchangeconfirm(this.value, this.onSuccess, this.onError);
 
             } else {

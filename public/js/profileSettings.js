@@ -14,9 +14,9 @@ const ProfileSettings = {
                     <div class="col-md-4">
 
                         
-                        <editableForm icon="user" type="" placeholder="Username" :value="user.username" :onchangeconfirm="changeUsername"></editableForm>
+                        <editableForm icon="user" type="" placeholder="Username" :value.sync="user.username" :onchangeconfirm="changeUsername"></editableForm>
                         
-                        <editableForm icon="flag" type="" placeholder="Nationality" :value="user.nationality" :onchangeconfirm="changeNationality"></editableForm>
+                        <editableForm icon="flag" type="" placeholder="Nationality" :value.sync="user.nationality" :onchangeconfirm="changeNationality"></editableForm>
 
 
                     </div>
@@ -26,7 +26,7 @@ const ProfileSettings = {
                 <hr class="hr-text" data-content="E-mail" />
                 
                 
-                <editableForm icon="envelope" type="email" placeholder="Email" :value="user.email" :onchangeconfirm="changeEmail"></editableForm>
+                <editableForm icon="envelope" type="email" placeholder="Email" :value.sync="user.email" :onchangeconfirm="changeEmail"></editableForm>
                 
                 
                 <hr class="hr-text" data-content="Change password" />    
