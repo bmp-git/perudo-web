@@ -12,19 +12,23 @@ const Game = {
         <p class="card-title float-right" data-toggle="tooltip" data-placement="bottom" v-bind:title="users"> players: {{usedSpaces}} </p>
     </h6>
     
-    <p class="card-text"><small class="text-muted">Created by {{ownerUsername}} {{game.game_creation_time | formatTime}} ago</small></p>
+    <p class="card-text"><small class="text-muted">Created {{game.game_creation_time | formatTime}} ago</small></p>
     <div class="row" style="margin-bottom:25px">
         <template v-for="user in game.users">
-            <div class="col">
+        <div class="col-2 text-center">
+
+               
+
                 <router-link :to="{ name: 'profile', params: { id: user.id }}">
-                    <img v-bind:src="user.avatar_url" class="ig-avatar" width="48px" height="48px" style="object-fit: cover; border-radius: 50%;">
+                    <img v-bind:src="user.avatar_url" class="ig-avatar" width="48px" height="48px" style="object-fit: cover; border-radius: 50%; border: 2px solid #007BFF;">
                 </router-link>
-                
+
                 <router-link :to="{ name: 'profile', params: { id: user.id }}" style="margin-bottom:0px">
-                    {{user.username}} 
+                    {{user.username}}   <template v-if="game.owner_id === user.id">
+                    <i class="fas fa-crown"></i>
+                </template>
                 </router-link>
-    
-                <!--<p class="card-text" style="margin-bottom:0px">{{user.username}} </p>-->
+
             </div>
         </template>
     </div>
@@ -34,7 +38,7 @@ const Game = {
     <template v-if="userIsOwner && !game.started">
         <button type="button" @click.prevent="startGame" class="btn btn-primary btn-sm float-right">Start game!</button>
     </template>
-    <template v-if="!freeSpaceAvailable && !currentUserInside">
+    <template v-if="(!freeSpaceAvailable && !currentUserInside)">
         <button type="button" class="btn btn-primary btn-sm float-right" disabled>Join</button>
     </template>
     <template v-if="!currentUserInside">
@@ -73,13 +77,12 @@ const Game = {
     },
     methods: {
         updateGame: function (game) {
-            //if (this.game.tick < game.tick) {
-                this.game = game;
-                allGames.set(this.gameid, game);
-            //}
+            this.game = game;
+            allGames.set(this.gameid, game);
+            //send event to parent ==> parent says to all other child that a game is changed, update Join button
         },
-        updateGameFromWeb: function (game) {
-            console.log("refreshing game from web");
+        updateGameFromWeb: function () {
+            console.log("refreshing game " + this.gameid + " from web");
             axios.get("http://localhost:3000/api/games/" + this.gameid)
                 .then(response => {
                     this.updateGame(response.data.result);
@@ -96,10 +99,27 @@ const Game = {
                     this.updateGame(response.data.result);
                 })
                 .catch(error => {
-                    if (operation === "join" && error.response.status == 403) {
+                    if (operation === "join" && error.response.status === 403) {
                         this.password_wrong = true;
+                    } else if (operation === "join" && error.response.data.message === "You are already in another game.") {
+                        //Leave other game and re-join this game
+                        const authHeader = 'bearer '.concat(this.$store.state.token);
+                        var result = "null";
+                        allGames.forEach(g => {
+                                if (g.id !== this.gameid && g.users.some(u => u.id === this.$store.state.user._id)) {
+                                    result = g.id;
+                                }
+                        });
+                        if (result !== "null") {
+                            axios.delete("http://localhost:3000/api/games/" + result, { headers: { Authorization: authHeader } })
+                                .then(response => {
+                                    this.joinGame();
+                                })
+                                .catch(error => {
+                                    console.log(error);
+                                });
+                        }
                     }
-                    console.log(error.response);
                     console.log(error.response.data.message);
                 });
         },
