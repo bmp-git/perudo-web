@@ -1,6 +1,5 @@
-const games = new Map(); //game id -> game
 var socket = io();
-const Games = {
+const Game = {
     template: `
 <div class="row mt-2">
     <div class="col-12 col-sm-10 offset-sm-1 col-md-8 offset-md-2 col-lg-6 offset-lg-3 col-xl-4 offset-xl-4">
@@ -53,6 +52,7 @@ const Games = {
     </div>
     </div>
 </div>`,
+    props: ['gameid'],
     data() {
         return {
             inserted_password: "",
@@ -73,14 +73,26 @@ const Games = {
     },
     methods: {
         updateGame: function (game) {
-            this.game = game;
+            //if (this.game.tick < game.tick) {
+                this.game = game;
+                allGames.set(this.gameid, game);
+            //}
         },
-        operateInGame: function (operation) {
+        updateGameFromWeb: function (game) {
+            console.log("refreshing game from web");
+            axios.get("http://localhost:3000/api/games/" + this.gameid)
+                .then(response => {
+                    this.updateGame(response.data.result);
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+        },
+        joinStartGame: function (operation) {
             const authHeader = 'bearer '.concat(this.$store.state.token);
             var body = this.game.password == null ? { operation: operation } : { operation: operation, password: this.inserted_password };
             axios.put("/api/games/" + this.game.id, body, { headers: { Authorization: authHeader } })
                 .then(response => {
-                    //if start need to route in game
                     this.updateGame(response.data.result);
                 })
                 .catch(error => {
@@ -92,16 +104,16 @@ const Games = {
                 });
         },
         joinGame: function () {
-            this.operateInGame("join");
+            this.joinStartGame("join");
         },
         startGame: function () {
             if (this.userIsOwner) {
-                this.operateInGame("start");
+                this.joinStartGame("start");
             }
         },
         leaveGame: function () {
             const authHeader = 'bearer '.concat(this.$store.state.token);
-            axios.delete("http://localhost:3000/api/games/" + 0, { headers: { Authorization: authHeader } })
+            axios.delete("http://localhost:3000/api/games/" + this.gameid, { headers: { Authorization: authHeader } })
                 .then(response => {
                     this.updateGame(response.data.result);
                 })
@@ -110,29 +122,22 @@ const Games = {
                 });
         },
         gameChanged: function (game) {
-            if(game.id === this.game.id && game.tick > this.game.tick) {
-                axios.get("http://localhost:3000/api/games/" + 0)
-                .then(response => {
-                    this.updateGame(response.data.result);
-                })
-                .catch(error => {
-                    console.log(error);
-                });
+            if (game.id === this.gameid && game.tick > this.game.tick) {
+                this.updateGameFromWeb();
             }
         }
     },
-    destroyed: function() {
+    destroyed: function () {
         socket.off('game changed', this.gameChanged);
     },
     mounted: function () {
         socket.on('game changed', this.gameChanged);
-        axios.get("http://localhost:3000/api/games/" + 0)
-            .then(response => {
-                this.updateGame(response.data.result);
-            })
-            .catch(error => {
-                console.log(error);
-            });
+        var cachedGame = allGames.get(this.gameid);
+        if (cachedGame) {
+            this.updateGame(cachedGame);
+        } else {
+            this.updateGameFromWeb();
+        }
     },
     filters: {
         formatTime: function (value) {
