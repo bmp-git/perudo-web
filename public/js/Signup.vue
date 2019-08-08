@@ -75,7 +75,7 @@ export default {
   methods: {
     login: function() {
       axios
-        .post("http://localhost:3000/api/users/", this.signup_request)
+        .post("/api/users/", this.signup_request)
         .then(response => {
           this.success_message =
             "Sign up completed. You will be redirected soon.";

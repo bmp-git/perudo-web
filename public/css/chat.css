@@ -9,8 +9,15 @@
     border: 2px solid #dedede;
     background-color: #f1f1f1;
     border-radius: 5px;
-    padding: 10px;
     margin: 10px 0;
+    padding-top: 5px;
+    padding-left: 5px;
+    width: 98%;
+}
+
+.chat-message p {
+    margin-bottom: 5px;
+    word-wrap: break-word;
 }
 
 /* Darker chat container */
@@ -29,10 +36,12 @@
 /* Style images */
 .chat-message img {
     float: left;
-    max-width: 60px;
-    width: 100%;
+    width: 48px;
+    height: 48px;
     margin-right: 20px;
     border-radius: 50%;
+    object-fit: cover; 
+    border: 2px solid #007BFF;
 }
 
 /* Style the right image */

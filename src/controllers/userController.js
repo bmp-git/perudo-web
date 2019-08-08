@@ -88,6 +88,20 @@ exports.get_user_avatar = function (req, res) {
     });
 };
 
+exports.get_user_name = function (req, res) {
+    const id = req.params.id;
+
+    User.findById(id, function (err, result) {
+        if (err) {
+            res.status(500).send({ message: err }).end();
+        } else if (result) {
+            res.status(200).send({ username: result.username }).end();
+        } else {
+            res.status(401).send({ message: "Incorrect user id." }).end();
+        }
+    });
+};
+
 exports.get_user_personal_info = function (req, res) {
     const id = req.params.id;
     const tokenId = req.authData.user._id;

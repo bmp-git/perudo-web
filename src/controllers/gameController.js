@@ -362,7 +362,7 @@ exports.action_message = function (req, res) {
     const id = parseInt(req.params.id);
     const game = games.get(id);
 
-    if (assert_in_game(game, req, res)) {
+    if (game.started && assert_in_game(game, req, res) || assert_game_exists(game, req, res)) {
         actions_add_message(game.id, req.user._id, req.body.message);
         res.status(200).send({ message: "Message posted." }).end();
     }

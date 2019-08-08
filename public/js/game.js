@@ -1,6 +1,6 @@
 const Game = {
     template: `
-<div class="row mt-2">
+<div class="row">
     <div class="col-12 col-sm-12 col-md-10 offset-md-1 col-lg-10 offset-lg-1 col-xl-8 offset-xl-2">
     <div class="card-body text-dark">
     <h6 class="card-title"><a v-bind:href="'/game/'+game.id">{{game.name}}</a>&emsp;
@@ -13,14 +13,14 @@ const Game = {
     <p class="card-text"><small class="text-muted">Created {{game.game_creation_time | formatTime}} ago</small></p>
     <div class="row" style="margin-bottom:0px">
         <template v-for="user in game.users">
-        <div class="col-2 text-center">
+        <div class="col-4 col-md-2 text-center">
 
                 <router-link :to="{ name: 'profile', params: { id: user.id }}">
                     <img v-bind:src="user.avatar_url" class="ig-avatar" width="64px" height="64px" style="object-fit: cover; border-radius: 50%; border: 2px solid #007BFF;">
                 </router-link>
 
                 <router-link :to="{ name: 'profile', params: { id: user.id }}" style="margin-bottom:0px">
-                    {{user.username}}  
+                    <username :userid="user.id"></username>
                     <template v-if="game.owner_id === user.id">
                     <i class="fas fa-crown"></i>
                     </template>
@@ -29,7 +29,7 @@ const Game = {
             </div>
         </template>
         <template v-for="i in freeSpaces" :key="i">
-            <div class="col-2 text-center">
+            <div class="col-4 col-md-2 text-center">
                 <a href="" @click.prevent="joinGame">
                     <img src="/img/avatar"  class="ig-avatar" width="64px" height="64px" style="object-fit: cover; border-radius: 50%;">
                 </a>
@@ -59,11 +59,14 @@ const Game = {
     </template>
     </div>
     <template v-if="includedivisor">
-        <hr class="hr-text" data-content="">
+        <hr class="hr-text mb-0" data-content="">
     </template>
     </div>
    
 </div>`,
+    components: {
+        'username': Username
+    },
     props: ['gameid', 'includedivisor'],
     data() {
         return {
@@ -91,7 +94,7 @@ const Game = {
         },
         updateGameFromWeb: function () {
             console.log("refreshing game " + this.gameid + " from web");
-            axios.get("http://localhost:3000/api/games/" + this.gameid)
+            axios.get("/api/games/" + this.gameid)
                 .then(response => {
                     this.updateGame(response.data.result);
                 })
@@ -114,12 +117,12 @@ const Game = {
                         const authHeader = 'bearer '.concat(this.$store.state.token);
                         var result = "null";
                         allGames.forEach(g => {
-                                if (g.id !== this.gameid && g.users.some(u => u.id === this.$store.state.user._id)) {
-                                    result = g.id;
-                                }
+                            if (g.id !== this.gameid && g.users.some(u => u.id === this.$store.state.user._id)) {
+                                result = g.id;
+                            }
                         });
                         if (result !== "null") {
-                            axios.delete("http://localhost:3000/api/games/" + result, { headers: { Authorization: authHeader } })
+                            axios.delete("/api/games/" + result, { headers: { Authorization: authHeader } })
                                 .then(response => {
                                     this.joinGame();
                                 })
@@ -132,7 +135,7 @@ const Game = {
                 });
         },
         joinGame: function () {
-            if(!this.game.users.some(u => u.id == this.$store.state.user._id)) {
+            if (!this.game.users.some(u => u.id == this.$store.state.user._id)) {
                 this.joinStartGame("join");
             }
         },
@@ -143,7 +146,7 @@ const Game = {
         },
         leaveGame: function () {
             const authHeader = 'bearer '.concat(this.$store.state.token);
-            axios.delete("http://localhost:3000/api/games/" + this.gameid, { headers: { Authorization: authHeader } })
+            axios.delete("/api/games/" + this.gameid, { headers: { Authorization: authHeader } })
                 .then(response => {
                     this.updateGame(response.data.result);
                 })

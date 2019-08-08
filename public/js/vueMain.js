@@ -10,7 +10,7 @@ const app = new Vue({
     methods: {
     },
     mounted() {
-        axios.get("http://localhost:3000/api/games")
+        axios.get("/api/games")
             .then(response => {
                 allGames = new Map();
                 response.data.result.forEach(g => {

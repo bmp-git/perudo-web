@@ -118,6 +118,7 @@ const ProfileSettings = {
             axios.put("/api/users/" + this.$store.state.user._id + "/username", {username: username}, {headers: { Authorization: authHeader}})
                 .then(response => {
                     succ("Username changed successfully!");
+                    cache_username(this.$store.state.user._id, username);
                     this.refreshToken();
                 })
                 .catch(error => {

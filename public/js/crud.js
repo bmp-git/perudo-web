@@ -83,7 +83,7 @@ data() {
   },
   methods: {
       listMovies: function () {
-        axios.get("http://localhost:3000/api/movies")
+        axios.get("/api/movies")
           //.then(response => (console.log(response.data)))
           .then(response => (this.movies = response.data))
           .catch(error => (console.log(error)));
@@ -91,7 +91,7 @@ data() {
       },
       addMovie: function(){
           console.log(this.new_movie);
-          axios.post('http://localhost:3000/api/movies', this.new_movie)
+          axios.post('/api/movies', this.new_movie)
               //.then(response => (console.log(response.data)))
               .then(response => {
                   this.movies.push(response.data);
@@ -109,7 +109,7 @@ data() {
       },
       deleteMovie: function(_id){
           console.log(_id);
-          axios.delete('http://localhost:3000/api/movies/'+_id)
+          axios.delete('/api/movies/'+_id)
               //.then(response => (console.log(response.data)))
               .then(response => {
                   console.log("cancellato!");

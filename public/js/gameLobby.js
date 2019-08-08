@@ -2,12 +2,14 @@ const gameLobby = {
     template: `
             <div class="container">
             
-            <hr class="hr-text" v-bind:data-content="'Inside lobby: ' + game.name" />
-            
-            <gameComponent :gameid="game.id"></gameComponent>
-            
-            <hr class="hr-text" data-content="Chat" />
-            <chat :gameid="game.id"></chat>
+            <template v-if="game !== null">
+                <hr class="hr-text" v-bind:data-content="'Inside lobby: ' + game.name" />
+                
+                <gameComponent :gameid="game.id"></gameComponent>
+           
+                <hr class="hr-text" data-content="Chat" />
+                <chat :gameid="game.id"></chat>
+            </template>
 
             </div>     
 `,
@@ -17,7 +19,7 @@ const gameLobby = {
     },
     data() {
         return {
-            game: null
+            game: null,
         }
 
     },
@@ -30,13 +32,16 @@ const gameLobby = {
     filters: {
     },
     mounted: function () {
-        axios.get("/api/games/" + this.$route.params.id, { headers: { Authorization: 'bearer '.concat(this.$store.state.token) } })
-            .then(response => {
-                this.game = response.data.result;
-                console.log(response);
-            })
-            .catch(error => {
-                router.push("/404")
-            });
+        if (allGames.get(this.$route.params.id)) {
+            this.game = allGames.get(this.$route.params.id);
+        } else {
+            axios.get("/api/games/" + this.$route.params.id, { headers: { Authorization: 'bearer '.concat(this.$store.state.token) } })
+                .then(response => {
+                    this.game = response.data.result;
+                })
+                .catch(error => {
+                    router.push("/404")
+                });
+        }
     }
 };

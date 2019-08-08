@@ -26,7 +26,7 @@ const Movies = {
 	},
 	methods: {
 		listMovies: function () {
-			axios.get("http://localhost:3000/api/movies")
+			axios.get("/api/movies")
 			//.then(response => (console.log(response.data)))
 			.then(response => (this.movies = response.data))
 			.catch(error => (console.log(error)));

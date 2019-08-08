@@ -34,6 +34,9 @@ module.exports = function (app) {
 		.put(autheticate, userController.change_user_avatar)
 		.get(userController.get_user_avatar);
 
+	app.route('/api/users/:id/username')
+		.get(userController.get_user_name);
+
 	app.route('/api/users/:id')
 		.get(autheticate, userController.get_user_personal_info)
 

@@ -3,7 +3,7 @@ const Chat = {
             <div class="container">
             
                 <div class="col-12">
-                    <div class="card border-dark mb-3" style="border-radius:.99rem!important; border-width: 2px;">
+                   
                         <div class="card-body text-dark">
                             
                             <div id="chat" class="chat-container">
@@ -11,10 +11,11 @@ const Chat = {
                                 <template v-for="msg in messages">
                                     <template v-if="msg.type === 'message'">
                                         <div class="container chat-message">
-                                            <img v-bind:src="'/api/users/' + msg.user_id +'/avatar'" width="64px" height="64px" style="object-fit: cover; border-radius: 50%; border: 2px solid #007BFF;">
-                                            <strong>{{getUsername(msg.user_id)}}: </strong>
-                                            <p>{{msg.content}}</p>
+                                            <img v-bind:src="'/api/users/' + msg.user_id +'/avatar'">
+                                            <strong><username :userid="msg.user_id"></username></strong>
                                             <span class="time-right">{{msg.date | formatDate}}</span>
+                                            <p>{{msg.content}}</p>
+                                            
                                         </div>                                    
                                     </template>
                                 
@@ -31,7 +32,6 @@ const Chat = {
                               <div class="input-group-append">
                                 <button class="btn btn-outline-secondary" @click.prevent="sendMessage" @keyup.enter="sendMessage" type="button">Send Message</button>
                               </div>
-                            </div>
 
                     </div>
                 </div>
@@ -41,7 +41,7 @@ const Chat = {
             </div>     
 `,
     components: {
-
+        'username': Username
     },
     /*
     *   content: "Hey come stai?"
@@ -93,9 +93,6 @@ const Chat = {
         scrollChatToBottom: function() {
             const chatContainer = this.$el.querySelector("#chat");
             chatContainer.scrollTop = chatContainer.scrollHeight;
-        },
-        getUsername: function(userId) {
-            return allGames.get(this.gameid).users.find(u => u.id === userId).username;
         }
 
     },
