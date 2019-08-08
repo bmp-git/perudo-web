@@ -12,18 +12,14 @@ const Chat = {
                                     <template v-if="msg.type === 'message'">
                                         <div class="container chat-message">
                                             <img v-bind:src="'/api/users/' + msg.user_id +'/avatar'" width="64px" height="64px" style="object-fit: cover; border-radius: 50%; border: 2px solid #007BFF;">
+                                            <strong>{{getUsername(msg.user_id)}}: </strong>
                                             <p>{{msg.content}}</p>
-                                            <span class="time-right">{{msg.date}}</span>
+                                            <span class="time-right">{{msg.date | formatDate}}</span>
                                         </div>                                    
                                     </template>
                                 
                                 </template>
                             
-                                <div class="container chat-message">
-                                  <img src="" alt="Avatar">
-                                  <p>Hello. How are you today?</p>
-                                  <span class="time-right">11:00</span>
-                                </div>
                            
                             </div>
                                 
@@ -91,13 +87,21 @@ const Chat = {
                 .catch(error => {
                     console.log(error.response.data.message);
                 });
+        },
+        getUsername: function(userId) {
+            return this.my_game.users.find(u => u.id === userId).username;
         }
 
     },
     filters: {
+        formatDate: function(value) {
+            if (value) {
+                return moment(String(value)).format("h:mm:ss a");
+            }
+        }
     },
     mounted: function () {
-        this.my_game = allGames.get(this.gameid); /*.users.find(u => u.id === message.user_id).name;*/
+        this.my_game = allGames.get(this.gameid);
         socket.emit('watch game', this.gameid);
         socket.on('new action', game_id => {
             if(game_id === this.gameid) {
