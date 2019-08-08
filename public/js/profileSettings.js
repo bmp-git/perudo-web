@@ -6,7 +6,7 @@ const ProfileSettings = {
                 
                 <div class="row">
                     
-                    <div class="col-md-2 offset-md-3">
+                    <div class="col-md-3 offset-md-3">
                         <profileImageSelector :onnewimage="changeAvatar"></profileImageSelector>
                     </div>
                     

@@ -1,11 +1,16 @@
 const profileImageSelector = {
     template: `
             <div>
-                <div class="profile-pic">
-                    <img v-bind:src="imageURL" height="160" width="160" style="object-fit: cover;"/>
-                    <div class="edit"><a href="#" @click.prevent="onEditClick"><i class="fas fa fa-edit"></i></a></div>
+                <div class="profileImage">
+                    <img v-bind:src="imageURL"/>
                 </div>
+                
                 <input type="file" ref="inputFile" @change="loadImage" single hidden>
+                
+                <button class="mt-1 btn btn-primary btn-block" @click.prevent="onEditClick">
+                    <i class="fas fa fa-edit"></i>Change Avatar
+                </button>
+                
                 <errorSuccessNotifier ref="notifier"></errorSuccessNotifier>
             </div>     
 `,
