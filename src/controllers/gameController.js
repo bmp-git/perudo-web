@@ -41,7 +41,6 @@ add_user_to_game = function (game, userId, next) {
 };
 
 start_game = function (game) {
-    actions.set(game.id, []);
     actions_add_event(game.id, "Welcome! The game is started!");
     actions_add_round(game.id, 1);
     reroll_dice(game);
@@ -259,6 +258,7 @@ exports.create_game = function (req, res) {
         new_game.game_creation_time = new Date();
         new_game.users = [];
         new_game.tick = 0;
+        actions.set(new_game.id, []);
         add_user_to_game(new_game, req.user._id, function (success) {
             if (success) {
                 games.set(id, new_game);
@@ -455,9 +455,10 @@ exports.get_actions = function (req, res) {
     const id = parseInt(req.params.id);
     const game = games.get(id);
 
-    if (assert_game_started(game, req, res)) {
+    if (assert_game_exists(game, req, res)) {
         const from = req.body.from_index;
-        res.status(200).send({ result: actions.get(game.id).filter(a => a.index >= from) }).end();
+        const type = req.body.type;
+        res.status(200).send({ result: actions.get(game.id).filter(a => a.index >= from && a.type === type) }).end();
     }
 };
 

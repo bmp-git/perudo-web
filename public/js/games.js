@@ -2,9 +2,9 @@ const games = new Map(); //game id -> game
 var socket = io();
 const Games = {
     template: `
-<div class="row">
+<div class="row mt-2">
     <div class="col-12 col-sm-10 offset-sm-1 col-md-8 offset-md-2 col-lg-6 offset-lg-3 col-xl-4 offset-xl-4">
-    <div class="card border-dark mb-3" style="border-radius:.99rem!important">
+    <div class="card border-dark mb-3" style="border-radius:.99rem!important; border-width: 2px;">
     <div class="card-body text-dark">
     <h6 class="card-title">{{game.name}} &emsp;
         <template v-if="game.password != null"> <i class="fas fa-lock" data-toggle="tooltip" data-placement="bottom" title="Password needed"></i> </template> 
