@@ -6,7 +6,7 @@ const Game = {
     <h6 class="card-title"><router-link :to="{ name: 'gamelobby', params: { id: gameid }}">{{game.name}}</router-link>&emsp;
         <template v-if="game.password != null"> <i class="fas fa-lock" data-toggle="tooltip" data-placement="bottom" title="Password needed"></i> </template> 
         <template v-else> <i class="fas fa-lock-open" data-toggle="tooltip" data-placement="bottom" title="No password needed"></i> </template>
-        <i class="fas fa-stopwatch"></i> {{turnTime}}
+        <i class="fas fa-stopwatch" title="Maximum time per turn"></i> {{turnTime}}
         <p class="card-title float-right" data-toggle="tooltip" data-placement="bottom" v-bind:title="users"> players: {{usedSpaces}} </p>
     </h6>
     
@@ -229,8 +229,13 @@ const Game = {
             }
         },
         turnTime: function () {
-            if (this.game.turn_time) {
-                return this.game.turn_time + " s";
+            if (this.game.turn_time) { 
+                if(this.game.turn_time % 60 === 0) {
+                    return (this.game.turn_time / 60) + " min";
+                } else if(this.game.turn_time > 60) {
+                    return (this.game.turn_time / 60 | 0)+ " min " + (this.game.turn_time % 60) + " sec";
+                }
+                return this.game.turn_time + " sec";
             } else {
                 return "∞ s";
             }
