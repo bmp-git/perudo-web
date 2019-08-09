@@ -4,7 +4,7 @@ const router = new VueRouter({
         {path: '/', component: Home},
         {path: '/leaderboard', component: Leaderboard},
         {path: '/games', component: Games, name: "games"},
-        {path: '/new_game', component: NewGame, meta: {requiresAuth: true} },
+        {path: '/new_game', component: NewGame, name: "new_game", meta: {requiresAuth: true} },
         {path: '/game/:id', component: gameLobby, name: "gamelobby", meta: {requiresAuth: true} },
         {path: '/signin', component: Login, meta: {requiresNotAuth: true}},
         {path: '/signup', component: Signup, meta : {requiresNotAuth : true}},
