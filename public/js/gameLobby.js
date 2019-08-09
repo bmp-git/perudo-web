@@ -27,7 +27,11 @@ const gameLobby = {
     computed: {
     },
     methods: {
-
+        gameRemoved: function (game_id) {
+            if (this.game && game_id === this.game.id) {
+                router.push({ name: 'games' });
+            }
+        }
     },
     filters: {
     },
@@ -39,6 +43,7 @@ const gameLobby = {
         }
     },
     mounted: function () {
+        socket.on('game removed', this.gameRemoved);
         if (allGames.get(this.$route.params.id)) {
             this.game = allGames.get(this.$route.params.id);
         } else {
@@ -50,5 +55,8 @@ const gameLobby = {
                     router.push("/404")
                 });
         }
+    },
+    destroyed: function () {
+        socket.off('game removed', this.gameRemoved);
     }
 };
