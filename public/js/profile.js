@@ -29,11 +29,10 @@ const Profile = {
                     </div>
                 </div>                  
                 
+
+                
                 <div class="row">
-                    <div class="col-lg-3 offset-lg-3 col-md-4 offset-md-2 col-6">
-                        <p>Chart</p>                                          
-                    </div>
-                    <div class="col-lg-3 col-md-4 col-6 align-self-center">
+                    <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-12">
                         <div class="row">
                             <div class="col-8">
                                 <strong>Global ranking</strong>
@@ -59,6 +58,12 @@ const Profile = {
                             </div>                            
                         </div>                        
                                    
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-12">
+                        <LineChart></LineChart>
                     </div>
                 </div>
                 
@@ -149,7 +154,7 @@ const Profile = {
                 
                 <div class="row">
                     <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-12">
-                        Chart <br>                                
+                        <LineChart></LineChart>                                
                     </div>           
                          
                 </div>
@@ -157,7 +162,8 @@ const Profile = {
         </div>
 `,
     components: {
-        'profileImage': profileImage
+        'profileImage': profileImage,
+        'LineChart': LineChart
     },
     data() {
         return {
