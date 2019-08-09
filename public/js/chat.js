@@ -1,20 +1,20 @@
 const Chat = {
     template: `
-                <div class="col-12 col-sm-12 col-md-10 offset-md-1 col-lg-10 offset-lg-1 col-xl-8 offset-xl-2">
+                <div class="col-12 col-sm-12 col-md-10 offset-md-1 col-lg-10 offset-lg-1 col-xl-8 offset-xl-2 pl-0 pr-0">
                     <div ref="chat" class="chat-container">
                         
                         <template v-for="msg in messages">
                             <template v-if="msg.type === 'message'">
                                 <div class="container chat-message">
                                     <div class="row">
-                                        <div class="col-3 col-md-2 col-lg-1">
+                                        <div class="col-2 col-md-2 col-lg-1">
                                             <img v-bind:src="'/api/users/' + msg.user_id +'/avatar'">
                                         </div>
-                                        <div class="col-5 col-md-6 col-lg-9">
+                                        <div class="col-8 col-md-8 col-lg-10">
                                             <strong><username :userid="msg.user_id"></username></strong>
                                             <p>{{msg.content}}</p>
                                         </div>
-                                        <div class="col-4 col-md-4 col-lg-2">
+                                        <div class="col-2 col-md-2 col-lg-1">
                                             <span class="time-right">{{msg.date | formatDate}}</span>
                                         </div>                                          
                                     
@@ -32,7 +32,7 @@ const Chat = {
                         <div class="input-group-prepend">
                             <div class="input-group-text"><i class="fas fa-paper-plane"></i></div>
                         </div>                                
-                      <input v-model="message" type="text" class="form-control" placeholder="Message" @keyup.enter="sendMessage">
+                      <input v-model="message" type="text" class="form-control" placeholder="Type a message" @keyup.enter="sendMessage">
                       <div class="input-group-append d-none d-sm-block">
                         <button class="btn btn-outline-secondary" @click.prevent="sendMessage" @keyup.enter="sendMessage" type="button">Send</button>
                       </div>
@@ -100,7 +100,7 @@ const Chat = {
     filters: {
         formatDate: function(value) {
             if (value) {
-                return moment(String(value)).format("h:mm:ss a");
+                return moment(String(value)).format("HH:mm:ss");
             }
         }
     },
