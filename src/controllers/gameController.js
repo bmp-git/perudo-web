@@ -339,7 +339,7 @@ exports.leave_game = function (req, res) {
                     console.log("Game " + game.id + " is expired.");
                     remove_game(game.id);
                     gameTimeouts.delete(game.id);
-                }, 3 * 1000));
+                }, 60 * 1000));
             }
         } else if (game.started) {
             actions_add_left_game(game.id, req.user._id);
