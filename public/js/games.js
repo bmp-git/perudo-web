@@ -12,6 +12,14 @@ const Games = {
                 <gameComponent :gameid="val" includedivisor="true"></gameComponent>
             </template>
         </template>
+        <div class="row mt-5">
+        <div class="col-12 col-sm-12 col-md-10 offset-md-1 col-lg-10 offset-lg-1 col-xl-8 offset-xl-2">
+        <router-link :to="{ name: 'new_game' }">
+        <button type="button" class="btn btn-primary btn-circle btn-xl" style="float: right"><i class="fas fa-plus"></i></button>
+        </router-link>
+        </div>
+        </button>
+        </div>
     </div>`,
     components: {
         'gameComponent': Game
