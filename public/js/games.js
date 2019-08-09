@@ -3,8 +3,14 @@ var socket = io();
 const Games = {
     template: `
     <div class="container">
-        <template v-for="game in games" :key="game_changed">
-            <gameComponent :gameid="game.id" includedivisor="true"></gameComponent>
+        <hr class="hr-text" data-content="All games" />
+        <template v-for="(val,index) in games_index">
+            <template v-if="index === (games_index.length - 1)">
+                <gameComponent :gameid="val" includedivisor=""></gameComponent>
+            </template>
+            <template v-if="index < (games_index.length - 1)">
+                <gameComponent :gameid="val" includedivisor="true"></gameComponent>
+            </template>
         </template>
     </div>`,
     components: {
@@ -12,8 +18,7 @@ const Games = {
     },
     data() {
         return {
-            games: [],
-            game_changed: null,
+            games_index: [],
         }
     },
     methods: {
@@ -24,8 +29,7 @@ const Games = {
                     response.data.result.forEach(g => {
                         allGames.set(g.id, g);
                     });
-                    this.games = response.data.result;
-                    this.game_changed = new Date();
+                    this.games_index = response.data.result.map(g => g.id);
                 })
                 .catch(error => {
                     console.log(error);
@@ -35,23 +39,18 @@ const Games = {
     mounted: function () {
         this.updateGames();
         socket.on('game removed', game_id => {
-            /*allGames.delete(game_id);
-            for (var i = 0; i < this.games.length; i++) {
-                if (this.games[i].id === game_id) {
-                    Vue.delete(this.games, i);
-                    this.game_changed = new Date();
-                    console.log(this.games);
+            allGames.delete(game_id);
+            for (var i = 0; i < this.games_index.length; i++) {
+                if (this.games_index[i] === game_id) {
+                    Vue.delete(this.games_index, i);
                 }
-            }*/ //TODO investigate why it's not working
-            this.games = [];
-            this.updateGames();
+            } 
         });
         socket.on('game added', game_id => {
             axios.get("/api/games/" + game_id)
                 .then(response => {
                     allGames.set(response.data.result.id, response.data.result);
-                    this.games.push(response.data.result);
-                    this.game_changed = new Date();
+                    this.games_index.push(response.data.result.id);
                 })
                 .catch(error => {
                     console.log(error);

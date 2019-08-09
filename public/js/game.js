@@ -3,10 +3,10 @@ const Game = {
 <div class="row">
     <div class="col-12 col-sm-12 col-md-10 offset-md-1 col-lg-10 offset-lg-1 col-xl-8 offset-xl-2">
     <div class="card-body text-dark">
-    <h6 class="card-title"><router-link :to="{ name: 'gamelobby', params: { id: this.gameid }}">{{game.name}}</router-link>&emsp;
+    <h6 class="card-title"><router-link :to="{ name: 'gamelobby', params: { id: gameid }}">{{game.name}}</router-link>&emsp;
         <template v-if="game.password != null"> <i class="fas fa-lock" data-toggle="tooltip" data-placement="bottom" title="Password needed"></i> </template> 
         <template v-else> <i class="fas fa-lock-open" data-toggle="tooltip" data-placement="bottom" title="No password needed"></i> </template>
-        <i class="fas fa-stopwatch"></i> {{turnTime}}
+        <i class="fas fa-stopwatch" title="Maximum time per turn"></i> {{turnTime}}
         <p class="card-title float-right" data-toggle="tooltip" data-placement="bottom" v-bind:title="users"> players: {{usedSpaces}} </p>
     </h6>
     
@@ -32,8 +32,10 @@ const Game = {
             <div class="col-4 col-md-2 text-center">
                 <a href="" @click.prevent="joinGame">
                     <img src="/img/avatar"  class="ig-avatar" width="64px" height="64px" style="object-fit: cover; border-radius: 50%;">
+                 </a>
+                <a href="" @click.prevent="joinGame" style="color:black; text-decoration: none; background-color: none;">
+                    <p>Empty</p>
                 </a>
-                <p>Empty</p>
             </div>
         </template>
     </div>
@@ -108,7 +110,7 @@ const Game = {
             axios.put("/api/games/" + this.game.id, body, { headers: { Authorization: authHeader } })
                 .then(response => {
                     this.updateGame(response.data.result);
-                    if(operation === "join") {
+                    if (operation === "join") {
                         router.push({ name: 'gamelobby', params: { id: response.data.result.id } });
                     }
                 })
@@ -162,23 +164,32 @@ const Game = {
             if (game.id === this.gameid && game.tick > this.game.tick) {
                 this.updateGameFromWeb();
             }
+        },
+        initialize: function() {
+            socket.on('game changed', this.gameChanged);
+            var cachedGame = allGames.get(this.gameid);
+            //console.log(this.gameid);
+            if (cachedGame) {
+                this.updateGame(cachedGame);
+            } else {
+                this.updateGameFromWeb();
+            }
         }
     },
     destroyed: function () {
         socket.off('game changed', this.gameChanged);
     },
     mounted: function () {
-        socket.on('game changed', this.gameChanged);
-        var cachedGame = allGames.get(this.gameid);
-        if (cachedGame) {
-            this.updateGame(cachedGame);
-        } else {
-            this.updateGameFromWeb();
-        }
+        this.initialize();
     },
     filters: {
         formatTime: function (value) {
             return moment.duration(moment().diff(value)).humanize();
+        }
+    },
+    watch: {
+        gameid: function (val) {
+            this.initialize();
         }
     },
     computed: {
@@ -218,8 +229,13 @@ const Game = {
             }
         },
         turnTime: function () {
-            if (this.game.turn_time) {
-                return this.game.turn_time + " s";
+            if (this.game.turn_time) { 
+                if(this.game.turn_time % 60 === 0) {
+                    return (this.game.turn_time / 60) + " min";
+                } else if(this.game.turn_time > 60) {
+                    return (this.game.turn_time / 60 | 0)+ " min " + (this.game.turn_time % 60) + " sec";
+                }
+                return this.game.turn_time + " sec";
             } else {
                 return "∞ s";
             }
