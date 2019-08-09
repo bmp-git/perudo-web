@@ -2,18 +2,41 @@ const Game = {
     template: `
 <div class="row">
     <div class="col-12 col-sm-12 col-md-10 offset-md-1 col-lg-10 offset-lg-1 col-xl-8 offset-xl-2">
-    <div class="card-body text-dark">
     <h6 class="card-title"><router-link :to="{ name: 'gamelobby', params: { id: gameid }}">{{game.name}}</router-link>&emsp;
-        <template v-if="game.password != null"> <i class="fas fa-lock" data-toggle="tooltip" data-placement="bottom" title="Password needed"></i> </template> 
-        <template v-else> <i class="fas fa-lock-open" data-toggle="tooltip" data-placement="bottom" title="No password needed"></i> </template>
-        <i class="fas fa-stopwatch" title="Maximum time per turn"></i> {{turnTime}}
-        <p class="card-title float-right" data-toggle="tooltip" data-placement="bottom" v-bind:title="users"> players: {{usedSpaces}} </p>
+        <template v-if="game.password != null"> <i class="fas fa-lock mr-3" data-toggle="tooltip" data-placement="bottom" title="Password needed"></i> </template> 
+        <template v-else> <i class="mr-3 fas fa-lock-open" data-toggle="tooltip" data-placement="bottom" title="No password needed"></i> </template>
+        
+        <i class="fas fa-stopwatch" title="Maximum time per turn"> </i> <small>{{turnTime}}</small>
+        <i class=" fas fa-users ml-3" title="Maximum time per turn"> </i><small> {{usedSpaces}} </small>
+
+        <template v-if="game.started">
+            <button type="button" class="btn btn-primary btn-sm float-right" disabled>Game started</button>
+        </template>
+        <template v-if="userIsOwner && !game.started">
+            <button type="button" @click.prevent="startGame" class="btn btn-primary btn-sm float-right">Start game!</button>
+        </template>
+        <template v-if="(!freeSpaceAvailable && !currentUserInside)">
+            <button type="button" class="btn btn-primary btn-sm float-right" disabled>Join</button>
+        </template>
+        <template v-if="!currentUserInside">
+            <div class="input-group-append float-right">
+            <template v-if="game.password != null">
+                <input v-model="inserted_password" type="password" v-bind:class="'form-control '+(password_wrong?'is-invalid':'')" placeholder="Password" required>
+            </template>
+            <button type="button" @click.prevent="joinGame" class="btn btn-primary btn-sm float-right ml-2">Join</button>
+            </div>
+        </template>
+        <template v-if="currentUserInside">
+            <button type="button" @click.prevent="leaveGame" class="btn btn-primary btn-sm float-right mr-2">Leave</button>
+        </template>
+        
+      
     </h6>
     
     <p class="card-text"><small class="text-muted">Created {{game.game_creation_time | formatTime}} ago</small></p>
     <div class="row" style="margin-bottom:0px">
         <template v-for="user in game.users">
-        <div class="col-4 col-md-2 text-center">
+        <div class="col-4 col-md-2 text-center pl-3 pr-3">
 
                 <router-link :to="{ name: 'profile', params: { id: user.id }}">
                     <img v-bind:src="user.avatar_url" class="ig-avatar" width="64px" height="64px" style="object-fit: cover; border-radius: 50%; border: 2px solid #007BFF;">
@@ -39,29 +62,8 @@ const Game = {
             </div>
         </template>
     </div>
-    <template v-if="game.started">
-        <button type="button" class="btn btn-primary btn-sm float-right" disabled>Game started</button>
-    </template>
-    <template v-if="userIsOwner && !game.started">
-        <button type="button" @click.prevent="startGame" class="btn btn-primary btn-sm float-right">Start game!</button>
-    </template>
-    <template v-if="(!freeSpaceAvailable && !currentUserInside)">
-        <button type="button" class="btn btn-primary btn-sm float-right" disabled>Join</button>
-    </template>
-    <template v-if="!currentUserInside">
-        <div class="input-group-append float-right">
-        <template v-if="game.password != null">
-            <input v-model="inserted_password" type="password" v-bind:class="'form-control '+(password_wrong?'is-invalid':'')" placeholder="Password" required>
-        </template>
-        <button type="button" @click.prevent="joinGame" class="btn btn-primary btn-sm float-right ml-2">Join</button>
-        </div>
-    </template>
-    <template v-if="currentUserInside">
-        <button type="button" @click.prevent="leaveGame" class="btn btn-primary btn-sm float-right mr-2">Leave</button>
-    </template>
-    </div>
     <template v-if="includedivisor">
-        <hr class="hr-text mb-0" data-content="">
+        <hr class="hr-text mb-4 mt-0" data-content="">
     </template>
     </div>
    
