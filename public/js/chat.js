@@ -1,44 +1,43 @@
 const Chat = {
     template: `
-            <div class="container">
-            
-                <div class="col-12">
-                   
-                        <div class="card-body text-dark">
-                            
-                            <div ref="chat" class="chat-container">
-                                
-                                <template v-for="msg in messages">
-                                    <template v-if="msg.type === 'message'">
-                                        <div class="container chat-message">
-                                            <img v-bind:src="'/api/users/' + msg.user_id +'/avatar'">
-                                            <strong><username :userid="msg.user_id"></username></strong>
-                                            <span class="time-right">{{msg.date | formatDate}}</span>
-                                            <p>{{msg.content}}</p>
-                                            
-                                        </div>                                    
-                                    </template>
-                                
-                                </template>
-                            
-                           
-                            </div>
-                                
-                            <div class="input-group mb-2 mt-2">
-                                <div class="input-group-prepend">
-                                    <div class="input-group-text"><i class="fas fa-paper-plane"></i></div>
-                                </div>                                
-                              <input v-model="message" type="text" class="form-control" placeholder="Send message" @keyup.enter="sendMessage">
-                              <div class="input-group-append">
-                                <button class="btn btn-outline-secondary" @click.prevent="sendMessage" @keyup.enter="sendMessage" type="button">Send Message</button>
-                              </div>
-
-                    </div>
-                </div>
+                <div class="col-12 col-sm-12 col-md-10 offset-md-1 col-lg-10 offset-lg-1 col-xl-8 offset-xl-2">
+                    <div ref="chat" class="chat-container">
                         
-            
-
-            </div>     
+                        <template v-for="msg in messages">
+                            <template v-if="msg.type === 'message'">
+                                <div class="container chat-message">
+                                    <div class="row">
+                                        <div class="col-3 col-md-2 col-lg-1">
+                                            <img v-bind:src="'/api/users/' + msg.user_id +'/avatar'">
+                                        </div>
+                                        <div class="col-5 col-md-6 col-lg-9">
+                                            <strong><username :userid="msg.user_id"></username></strong>
+                                            <p>{{msg.content}}</p>
+                                        </div>
+                                        <div class="col-4 col-md-4 col-lg-2">
+                                            <span class="time-right">{{msg.date | formatDate}}</span>
+                                        </div>                                          
+                                    
+                                    </div>
+                                    
+                                </div>                                    
+                            </template>
+                        
+                        </template>
+                    
+                   
+                    </div>
+                        
+                    <div class="input-group mb-2 mt-2">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text"><i class="fas fa-paper-plane"></i></div>
+                        </div>                                
+                      <input v-model="message" type="text" class="form-control" placeholder="Message" @keyup.enter="sendMessage">
+                      <div class="input-group-append d-none d-sm-block">
+                        <button class="btn btn-outline-secondary" @click.prevent="sendMessage" @keyup.enter="sendMessage" type="button">Send</button>
+                      </div>
+                    </div>
+                </div>  
 `,
     components: {
         'username': Username
