@@ -1,57 +1,154 @@
 const Profile = {
     template: `
         <div class="container">
+        
+                <div class="row">
+                    <div class="col-md-8 offset-md-2">
+                        <hr class="hr-text" data-content="Player info" />
+                    </div>
+                </div>        
                 
-                <hr class="hr-text" data-content="Player info" />
                 
                 <div class="row">
-                    <div class="col-md-2 offset-md-3">
+                    
+                    <div class="col-lg-3 offset-lg-3 col-md-4 offset-md-2 col-6">
                         <profileImage ref="profileImage" :userid="this.$route.params.id"></profileImage>
                     </div>
-                    <div class="col-md-4">
+                    
+                    <div class="col-lg-3 col-md-4 col-6 align-self-center">
                         <h2>{{user.username}}</h2>
-                        <h4>Italy</h4>
+                        <h4><i>Italy</i></h4>
                     </div>
+                
                 </div>
                               
 
-                <hr class="hr-text" data-content="Ranking" />
-                
+                <div class="row">
+                    <div class="col-md-8 offset-md-2">
+                        <hr class="hr-text" data-content="Ranking" />
+                    </div>
+                </div>                  
                 
                 <div class="row">
-                    <div class="col-md-3 offset-md-3">
+                    <div class="col-lg-3 offset-lg-3 col-md-4 offset-md-2 col-6">
                         <p>Chart</p>                                          
                     </div>
-                    <div class="col-md-3">
-                        Global ranking: 2039 <br>
-                        Country ranking: 234 <br>
-                        Points: {{user.points}} <br>                                     
+                    <div class="col-lg-3 col-md-4 col-6 align-self-center">
+                        <div class="row">
+                            <div class="col-8">
+                                <strong>Global ranking</strong>
+                            </div>
+                            <div class="col-4">
+                                <p class="float-right" style="font-size:23px">2039</p>
+                            </div>                            
+                        </div>
+                        <div class="row">
+                            <div class="col-8">
+                                <strong>Country ranking</strong>
+                            </div>
+                            <div class="col-4">
+                                <p class="float-right">234</p>
+                            </div>                            
+                        </div>                        
+                        <div class="row">
+                            <div class="col-8">
+                                <strong>Points</strong>
+                            </div>
+                            <div class="col-4">
+                                <p class="float-right">{{user.points}}</p>
+                            </div>                            
+                        </div>                        
+                                   
                     </div>
                 </div>
                 
 
-                <hr class="hr-text" data-content="Stats" />
-
-                
                 <div class="row">
-                    <div class="col-md-6 offset-md-3">
-                        
-                        Member since: {{user.registeredDate | formatDate}} <br>
-                        Last stat reset: {{user.lastReset | formatDate}} <br>
-                        Total play time: {{user.totalPlayTime}} hours <br>
-                        Play time since reset: {{user.playTime}} hours <br>
-                        Play count: {{user.wins + user.losses}} <br>
-                        Wins: {{user.wins}} <br>
-                        Losses: {{user.losses}} <br>
-                        Win/Loss ratio: {{user.wins | ratio(user.losses)}} <br>                                   
+                    <div class="col-md-8 offset-md-2">
+                        <hr class="hr-text" data-content="Stats" />
+                    </div>
+                </div>
+                                
+                <div class="row">
+                    <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-12">
+                        <div class="row">
+                            <div class="col-8">
+                                <strong>Member since</strong>
+                            </div>
+                            <div class="col-4">
+                                <p class="float-right">{{user.registeredDate | formatDate}}</p>
+                            </div>                            
+                        </div>
+                        <div class="row">
+                            <div class="col-8">
+                                <strong>Last stat reset</strong>
+                            </div>
+                            <div class="col-4">
+                                <p class="float-right">{{user.lastReset | formatDate}}</p>
+                            </div>                            
+                        </div>                         
+                        <div class="row">
+                            <div class="col-8">
+                                <strong>Total play time</strong>
+                            </div>
+                            <div class="col-4">
+                                <p class="float-right">{{user.totalPlayTime}} hours</p>
+                            </div>                            
+                        </div>                         
+                        <div class="row">
+                            <div class="col-8">
+                                <strong>Play time since reset</strong>
+                            </div>
+                            <div class="col-4">
+                                <p class="float-right">{{user.playTime}} hours</p>
+                            </div>                            
+                        </div>                         
+                        <div class="row">
+                            <div class="col-8">
+                                <strong>Play count</strong>
+                            </div>
+                            <div class="col-4">
+                                <p class="float-right">{{user.wins + user.losses}}</p>
+                            </div>                            
+                        </div>                         
+                        <div class="row">
+                            <div class="col-8">
+                                <strong>Wins</strong>
+                            </div>
+                            <div class="col-4">
+                                <p class="float-right">{{user.wins}}</p>
+                            </div>                            
+                        </div>                         
+                         <div class="row">
+                            <div class="col-8">
+                                <strong>Losses</strong>
+                            </div>
+                            <div class="col-4">
+                                <p class="float-right">{{user.losses}}</p>
+                            </div>                            
+                        </div> 
+                        <div class="row">
+                            <div class="col-8">
+                                <strong>Win/Loss ratio</strong>
+                            </div>
+                            <div class="col-4">
+                                <p class="float-right">{{user.wins | ratio(user.losses)}}</p>
+                            </div>                            
+                        </div>                                                                        
+                                
                     </div>           
                          
                 </div>
                 
-                <hr class="hr-text" data-content="Play History" />
                 
                 <div class="row">
-                    <div class="col-md-6 offset-md-3">
+                    <div class="col-md-8 offset-md-2">
+                        <hr class="hr-text" data-content="Play History" />
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-12">
                         Chart <br>                                
                     </div>           
                          
