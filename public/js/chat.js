@@ -10,11 +10,11 @@ const Chat = {
                                         <div class="col-3 col-md-2 col-lg-1">
                                             <img v-bind:src="'/api/users/' + msg.user_id +'/avatar'">
                                         </div>
-                                        <div class="col-5 col-md-7 col-lg-9">
+                                        <div class="col-5 col-md-6 col-lg-9">
                                             <strong><username :userid="msg.user_id"></username></strong>
                                             <p>{{msg.content}}</p>
                                         </div>
-                                        <div class="col-4 col-md-3 col-lg-2">
+                                        <div class="col-4 col-md-4 col-lg-2">
                                             <span class="time-right">{{msg.date | formatDate}}</span>
                                         </div>                                          
                                     
@@ -32,9 +32,9 @@ const Chat = {
                         <div class="input-group-prepend">
                             <div class="input-group-text"><i class="fas fa-paper-plane"></i></div>
                         </div>                                
-                      <input v-model="message" type="text" class="form-control" placeholder="Send message" @keyup.enter="sendMessage">
-                      <div class="input-group-append">
-                        <button class="btn btn-outline-secondary" @click.prevent="sendMessage" @keyup.enter="sendMessage" type="button">Send Message</button>
+                      <input v-model="message" type="text" class="form-control" placeholder="Message" @keyup.enter="sendMessage">
+                      <div class="input-group-append d-none d-sm-block">
+                        <button class="btn btn-outline-secondary" @click.prevent="sendMessage" @keyup.enter="sendMessage" type="button">Send</button>
                       </div>
                     </div>
                 </div>  
