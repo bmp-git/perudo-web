@@ -3,7 +3,7 @@ const Game = {
 <div class="row">
     <div class="col-12 col-sm-12 col-md-10 offset-md-1 col-lg-10 offset-lg-1 col-xl-8 offset-xl-2">
     <div class="card-body text-dark">
-    <h6 class="card-title"><a v-bind:href="'/game/'+game.id">{{game.name}}</a>&emsp;
+    <h6 class="card-title"><router-link :to="{ name: 'gamelobby', params: { id: this.gameid }}">{{game.name}}</router-link>&emsp;
         <template v-if="game.password != null"> <i class="fas fa-lock" data-toggle="tooltip" data-placement="bottom" title="Password needed"></i> </template> 
         <template v-else> <i class="fas fa-lock-open" data-toggle="tooltip" data-placement="bottom" title="No password needed"></i> </template>
         <i class="fas fa-stopwatch"></i> {{turnTime}}
@@ -108,6 +108,9 @@ const Game = {
             axios.put("/api/games/" + this.game.id, body, { headers: { Authorization: authHeader } })
                 .then(response => {
                     this.updateGame(response.data.result);
+                    if(operation === "join") {
+                        router.push({ name: 'gamelobby', params: { id: response.data.result.id } });
+                    }
                 })
                 .catch(error => {
                     if (operation === "join" && error.response.status === 403) {
@@ -149,6 +152,7 @@ const Game = {
             axios.delete("/api/games/" + this.gameid, { headers: { Authorization: authHeader } })
                 .then(response => {
                     this.updateGame(response.data.result);
+                    router.push({ name: 'games' });
                 })
                 .catch(error => {
                     console.log(error);
