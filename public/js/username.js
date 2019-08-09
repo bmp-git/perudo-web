@@ -3,13 +3,13 @@ var username_observers = [];
 var cache_username = function(user_id, username) {
     usernames.set(user_id, username);
     username_observers.forEach(o => o());
-}
+};
 const Username = {
     template: `<template :key="count">{{username}}</template>`,
     props: ['userid'],
     data() {
         return {
-            username: "",
+            username: "Anonymous",
         }
     },
     methods: {
@@ -38,4 +38,4 @@ const Username = {
     destroyed: function () {
         username_observers = username_observers.filter(o => o !== this.observer);
     }
-}
+};
