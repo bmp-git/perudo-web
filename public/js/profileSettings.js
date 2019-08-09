@@ -11,12 +11,12 @@ const ProfileSettings = {
                 
                 <div class="row">
                     
-                    <div class="col-lg-3 offset-lg-2 col-md-4 offset-md-2 col-6">
+                    <div class="col-lg-3 offset-lg-2 col-md-4 offset-md-2">
                         <profileImage ref="profileImage" :userid="this.$store.state.user._id" canedit="true" :onnewimage="changeAvatar"></profileImage>
                     </div>
                     
                     
-                    <div class="col-lg-5 col-md-4 col-6">
+                    <div class="col-lg-5 col-md-4">
 
                         
                         <editableForm icon="user" type="" placeholder="Username" :value.sync="user.username" :onchangeconfirm="changeUsername"></editableForm>
