@@ -6,7 +6,7 @@ const Chat = {
                    
                         <div class="card-body text-dark">
                             
-                            <div id="chat" class="chat-container">
+                            <div ref="chat" class="chat-container">
                                 
                                 <template v-for="msg in messages">
                                     <template v-if="msg.type === 'message'">
@@ -91,8 +91,10 @@ const Chat = {
                 });
         },
         scrollChatToBottom: function() {
-            const chatContainer = this.$el.querySelector("#chat");
-            chatContainer.scrollTop = chatContainer.scrollHeight;
+            const chatContainer = this.$refs.chat;
+            if(chatContainer) {
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
         }
 
     },

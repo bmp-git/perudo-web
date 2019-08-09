@@ -8,7 +8,7 @@ const gameLobby = {
                 <gameComponent :gameid="game.id"></gameComponent>
            
                 <hr class="hr-text" data-content="Chat" />
-                <chat :gameid="game.id"></chat>
+                <chat ref="chat" :gameid="game.id"></chat>
             </template>
 
             </div>     
@@ -30,6 +30,13 @@ const gameLobby = {
 
     },
     filters: {
+    },
+    watch: {
+        $route: function(to, from) {
+            if(to.name === 'gamelobby') {
+                this.$refs.chat.scrollChatToBottom();
+            }
+        }
     },
     mounted: function () {
         if (allGames.get(this.$route.params.id)) {
