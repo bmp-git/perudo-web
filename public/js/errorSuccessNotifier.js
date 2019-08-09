@@ -31,7 +31,7 @@ const errorSuccessNotifier = {
             if(timeout !== null) {
                 this.old_timeout = setTimeout(() => {
                     this.disappear();
-                }, this.showTimeSpan);
+                }, timeout);
             }
         },
         showPersistentError: function(message) {
@@ -55,7 +55,7 @@ const errorSuccessNotifier = {
             if(timeout !== null) {
                 this.old_timeout = setTimeout(() => {
                     this.disappear();
-                }, this.showTimeSpan);
+                }, timeout);
             }
         },
         showPersistentSuccess: function(message) {
