@@ -4,7 +4,7 @@ const Games = {
     template: `
     <div class="container">
         <hr class="hr-text" data-content="All games" />
-        <template v-for="(val,index) in games_index">
+        <template v-for="(val,index) in games_index.slice().reverse()">
             <template v-if="index === (games_index.length - 1)">
                 <gameComponent :gameid="val" includedivisor=""></gameComponent>
             </template>

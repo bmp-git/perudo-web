@@ -7,24 +7,23 @@ const Game = {
         <template v-else> <i class="mr-3 fas fa-lock-open" data-toggle="tooltip" data-placement="bottom" title="No password needed"></i> </template>
         
         <i class="fas fa-stopwatch" title="Maximum time per turn"> </i> <small>{{turnTime}}</small>
-        <i class=" fas fa-users ml-3" title="Maximum time per turn"> </i><small> {{usedSpaces}} </small>
+        <i class=" fas fa-users ml-3" title="Number of users"> </i><small> {{usedSpaces}} </small>
 
         <template v-if="game.started">
             <button type="button" class="btn btn-primary btn-sm float-right" disabled>Game started</button>
         </template>
-        <template v-if="userIsOwner && !game.started">
-            <button type="button" @click.prevent="startGame" class="btn btn-primary btn-sm float-right">Start game!</button>
-        </template>
-        <template v-if="(!freeSpaceAvailable && !currentUserInside)">
-            <button type="button" class="btn btn-primary btn-sm float-right" disabled>Join</button>
-        </template>
-        <template v-if="!currentUserInside">
-            <div class="input-group-append float-right">
-            <template v-if="game.password != null">
-                <input v-model="inserted_password" type="password" v-bind:class="'form-control '+(password_wrong?'is-invalid':'')" placeholder="Password" required>
+        <template v-else>
+            <template v-if="userIsOwner">
+                <button type="button" @click.prevent="startGame" class="btn btn-primary btn-sm float-right">Start game!</button>
             </template>
-            <button type="button" @click.prevent="joinGame" class="btn btn-primary btn-sm float-right ml-2">Join</button>
-            </div>
+            <template v-if="!currentUserInside">
+                <div class="input-group-append float-right">
+                    <template v-if="game.password != null">
+                        <input v-model="inserted_password" type="password" :disabled="(!freeSpaceAvailable && !currentUserInside)" v-bind:class="'form-control '+(password_wrong?'is-invalid':'')" placeholder="Password" required>
+                    </template>
+                    <button type="button" @click.prevent="joinGame" :disabled="(!freeSpaceAvailable && !currentUserInside)" class="btn btn-primary btn-sm float-right ml-2">Join</button>
+                </div>
+            </template>
         </template>
         <template v-if="currentUserInside">
             <button type="button" @click.prevent="leaveGame" class="btn btn-primary btn-sm float-right mr-2">Leave</button>
