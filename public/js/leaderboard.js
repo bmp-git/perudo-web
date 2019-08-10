@@ -46,7 +46,7 @@ const Leaderboard = { template: `<div class="container">
 </div>
 <div class="row">
 <div class="col-sm-5 col-md-5">
-    <p>Showing {{firstUser}} to {{lastUser}} of {{total}} players</p>
+    <p><i>Showing {{firstUser}} to {{lastUser}} of {{total}} players</i></p>
 </div>
 <div class="col-sm-7 col-md-7">
         <ul class="pagination float-right">
@@ -55,10 +55,24 @@ const Leaderboard = { template: `<div class="container">
                 <i class="fas fa-chevron-left"></i>
             </a>
         </li>
-        <template v-for="n in pages">
-        <li class="page-item" v-bind:class="n == page ? 'active' : ''">
-            <a class="page-link" @click.prevent="changePage(n)" href="">{{n}}</a>
-        </li>
+        <template v-if="pages <= 5">
+            <template v-for="n in pages">
+            <li class="page-item" v-bind:class="n == page ? 'active' : ''">
+                <a class="page-link" @click.prevent="changePage(n)" href="">{{n}}</a>
+            </li>
+            </template>
+        </template>
+        <template v-else>
+            <template v-for="n in pages">
+            <template v-if="n == 1 || n == page || n == pages">
+                <li class="page-item" v-bind:class="n == page ? 'active' : ''">
+                    <a class="page-link" @click.prevent="changePage(n)" href="">{{n}}</a>
+                </li>
+            </template>
+            <template v-else-if="n == page + 1 || n == page - 1">
+                <li class="page-item disabled"> <a class="page-link">...</a></li>
+            </template>
+            </template>
         </template>
         <li class="page-item" v-bind:class="lastPage ? 'disabled' : ''">
             <a class="page-link" @click.prevent="changePage(page+1)" href="">
