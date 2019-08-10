@@ -180,16 +180,23 @@ exports.get_leaderboard = function (req, res) {
     const page = req.query.page;
     const pageLenght = req.query.pageLenght;
     if (page && pageLenght && /^[1-9]\d*$/.test(page) && /^[1-9]\d*$/.test(pageLenght)) {
-        User.paginate({}, { page: parseInt(page, 10), limit: parseInt(pageLenght, 10), sort: { points: -1 } }, function (err, result) {
-            if (err) {
+        let skip = (page - 1) * pageLenght;
+        User.countDocuments({}, function(err, count) {
+            if(err) {
                 res.status(500).send({ message: err });
             } else {
-                let leaderboard = { total: result.total , result: [] };
-                let i = (page - 1) * pageLenght + 1;
-                result.docs.forEach(function (user) {
-                    leaderboard.result.push({ rank: i++, id: user._id, username: user.username, points: user.points });
+                User.find().sort({points: -1}).skip(skip).limit(parseInt(pageLenght, 10)).exec( function (err, result) {
+                    if (err) {
+                        res.status(500).send({ message: err });
+                    } else {
+                        let leaderboard = { total: count , result: [] };
+                        let i = skip + 1;
+                        result.forEach(function (user) {
+                            leaderboard.result.push({ rank: i++, id: user._id, username: user.username, points: user.points });
+                        });
+                        res.json(leaderboard).end();
+                    }
                 });
-                res.json(leaderboard).end();
             }
         });
     } else {
