@@ -1,4 +1,4 @@
-const Leaderboard = { template: `<div class="container table-responsive">
+const Leaderboard = { template: `<div class="container">
 <hr class="hr-text" data-content="Global leaderboard">
 
 <div class="row">
@@ -13,37 +13,34 @@ const Leaderboard = { template: `<div class="container table-responsive">
             </label>
     </div>
 </div>
-
-<div class="row">
+<div class="container table-responsive">
+<div class="row ">
 <table class="table table-hover">
   <thead>
     <tr>
       <th scope="col">#</th>
-      <th scope="col">Country</th>
       <th scope="col">Username</th>
       <th scope="col">Points</th>
     </tr>
   </thead>
   <tbody>
-    <tr>
-      <th scope="row">1</th>
-      <td>Mark</td>
-      <td>Otto</td>
-      <td>@mdo</td>
-    </tr>
-    <tr>
-      <th scope="row">2</th>
-      <td>Jacob</td>
-      <td>Thornton</td>
-      <td>@fat</td>
-    </tr>
-    <tr>
-      <th scope="row">3</th>
-      <td colspan="2">Larry the Bird</td>
-      <td>@twitter</td>
-    </tr>
+    <template v-for="user in users">
+        <tr>
+            <th scope="row">{{user.rank}}</th>
+            <td>
+                <router-link :to="{ name: 'profile', params: { id: user.id }}">
+                        <img v-bind:src="avatar_url(user.id)" class="ig-avatar" width="32px" height="32px" style="object-fit: cover; border-radius: 50%; border: 2px solid #007BFF;">
+                </router-link>
+                <router-link :to="{ name: 'profile', params: { id: user.id }}">
+                {{user.username}}
+                </router-link>
+            </td>
+            <td>{{user.points}}</td>
+        </tr>
+    </template>
   </tbody>
 </table>
+</div>
 </div>
 <div class="row">
 <div class="col-sm-5 col-md-5">
@@ -63,4 +60,31 @@ const Leaderboard = { template: `<div class="container table-responsive">
         </ul>
     </div>
 </div>
-</div>` }
+</div>`,
+data() {
+    return {
+        page : 1,
+        page_lenght : 10,
+        total : 0,
+        users: []
+    }
+ },
+ methods: {
+     reload: function() {
+        axios.get("/api/leaderboard", { params: { page : this.page, pageLenght : this.page_lenght } })
+            .then(response => {
+                this.users = response.data.result;
+                this.total = response.data.total;
+            })
+            .catch(error => {
+                console.log(error.data);
+            });
+    },
+    avatar_url: function(user_id) {
+        return "/api/users/" + user_id + "/avatar";
+    }
+ },
+ mounted: function () {
+    this.reload();
+ }
+}

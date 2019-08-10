@@ -184,10 +184,10 @@ exports.get_leaderboard = function (req, res) {
             if (err) {
                 res.status(500).send({ message: err });
             } else {
-                let leaderboard = { result: [] };
+                let leaderboard = { total: result.total , result: [] };
                 let i = 1;
                 result.docs.forEach(function (user) {
-                    leaderboard.result.push({ rank: i++, userId: user._id, username: user.username, points: user.points });
+                    leaderboard.result.push({ rank: i++, id: user._id, username: user.username, points: user.points });
                 });
                 res.json(leaderboard).end();
             }
