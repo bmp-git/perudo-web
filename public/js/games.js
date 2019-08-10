@@ -13,15 +13,10 @@ const Games = {
             </template>
         </template>
         <div class="row mt-5">
-        <div class="col-12 col-sm-12 col-md-10 offset-md-1 col-lg-10 offset-lg-1 col-xl-8 offset-xl-2">
-
-        
-        
-        <button type="button" class="btn btn-primary btn-circle btn-xl" style="float: right"><i class="fas fa-plus" @click.prevent="newGame"></i></button>
-        <errorSuccessNotifier ref="new_game_notifier" class="mt-4"></errorSuccessNotifier>
-
-        </div>
-        </button>
+            <div class="col-12 col-sm-12 col-md-10 offset-md-1 col-lg-10 offset-lg-1 col-xl-8 offset-xl-2">
+                <button type="button" class="btn btn-primary btn-circle btn-xl" style="float: right"><i class="fas fa-plus" @click.prevent="newGame"></i></button>
+                <errorSuccessNotifier ref="new_game_notifier" class="mt-4"></errorSuccessNotifier>
+            </div>
         </div>
     </div>`,
     components: {

@@ -1,7 +1,6 @@
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
-require('./src/models/moviesModel');
 require('./src/models/user');
 const bodyParser = require('body-parser');
 

@@ -2,7 +2,14 @@ const Game = {
     template: `
 <div class="row">
     <div class="col-12 col-sm-12 col-md-10 offset-md-1 col-lg-10 offset-lg-1 col-xl-8 offset-xl-2">
-    <h6 class="card-title"><router-link :to="{ name: 'gamelobby', params: { id: gameid }}">{{game.name}}</router-link>&emsp;
+        <template v-if="game.started">
+            <span class="badge badge-pill badge-danger" style="margin-bottom:10px">Game started</span>
+        </template>
+        <template v-else>
+            <span class="badge badge-pill badge-success" style="margin-bottom:10px">In lobby</span>
+        </template>
+    <h6 class="card-title">
+        <router-link :to="{ name: 'gamelobby', params: { id: gameid }}">{{game.name}}</router-link>&emsp;
         <template v-if="game.password != null"> <i class="fas fa-lock mr-3" data-toggle="tooltip" data-placement="bottom" title="Password needed"></i> </template> 
         <template v-else> <i class="mr-3 fas fa-lock-open" data-toggle="tooltip" data-placement="bottom" title="No password needed"></i> </template>
         
@@ -32,7 +39,7 @@ const Game = {
       
     </h6>
     
-    <p class="card-text"><small class="text-muted">Created {{game.game_creation_time | formatTime}} ago</small></p>
+    <p class="card-text" data-toggle="tooltip" data-placement="bottom" v-bind:title="game.game_creation_time | formatTimeTooltip"><small class="text-muted">Created {{game.game_creation_time | formatTime}} ago</small></p>
     <div class="row" style="margin-bottom:0px">
         <template v-for="user in game.users">
         <div class="col-4 col-md-2 text-center pl-3 pr-3">
@@ -186,6 +193,9 @@ const Game = {
     filters: {
         formatTime: function (value) {
             return moment.duration(moment().diff(value)).humanize();
+        },
+        formatTimeTooltip: function (value) {
+            return moment(value).format('LLL');
         }
     },
     watch: {
