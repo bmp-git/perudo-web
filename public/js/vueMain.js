@@ -19,6 +19,7 @@ const app = new Vue({
     store,
     components : {
         'gamefooter' : gameFooter,
+        'navbar' : Navbar
     },
     methods: {
     },
