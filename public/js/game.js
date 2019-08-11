@@ -121,6 +121,7 @@ const Game = {
                     if (operation === "join") {
                         router.push({ name: 'gamelobby', params: { id: response.data.result.id } });
                     }
+                    store.commit('setGame', response.data.result);
                 })
                 .catch(error => {
                     if (operation === "join" && error.response.status === 403) {
@@ -162,6 +163,7 @@ const Game = {
             axios.delete("/api/games/" + this.gameid, { headers: { Authorization: authHeader } })
                 .then(response => {
                     this.updateGame(response.data.result);
+                    store.commit('unsetGame');
                     router.push({ name: 'games' });
                 })
                 .catch(error => {

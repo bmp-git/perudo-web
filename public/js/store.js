@@ -6,7 +6,20 @@ const store = new Vuex.Store( {
             email : "",
         },
         authenticated : false,
-        token: ""
+        token: "",
+        in_game : false,
+        game: {
+            name: "",
+            players: 0,
+            turn_time: 30,
+            id: 0,
+            password: null,
+            owner_id: "",
+            started: false,
+            game_creation_time: "",
+            users: [],
+            tick: 0
+        }
     },
     mutations: {
         setToken(state, token) {
@@ -29,6 +42,27 @@ const store = new Vuex.Store( {
             state.token = "";
             localStorage.token = "";
             axios.defaults.headers.common['Authorization'] = "";
+        },
+        setGame(state, game) {
+            state.in_game = true;
+            state.game = game;
+            localStorage.game = game.id;
+        },
+        unsetGame(state) {
+            state.in_game = false;
+            state.game = {
+                name: "",
+                players: 0,
+                turn_time: 30,
+                id: 0,
+                password: null,
+                owner_id: "",
+                started: false,
+                game_creation_time: "",
+                users: [],
+                tick: 0
+            }
+            localStorage.game = "";
         }
     }
 });

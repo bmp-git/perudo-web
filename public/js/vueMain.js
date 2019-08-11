@@ -2,11 +2,24 @@ if (localStorage.token) {
     console.log("Loaded token from localstorage " + localStorage.token);
     store.commit('setToken', localStorage.token);
 }
+if(localStorage.game) {
+    axios.get("/api/games/" + localStorage.game)
+        .then(response => {
+            console.log("Loaded game from localstorage " + localStorage.game);
+            store.commit('setGame', response.data.result);
+        })
+        .catch(error => {
+            //ignore
+        });
+}
 
 const app = new Vue({
     router,
     el: "#perudo",
     store,
+    components : {
+        'gamefooter' : gameFooter,
+    },
     methods: {
     },
     mounted() {

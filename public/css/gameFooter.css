@@ -1,0 +1,19 @@
+.gameFooter {
+  position: fixed;
+  opacity: 0.5;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background-color: #007bff;
+  color: white;
+  text-align: center;
+  z-index: 1;
+  border-radius: 10px 10px 3px 3px;
+  border: 5px solid #007bff;
+  margin-bottom: 2px;
+  padding-bottom: 0px;
+}
+
+.gameFooter .p {
+  margin-bottom: 0px;
+}

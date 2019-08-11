@@ -118,6 +118,7 @@ const NewGame = {
 
                         allGames.set(response.data.result.id, response.data.result);
                         router.push({ name: 'gamelobby', params: { id: response.data.result.id } });
+                        store.commit('setGame', response.data.result);
                     })
                     .catch(error => {
                         this.$refs.notifier.showError(error.response.data.message);
