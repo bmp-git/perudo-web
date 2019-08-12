@@ -63,7 +63,7 @@ const Chat = {
                                         <div class="col-8 col-md-8 col-lg-10">
                                             <p><i>
                                                 <username :userid="msg.user_id"></username> bid {{msg.bid.quantity}} dice of 
-                                                <span v-bind:class="'ml-2 dice dice-' + msg.bid.dice"></span>
+                                                <span v-bind:class="'ml-1 dice dice-' + msg.bid.dice"></span>
                                             </i></p>
                                         </div>
                                         <div class="col-2 offset-2 col-md-2 offset-md-2 col-lg-1 offset-lg-1">
