@@ -19,8 +19,169 @@ const Chat = {
                                         </div>                                          
                                     
                                     </div>
+                                </div>   
+                                                                 
+                            </template>
+                            
+                            <template v-else-if="msg.type === 'event'">
+                                
+                                <div class="container chat-message">
+                                    <div class="row">
+                                        <div class="col-8 col-md-8 col-lg-10">
+                                            <p><i>{{msg.content}}</i></p>
+                                        </div>
+                                        <div class="col-2 offset-2 col-md-2 offset-md-2 col-lg-1 offset-lg-1">
+                                            <span class="time-right">{{msg.date | formatDate}}</span>
+                                        </div>                                          
                                     
-                                </div>                                    
+                                    </div>
+                                </div>                             
+                                
+                            </template>
+                        
+                                                    
+                            <template v-else-if="msg.type === 'palifico'">
+
+                                <div class="container chat-message">
+                                    <div class="row">
+                                        <div class="col-8 col-md-8 col-lg-10">
+                                            <p><i><username :userid="msg.user_id"></username> called Palifico.</i></p>
+                                        </div>
+                                        <div class="col-2 offset-2 col-md-2 offset-md-2 col-lg-1 offset-lg-1">
+                                            <span class="time-right">{{msg.date | formatDate}}</span>
+                                        </div>                                          
+                                    
+                                    </div>
+                                </div> 
+                                                            
+                            </template>
+                                                    
+                            <template v-else-if="msg.type === 'bid'">
+
+                                <div class="container chat-message">
+                                    <div class="row">
+                                        <div class="col-8 col-md-8 col-lg-10">
+                                            <p><i><username :userid="msg.user_id"></username> bid {{msg.bid.quantity}} dice of {{msg.bid.dice}}.</i></p>
+                                        </div>
+                                        <div class="col-2 offset-2 col-md-2 offset-md-2 col-lg-1 offset-lg-1">
+                                            <span class="time-right">{{msg.date | formatDate}}</span>
+                                        </div>                                          
+                                    
+                                    </div>
+                                </div>                            
+                            
+                            </template>
+                                                    
+                            <template v-else-if="msg.type === 'doubt'">
+                            
+                                <div class="container chat-message">
+                                    <div class="row">
+                                        <div class="col-8 col-md-8 col-lg-10">
+                                            <p><i><username :userid="msg.user_id"></username> doubted.</i></p>
+                                        </div>
+                                        <div class="col-2 offset-2 col-md-2 offset-md-2 col-lg-1 offset-lg-1">
+                                            <span class="time-right">{{msg.date | formatDate}}</span>
+                                        </div>                                          
+                                    
+                                    </div>
+                                </div>                             
+                            
+                            </template>
+                                                    
+                            <template v-else-if="msg.type === 'spoton'">
+                            
+                                <div class="container chat-message">
+                                    <div class="row">
+                                        <div class="col-8 col-md-8 col-lg-10">
+                                            <p><i><username :userid="msg.user_id"></username> spotted on.</i></p>
+                                        </div>
+                                        <div class="col-2 offset-2 col-md-2 offset-md-2 col-lg-1 offset-lg-1">
+                                            <span class="time-right">{{msg.date | formatDate}}</span>
+                                        </div>                                          
+                                    
+                                    </div>
+                                </div>                             
+                            
+                            </template>
+                                                    
+                            <template v-else-if="msg.type === 'round'">
+                            
+                                <div class="container chat-message">
+                                    <div class="row">
+                                        <div class="col-8 col-md-8 col-lg-10">
+                                            <p><i>Started game round {{msg.round}}</i></p>
+                                        </div>
+                                        <div class="col-2 offset-2 col-md-2 offset-md-2 col-lg-1 offset-lg-1">
+                                            <span class="time-right">{{msg.date | formatDate}}</span>
+                                        </div>                                          
+                                    
+                                    </div>
+                                </div>                             
+                            
+                            </template>
+                                                    
+                            <template v-else-if="msg.type === 'turn'">
+                            
+                                <div class="container chat-message">
+                                    <div class="row">
+                                        <div class="col-8 col-md-8 col-lg-10">
+                                            <p><i>Turn of <username :userid="msg.user_id"></username></i></p>
+                                        </div>
+                                        <div class="col-2 offset-2 col-md-2 offset-md-2 col-lg-1 offset-lg-1">
+                                            <span class="time-right">{{msg.date | formatDate}}</span>
+                                        </div>                                          
+                                    
+                                    </div>
+                                </div>                             
+                            
+                            </template>
+                                                    
+                            <template v-else-if="msg.type === 'left'">
+                            
+                                <div class="container chat-message">
+                                    <div class="row">
+                                        <div class="col-8 col-md-8 col-lg-10">
+                                            <p><i><username :userid="msg.user_id"></username> left the game.</i></p>
+                                        </div>
+                                        <div class="col-2 offset-2 col-md-2 offset-md-2 col-lg-1 offset-lg-1">
+                                            <span class="time-right">{{msg.date | formatDate}}</span>
+                                        </div>                                          
+                                    
+                                    </div>
+                                </div>                              
+                            
+                            </template>
+                                                    
+                            <template v-else-if="msg.type === 'dice_lost'">
+                            
+                                <div class="container chat-message">
+                                    <div class="row">
+                                        <div class="col-8 col-md-8 col-lg-10">
+                                            <p><i><username :userid="msg.user_id"></username> lost a dice.</i></p>
+                                        </div>
+                                        <div class="col-2 offset-2 col-md-2 offset-md-2 col-lg-1 offset-lg-1">
+                                            <span class="time-right">{{msg.date | formatDate}}</span>
+                                        </div>                                          
+                                    
+                                    </div>
+                                </div>                              
+                            
+                            </template>
+                                                    
+                            <template v-else-if="msg.type === 'dice_win'">
+                            
+                                <div class="container chat-message">
+                                    <div class="row">
+                                        <div class="col-8 col-md-8 col-lg-10">
+                                            <p><i><username :userid="msg.user_id"></username> gained a dice.</i></p>
+                                        </div>
+                                        <div class="col-2 offset-2 col-md-2 offset-md-2 col-lg-1 offset-lg-1">
+                                            <span class="time-right">{{msg.date | formatDate}}</span>
+                                        </div>                                          
+                                    
+                                    </div>
+                                </div>                              
+                            
                             </template>
                         
                         </template>
@@ -82,8 +243,10 @@ const Chat = {
             const authHeader = 'bearer '.concat(this.$store.state.token);
             axios.get("/api/games/" + this.gameid + "/actions", { params: {from_index:this.index}, headers: { Authorization: authHeader}})
                 .then(response => {
-                    this.index = this.index + response.data.result.length;
-                    this.messages.push(...response.data.result);
+                    const actions = response.data.result.filter( elem => elem.index >= this.index);
+                    this.index = this.index + actions.length;
+                    this.messages.push(...actions);
+                    console.log(this.messages);
                 })
                 .catch(error => {
                     console.log(error.response.data.message);
