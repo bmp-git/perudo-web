@@ -44,18 +44,16 @@ const Login = {
     methods: {
         login: function () {
             if (this.email && this.login_request.password) {
-                axios.post("/api/users/" + this.email + "/token", this.login_request)
-                    .then(response => {
-                        store.commit('setToken', response.data.token);
-                        this.login_request.password = "";
-                        router.push("/");
-                        loadToken(); // in vueMain.js
-                    })
-                    .catch(error => {
-                        this.$refs.errorNotifier.showError(error.response.data.message);                
-                    });
+                Api.login(this.email, this.login_request.password, token => {
+                    store.commit('setToken', token);
+                    this.login_request.password = "";
+                    router.push("/");
+                    loadToken(); // in vueMain.js
+                }, error => {
+                    this.$refs.errorNotifier.showError(error.response.data.message);
+                })
             } else {
-                this.$refs.errorNotifier.showError("Please enter Email and Password!");                
+                this.$refs.errorNotifier.showError("Please enter Email and Password!");
             }
         },
     },

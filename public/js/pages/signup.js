@@ -28,7 +28,7 @@ const Signup = {
             </div>
             <errorSuccessNotifier ref="notifier"></errorSuccessNotifier>
             <div class="form-group" style="padding-top:10px">
-                <input type="button" @click.prevent="login" class="btn btn-primary btn-lg btn-block" value="Sign up">
+                <input type="button" @click.prevent="singup" class="btn btn-primary btn-lg btn-block" value="Sign up">
             </div>
         </form>
         <div class="form-group" style="padding-top:10px">
@@ -49,21 +49,19 @@ const Signup = {
         }
     },
     methods: {
-        login: function () {
-            axios.post("/api/users/", this.signup_request)
-                .then(response => {
-                    this.$refs.notifier.showSuccess("Sign up completed. You will be redirected soon.");                
-                    tmp_email = (' ' + this.signup_request.email).slice(1); //to force the creation of a copy
+        singup: function () {
+            Api.signup(this.signup_request.email, this.signup_request.username, this.signup_request.password, () => {
+                this.$refs.notifier.showSuccess("Sign up completed. You will be redirected soon.");                
+                tmp_email = (' ' + this.signup_request.email).slice(1); //to force the creation of a copy
 
-                    this.signup_request.username = "";
-                    this.signup_request.email = "";
-                    this.signup_request.password = "";
+                this.signup_request.username = "";
+                this.signup_request.email = "";
+                this.signup_request.password = "";
 
-                    setTimeout(function () { router.push("/signin"); }, 2000);
-                })
-                .catch(error => {
-                    this.$refs.notifier.showError(error.response.data.message);                
-                });
+                setTimeout(function () { router.push("/signin"); }, 2000);
+            }, error => {
+                this.$refs.notifier.showError(error.response.data.message);       
+            })
         },
     },
     mounted: function () {
