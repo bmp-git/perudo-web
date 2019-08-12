@@ -35,7 +35,7 @@ const GameButtons = {
  methods: {
     makeAction: function(action) {
         const authHeader = 'bearer '.concat(this.$store.state.token);
-        axios.post("/api/games/" + this.game.id + "/actions/" + action, {headers: { Authorization: authHeader}})
+        axios.post("/api/games/" + this.game.id + "/actions/" + action, {}, {headers: { Authorization: authHeader}})
             .then(response => {
                 console.log(action + "done!");
             })
