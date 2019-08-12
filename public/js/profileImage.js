@@ -2,9 +2,11 @@ const profileImage = {
     template: `
             <div>
                 <div class="profileImage">
-                    <router-link :to="{ name: 'profile', params: { id: this.userid }}">
-                        <img v-bind:src="imageURL"/>
-                    </router-link>
+                    <template v-if="this.userid">
+                        <router-link :to="{ name: 'profile', params: { id: this.userid }}">
+                            <img v-bind:src="imageURL"/>
+                        </router-link>
+                    </template>
                 </div>
                 
                 <input type="file" ref="inputFile" accept="image/*" @change="loadImage" hidden>
@@ -26,8 +28,7 @@ const profileImage = {
 `,
     data() {
         return {
-            imageURL: '/api/users/' + this.userid + '/avatar',
-            profileURL: '/profile/' + this.userid
+            imageURL: '/api/users/' + this.userid + '/avatar'
         }
     },
     props: ['userid', 'canedit', 'onnewimage'],
