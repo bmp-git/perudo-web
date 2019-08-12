@@ -13,13 +13,14 @@ const gameLobby = {
                     <template v-else>
                     
                         <hr class="hr-text" v-bind:data-content="'In game: ' + game.name" />
-                        
+                        <currentbid v-bind:game="game"></currentbid>
+
                         <gameTurn v-bind:game="game"></gameTurn>
                         
                         <br/>
                         
-                        <diceSelector v-bind:game="game"></diceSelector>
-                        <gameButtons v-bind:game="game"></gameButtons>
+                        <diceSelector v-bind:game="game" v-bind:bid.sync="this.bid"></diceSelector>
+                        <gameButtons v-bind:game="game" v-bind:bid="this.bid"></gameButtons>
 
                    
                     </template>
@@ -38,13 +39,18 @@ const gameLobby = {
         'chat': Chat,
         'diceSelector': diceSelector,
         'gameButtons': GameButtons,
-        'gameTurn': gameTurn
+        'gameTurn': gameTurn,
+        'currentbid' : currentBid
     },
     data() {
         return {
             game: {
                 id: null
             },
+            bid: {
+                dice: 1,
+                quantity: 1
+            }
         }
 
     },
