@@ -35,7 +35,7 @@ const GameButtons = {
  methods: {
     makeAction: function(action) {
         const authHeader = 'bearer '.concat(this.$store.state.token);
-        axios.post("/api/games/" + this.game.gameid + "/actions/" + action, {headers: { Authorization: authHeader}})
+        axios.post("/api/games/" + this.game.id + "/actions/" + action, {headers: { Authorization: authHeader}})
             .then(response => {
                 console.log(action + "done!");
             })
@@ -45,9 +45,10 @@ const GameButtons = {
      },
      doBid: function() {
         const authHeader = 'bearer '.concat(this.$store.state.token);
-        axios.post("/api/games/" + this.game.gameid + "/actions/bid", {dice : this.bid.dice, quantity : this.bid.quantity}, {headers: { Authorization: authHeader}})
+        axios.post("/api/games/" + this.game.id + "/actions/bids", {dice : this.bid.dice, quantity : this.bid.quantity}, {headers: { Authorization: authHeader}})
             .then(response => {
                 console.log("bid done!");
+                console.log(response.data);
             })
             .catch(error => {
                 console.log(error.response.data.message);
