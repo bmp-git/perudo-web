@@ -197,10 +197,10 @@ tick_game = function (game, force_broadcast) {
         io.emit('game changed', { id: game.id, tick: game.tick });
     }
 };
-actions_notification = function (game) {
+actions_notification = function (game_id) {
     //Notify all user in that game that an actions has been added to 'game'.
     //They should refresh with get '/api/games/:id/actions' from the index they are.
-    io.to('game ' + game.id).emit('new action', game.id);
+    io.to('game ' + game_id).emit('new action', game_id);
 };
 new_game_io_notification = function (game_id) {
     io.emit('game added', game_id);
@@ -582,11 +582,30 @@ actions_add_take_one_dice = function (game_id, user_id) {
     add_action(game_id, { type: "dice_win", user_id: user_id });
 };
 
-
+var actionNotificationTimeouts = new Map(); //game id -> { timer: ..., count: ...}
 add_action = function (game_id, action) {
     const actionsList = actions.get(game_id);
     action.date = new Date();
     action.index = actionsList.length;
     actionsList.push(action);
-    actions_notification(games.get(game_id));
+
+    var count = 1;
+    var timeout = actionNotificationTimeouts.get(game_id);
+    if (timeout) {
+        clearTimeout(timeout.timer);
+        count = timeout.count + 1;
+    }
+    if (count >= 10) { //if a game countinue to push actions the timer will reset every time for a long period, this prevent it
+        console.log("forced actions_notification for " + game_id);
+        actions_notification(game_id);
+        actionNotificationTimeouts.set(game_id, null);
+    } else {
+        var t = setTimeout(function () {
+            console.log("actions_notification for " + game_id);
+            actions_notification(game_id);
+            actionNotificationTimeouts.set(game_id, null);
+        }, 50);
+        actionNotificationTimeouts.set(game_id, { timer: t, count: count });
+    }
+
 };
