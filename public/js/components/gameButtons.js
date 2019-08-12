@@ -1,7 +1,7 @@
 const GameButtons = { 
  template: `<div class="container">
                 <div class="row d-flex justify-content-center m-1">
-                        <button type="button" @click="bid" class="btn btn-primary m-1" v-bind:disabled="!canBid">Bid</button>
+                        <button type="button" @click="doBid" class="btn btn-primary m-1" v-bind:disabled="!canBid">Bid</button>
                         <button type="button" @click="doubt" class="btn btn-primary m-1" v-bind:disabled="!canDoubt">Dubt</button>
                         <button type="button" @click="spotOn" class="btn btn-primary m-1" v-bind:disabled="!canSpotOn">Spot on</button>
                         <button type="button" @click="palifico" class="btn btn-primary m-1" v-bind:disabled="!canPalifico">Palifico</button>
@@ -43,11 +43,11 @@ const GameButtons = {
                 console.log(error.response.data.message);
             });
      },
-     bid: function() {
+     doBid: function() {
         const authHeader = 'bearer '.concat(this.$store.state.token);
         axios.post("/api/games/" + this.game.gameid + "/actions/bid", {dice : this.bid.dice, quantity : this.bid.quantity}, {headers: { Authorization: authHeader}})
             .then(response => {
-                console.log(action + "done!");
+                console.log("bid done!");
             })
             .catch(error => {
                 console.log(error.response.data.message);
