@@ -37,5 +37,10 @@ const Username = {
     },
     destroyed: function () {
         username_observers = username_observers.filter(o => o !== this.observer);
+    },
+    watch: {
+        userid: function (val) {
+            this.updateUsername();
+        }
     }
 };
