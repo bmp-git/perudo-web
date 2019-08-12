@@ -42,6 +42,9 @@ module.exports = function (app) {
 
 	app.route('/api/users/:id/info')
 		.get(userController.get_user_info);
+	
+	app.route('/api/users/:id/rank')
+		.get(userController.get_user_rank);
 
 	app.route('/api/users/:id/info')
 		.delete(autheticate, userController.reset_user_stats);

@@ -152,6 +152,20 @@ exports.get_user_info = function (req, res) {
     });
 };
 
+exports.get_user_rank = function (req, res) {
+    const id = req.params.id;
+
+    User.findById(id, function (err, result) {
+        if (err) {
+            res.status(500).send({ message: err }).end();
+        } else if (result) {
+            res.status(200).send({ username: result.username }).end();
+        } else {
+            res.status(401).send({ message: "Incorrect user id." }).end();
+        }
+    });
+};
+
 exports.reset_user_stats = function (req, res) {
     const id = req.params.id;
     const tokenId = req.authData.user._id;
@@ -174,6 +188,24 @@ exports.reset_user_stats = function (req, res) {
             }
         });
     }
+};
+
+exports.get_user_rank = function (req, res) {
+    const id = req.params.id;
+    User.find({}).sort({points: -1}).exec(function (err, result) {
+        if (err) {
+            res.status(500).send({ message: err }).end();
+        } else if (result) {
+            rank = result.findIndex(u => u._id == id) + 1;
+            if(rank != 0) {
+                res.status(200).send({ rank: rank }).end();
+            } else {
+                res.status(401).send({ message: "Incorrect user id." }).end();
+            }
+        } else {
+            res.status(401).send({ message: "Incorrect user id." }).end();
+        }
+    });
 };
 
 exports.get_leaderboard = function (req, res) {
