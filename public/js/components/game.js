@@ -41,7 +41,7 @@ const Game = {
     
     <p class="card-text" data-toggle="tooltip" data-placement="bottom" v-bind:title="game.game_creation_time | formatTimeTooltip"><small class="text-muted">Created {{game.game_creation_time | formatTime}} ago</small></p>
     <div class="row" style="margin-bottom:0px">
-        <template v-for="user in game.users">
+        <template v-for="user in game.users" v-bind:key="user.id">
         <div class="col-4 col-md-2 text-center pl-3 pr-3">
 
                 <router-link :to="{ name: 'profile', params: { id: user.id }}">
@@ -57,7 +57,7 @@ const Game = {
 
             </div>
         </template>
-        <template v-for="i in freeSpaces" :key="i">
+        <template v-for="i in freeSpaces" v-bind:key="i">
             <div class="col-4 col-md-2 text-center">
                 <a href="" @click.prevent="joinGame">
                     <img src="/img/avatar"  class="ig-avatar" width="64px" height="64px" style="object-fit: cover; border-radius: 50%;">
@@ -127,7 +127,7 @@ const Game = {
                 .catch(error => {
                     if (operation === "join" && error.response.status === 403) {
                         this.password_wrong = true;
-                    } else if (operation === "join" && error.response.data.message === "You are already in another game.") {
+                    } else if (operation === "join" && error.response.data.error_code === 12) {
                         //Leave other game and re-join this game
                         const authHeader = 'bearer '.concat(this.$store.state.token);
                         var result = "null";
@@ -165,7 +165,9 @@ const Game = {
                 .then(response => {
                     this.updateGame(response.data.result);
                     store.commit('unsetGame');
-                    router.push({ name: 'games' });
+                    if(this.$router.currentRoute.name !== "games") {
+                        router.push({ name: 'games' });
+                    }
                 })
                 .catch(error => {
                     console.log(error);

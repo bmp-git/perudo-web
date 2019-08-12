@@ -1,7 +1,7 @@
 const gameTurn = { template: `
 <div class="container">
     <div class="row">
-    <template v-for="user in users">
+    <template v-for="user in this.game.users">
     <div class="col-4 col-md-2 pl-3 pr-3" >
             <div class="row d-flex justify-content-center">
                 {{user.remaining_dice > 0 ? user.remaining_dice + " dice" : "loses"}}
@@ -21,7 +21,7 @@ const gameTurn = { template: `
                 <template v-if="isMe(user.id)"> You </template> <template v-else>{{user.username}}</template>
             </router-link>
             </div>
-            <template v-if="current_turn_user_id == user.id">
+            <template v-if="this.game.current_turn_user_id === user.id">
             <div class="row d-flex justify-content-center">
             <i class="fas fa-chevron-up"></i>
             </div>
@@ -31,19 +31,14 @@ const gameTurn = { template: `
     </div>
 </div>
 `,
+props: ['game'],
  data() {
     return {
-        current_turn_user_id : "",
-        users: []
     }
  },
  methods: {
      isMe: function(id) {
          return id == this.$store.state.user._id;
      },
-     update: function(game) {
-        this.users = game.users;
-        this.current_turn_user_id = game.current_turn_user_id;
-     }
  }
 }
