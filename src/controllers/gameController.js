@@ -42,7 +42,7 @@ add_user_to_game = function (game, userId, next) {
 };
 
 start_game = function (game) {
-    actions_add_event(game.id, "Welcome! The game is started!");
+    actions_add_event(game.id, "Welcome! The game is started!", 1);
     actions_add_round(game.id, 1);
     reroll_dice(game);
     oldDice.set(game.id, new Map());
@@ -117,7 +117,8 @@ change_turn = function (game, user_id) {
     game.turn_start_time = new Date();
 
     turnTimeouts.set(game.id, setTimeout(function () {
-        console.log(user_id + " in game " + game.id + " is to slow, random bid and next turn.");
+        console.log(user_id + " in game " + game.id + " is too slow, random bid and next turn.");
+        actions_add_event(game.id, game.users.find(u => u.id == user_id).username + " is too slow, the game will bid automatically for him.", 2);
         if (game.current_bid) {
             make_bid(game, user_id, game.current_bid.dice, game.current_bid.quantity + 1);
         } else {
@@ -551,8 +552,8 @@ assert_is_my_turn = function (game, req, res) {
 actions_add_message = function (game_id, user_id, message) {
     add_action(game_id, { type: "message", user_id: user_id, content: message });
 };
-actions_add_event = function (game_id, message) {
-    add_action(game_id, { type: "event", content: message });
+actions_add_event = function (game_id, message, code) {
+    add_action(game_id, { type: "event", content: message, code: code});
 };
 actions_add_palifico = function (game_id, user_id) {
     add_action(game_id, { type: "palifico", user_id: user_id });
