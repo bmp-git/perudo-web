@@ -127,7 +127,7 @@ const Game = {
                 .catch(error => {
                     if (operation === "join" && error.response.status === 403) {
                         this.password_wrong = true;
-                    } else if (operation === "join" && error.response.data.message === "You are already in another game.") {
+                    } else if (operation === "join" && error.response.data.error_code === 12) {
                         //Leave other game and re-join this game
                         const authHeader = 'bearer '.concat(this.$store.state.token);
                         var result = "null";
