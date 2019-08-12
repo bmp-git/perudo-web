@@ -2,16 +2,6 @@ if (localStorage.token) {
     console.log("Loaded token from localstorage " + localStorage.token);
     store.commit('setToken', localStorage.token);
 }
-if(localStorage.game) {
-    axios.get("/api/games/" + localStorage.game)
-        .then(response => {
-            console.log("Loaded game from localstorage " + localStorage.game);
-            store.commit('setGame', response.data.result);
-        })
-        .catch(error => {
-            //ignore
-        });
-}
 
 const app = new Vue({
     router,
@@ -29,6 +19,10 @@ const app = new Vue({
                 allGames = new Map();
                 response.data.result.forEach(g => {
                     allGames.set(g.id, g);
+                    if(g.users.some(u => u.id === this.$store.state.user._id)) {
+                        console.log("sono in un game!")
+                        store.commit('setGame', g);
+                    }
                 });
             })
             .catch(error => {
