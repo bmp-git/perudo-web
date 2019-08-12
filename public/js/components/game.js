@@ -165,7 +165,9 @@ const Game = {
                 .then(response => {
                     this.updateGame(response.data.result);
                     store.commit('unsetGame');
-                    router.push({ name: 'games' });
+                    if(this.$router.currentRoute.name !== "games") {
+                        router.push({ name: 'games' });
+                    }
                 })
                 .catch(error => {
                     console.log(error);
