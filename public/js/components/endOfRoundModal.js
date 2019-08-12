@@ -6,10 +6,10 @@ const EndOfRoundModal = {
       <!-- Modal content -->
       <div class="modal-content">
         <h4>
-        <template v-if="game.last_round_recap.spoton_user"><username :userid="game.last_round_recap.spoton_user"></username> spoton </template>
-        <template v-if="game.last_round_recap.doubt_user"><username :userid="game.last_round_recap.doubt_user"></username> doubt on </template>
-        <username :userid="game.last_round_recap.bid_user"></username> bid!</h4>
-        <h5>The bid: {{game.last_round_recap.bid.quantity}} dice of <span v-bind:class="'ml-2 dice dice-' + game.last_round_recap.bid.dice"></span></h5>
+        <template v-if="game.last_round_recap.spoton_user"><b class="text-primary"><username :userid="game.last_round_recap.spoton_user"></username></b> spoton </template>
+        <template v-if="game.last_round_recap.doubt_user"><b class="text-primary"><username :userid="game.last_round_recap.doubt_user"></username></b> doubt on </template>
+        <b class="text-primary"><username :userid="game.last_round_recap.bid_user"></username></b> bid!</h4>
+        <h5><b class="text-info">Bid:</b> {{game.last_round_recap.bid.quantity}} dice of <span v-bind:class="'ml-2 dice dice-' + game.last_round_recap.bid.dice"></span></h5>
         <template v-for="d in dice">
           <h6><username :userid="d.user"></username>
             <template v-for="v in d.dice">
@@ -22,9 +22,8 @@ const EndOfRoundModal = {
             </template>
           </h6>
         </template>
-        <h6>Total count: {{total_count}} valid dice! 
-        So the spoton was an error!</h6>
-        <h6>Loan loses a dice</h6>
+        <h6>Total count: {{total_count}}!</h6>
+        <h6>So the spoton was an <b class="text-danger">error</b> and <b class="text-primary">Loan</b> loses a dice</h6>
       </div>
       
 
