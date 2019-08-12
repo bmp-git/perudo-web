@@ -52,6 +52,7 @@ start_game = function (game) {
     game.last_turn_user_id = null;
     game.current_bid = null;
     game.is_palifico_round = false;
+    game.last_round_recap = null;
     game.round = 1;
     change_turn(game, game.users[Math.floor(Math.random() * game.users.length)].id);
 };
@@ -88,7 +89,7 @@ reroll_dice = function (game) {
         for (i = 0; i < u.remaining_dice; i++) {
             user_dice.push(Math.floor(Math.random() * 6) + 1);
         }
-        game_dice.set(u.id, user_dice);
+        game_dice.set(u.id, user_dice.sort());
     });
     currentDice.set(game.id, game_dice);
 };
@@ -345,6 +346,7 @@ exports.leave_game = function (req, res) {
         } else if (game.started) {
             actions_add_left_game(game.id, req.user._id);
             if (game.current_turn_user_id === req.user._id || game.last_turn_user_id === req.user._id) {
+                game.last_round_recap = { leave_user: req.user._id };
                 next_round(game, false, null);
             }
             //TODO check for win
@@ -383,6 +385,7 @@ exports.action_doubt = function (req, res) {
                 lose_user_id = game.last_turn_user_id;
             }
             remove_one_dice(game, lose_user_id);
+            game.last_round_recap = { bid: game.current_bid, bid_user: game.current_turn_user_id, doubt_user: req.user._id };
             next_round(game, false, lose_user_id);
             tick_game(game);
             res.status(200).send({ message: "Doubt done.", result: game }).end();
@@ -416,6 +419,7 @@ exports.action_spoton = function (req, res) {
         } else {
             actions_add_spoton(game.id, req.user._id);
             const total_dice = count_dice(game);
+            game.last_round_recap = { bid: game.current_bid, bid_user: game.current_turn_user_id, spoton_user: req.user._id };
             if (total_dice === game.current_bid.quantity) {
                 game.users.forEach(u => {
                     if (u.id !== req.user._id) {
