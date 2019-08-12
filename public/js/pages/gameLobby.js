@@ -2,24 +2,41 @@ const gameLobby = {
     template: `
             <div class="container">
             
-            <template v-if="game !== null">
-                <hr class="hr-text" v-bind:data-content="'Inside lobby: ' + game.name" />
+            <template v-if="game.id !== null">
+                    <template v-if="!game.started">
+                    
+                        <hr class="hr-text" v-bind:data-content="'Inside lobby: ' + game.name" />
+                        
+                        <gameComponent :gameid="game.id"></gameComponent>
+                   
+                    </template>
+                    <template v-else>
+                    
+                        <hr class="hr-text" v-bind:data-content="'In game: ' + game.name" />
+                        
+                        <diceSelector></diceSelector>
+                   
+                    </template>
                 
-                <gameComponent :gameid="game.id"></gameComponent>
-           
-                <hr class="hr-text" data-content="Chat" />
-                <chat ref="chat" :gameid="game.id"></chat>
+                    <hr class="hr-text" data-content="Chat" />
+                    <chat ref="chat" :gameid="game.id"></chat>
+                
+                
+                
             </template>
 
             </div>     
 `,
     components: {
         'gameComponent': Game,
-        'chat': Chat
+        'chat': Chat,
+        'diceSelector': diceSelector
     },
     data() {
         return {
-            game: null,
+            game: {
+                id: null
+            },
         }
 
     },
@@ -27,9 +44,23 @@ const gameLobby = {
     computed: {
     },
     methods: {
+        reload: function() {
+            axios.get("/api/games/" + this.$route.params.id, { headers: { Authorization: 'bearer '.concat(this.$store.state.token) } })
+                .then(response => {
+                    this.game = response.data.result;
+                })
+                .catch(error => {
+                    router.push("/404")
+                });
+        },
         gameRemoved: function (game_id) {
-            if (this.game && game_id === this.game.id) {
+            if (game_id === this.game.id) {
                 router.push({ name: 'games' });
+            }
+        },
+        gameChanged: function (game) {
+            if (game.id === this.game.id) {
+                this.reload();
             }
         }
     },
@@ -44,19 +75,10 @@ const gameLobby = {
     },
     mounted: function () {
         socket.on('game removed', this.gameRemoved);
-        if (allGames.get(this.$route.params.id)) {
-            this.game = allGames.get(this.$route.params.id);
-        } else {
-            axios.get("/api/games/" + this.$route.params.id, { headers: { Authorization: 'bearer '.concat(this.$store.state.token) } })
-                .then(response => {
-                    this.game = response.data.result;
-                })
-                .catch(error => {
-                    router.push("/404")
-                });
-        }
+        socket.on('game changed', this.gameChanged);
+        this.reload();
     },
     destroyed: function () {
-        socket.off('game removed', this.gameRemoved);
+        socket.off('game removed');
     }
 };
