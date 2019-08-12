@@ -100,7 +100,9 @@ const Game = {
         updateGame: function (game) {
             this.game = game;
             allGames.set(this.gameid, game);
-            //send event to parent ==> parent says to all other child that a game is changed, update Join button
+            if(this.currentUserInside) {
+                store.commit('setGame', game);
+            }
         },
         updateGameFromWeb: function () {
             console.log("refreshing game " + this.gameid + " from web");
@@ -121,7 +123,6 @@ const Game = {
                     if (operation === "join") {
                         router.push({ name: 'gamelobby', params: { id: response.data.result.id } });
                     }
-                    store.commit('setGame', response.data.result);
                 })
                 .catch(error => {
                     if (operation === "join" && error.response.status === 403) {

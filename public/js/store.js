@@ -46,7 +46,6 @@ const store = new Vuex.Store( {
         setGame(state, game) {
             state.in_game = true;
             state.game = game;
-            localStorage.game = game.id;
         },
         unsetGame(state) {
             state.in_game = false;
@@ -62,7 +61,6 @@ const store = new Vuex.Store( {
                 users: [],
                 tick: 0
             }
-            localStorage.game = "";
         }
     }
 });
