@@ -19,8 +19,8 @@ const gameLobby = {
                         
                         <br/>
                         
-                        <diceSelector v-bind:game="game"></diceSelector>
-                        <gameButtons v-bind:game="game"></gameButtons>
+                        <diceSelector v-bind:game="game" v-bind:bid.sync="this.bid"></diceSelector>
+                        <gameButtons v-bind:game="game" v-bind:bid="this.bid"></gameButtons>
 
                    
                     </template>
@@ -47,6 +47,10 @@ const gameLobby = {
             game: {
                 id: null
             },
+            bid: {
+                dice: 1,
+                quantity: 1
+            }
         }
 
     },
