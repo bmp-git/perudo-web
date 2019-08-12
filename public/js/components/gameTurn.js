@@ -21,7 +21,7 @@ const gameTurn = { template: `
                 <template v-if="isMe(user.id)"> You </template> <template v-else>{{user.username}}</template>
             </router-link>
             </div>
-            <template v-if="this.game.current_turn_user_id === user.id">
+            <template v-if="isUserTurn(user.id)">
             <div class="row d-flex justify-content-center">
             <i class="fas fa-chevron-up"></i>
             </div>
@@ -38,7 +38,10 @@ props: ['game'],
  },
  methods: {
      isMe: function(id) {
-         return id == this.$store.state.user._id;
+         return id === this.$store.state.user._id;
      },
+     isUserTurn: function(user_id) {
+         return this.game.current_turn_user_id === user_id;
+     }
  }
-}
+};

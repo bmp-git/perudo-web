@@ -14,7 +14,13 @@ const gameLobby = {
                     
                         <hr class="hr-text" v-bind:data-content="'In game: ' + game.name" />
                         
-                        <diceSelector></diceSelector>
+                        <gameTurn v-bind:game="game"></gameTurn>
+                        
+                        <br/>
+                        
+                        <diceSelector v-bind:game="game"></diceSelector>
+                        <gameButtons v-bind:game="game"></gameButtons>
+
                    
                     </template>
                 
@@ -30,7 +36,9 @@ const gameLobby = {
     components: {
         'gameComponent': Game,
         'chat': Chat,
-        'diceSelector': diceSelector
+        'diceSelector': diceSelector,
+        'gameButtons': GameButtons,
+        'gameTurn': gameTurn
     },
     data() {
         return {
@@ -48,6 +56,7 @@ const gameLobby = {
             axios.get("/api/games/" + this.$route.params.id, { headers: { Authorization: 'bearer '.concat(this.$store.state.token) } })
                 .then(response => {
                     this.game = response.data.result;
+                    console.log(this.game);
                 })
                 .catch(error => {
                     router.push("/404")
