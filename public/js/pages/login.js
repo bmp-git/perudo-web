@@ -49,6 +49,7 @@ const Login = {
                         store.commit('setToken', response.data.token);
                         this.login_request.password = "";
                         router.push("/");
+                        loadToken(); // in vueMain.js
                     })
                     .catch(error => {
                         this.$refs.errorNotifier.showError(error.response.data.message);                

@@ -1,15 +1,40 @@
-if (localStorage.token) {
-    console.log("Loaded token from localstorage " + localStorage.token);
-    store.commit('setToken', localStorage.token);
+var setTokenTimeout = function (tokenData) {
+    setTimeout(function () {
+        const authHeader = 'bearer '.concat(localStorage.token);
+        axios.get("/api/users/" + tokenData.user._id + "/token", { headers: { Authorization: authHeader } })
+            .then(
+                tokenRes => {
+                    store.commit('setToken', tokenRes.data.token);
+                    var tokenData = JSON.parse(atob(tokenRes.data.token.split('.')[1]));
+                    setTokenTimeout(tokenData);
+                }
+            );
+    }, tokenData.exp * 1000 - Date.now() - 1000 * 90);
+    console.log("Token refresh timer set in " + (Math.round((tokenData.exp * 1000 - Date.now() - 1000 * 90) / (60 * 1000))) + "  minutes");
 }
+var loadToken = function () {
+    if (localStorage.token) {
+        console.log("Loaded token from localstorage " + localStorage.token);
+        store.commit('setToken', localStorage.token);
+
+        var tokenData = JSON.parse(atob(localStorage.token.split('.')[1]));
+        if ((tokenData.exp * 1000 - Date.now()) <= 1000 * 60) { //token expired or exipre in less than a minute
+            console.log("Token is expired");
+            store.commit('unsetToken');
+        } else {
+            setTokenTimeout(tokenData);
+        }
+    }
+}
+loadToken();
 
 const app = new Vue({
     router,
     el: "#perudo",
     store,
-    components : {
-        'gamefooter' : gameFooter,
-        'navbar' : Navbar
+    components: {
+        'gamefooter': gameFooter,
+        'navbar': Navbar
     },
     methods: {
     },
@@ -19,7 +44,7 @@ const app = new Vue({
                 allGames = new Map();
                 response.data.result.forEach(g => {
                     allGames.set(g.id, g);
-                    if(g.users.some(u => u.id === this.$store.state.user._id)) {
+                    if (g.users.some(u => u.id === this.$store.state.user._id)) {
                         console.log("sono in un game!")
                         store.commit('setGame', g);
                     }
