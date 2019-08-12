@@ -22,18 +22,68 @@ const diceSelector = {
     },
     data() {
         return {
-            selectedFace : 1,
-            selectedQuantity : 1
+            selectedFace: 1,
+            selectedQuantity: 1
         }
 
     },
     props: ['game'],
     computed: {
-        getDiceFaces : function () {
-            return [1, 2, 3, 4, 5, 6];
+        getDiceFaces: function () {
+            var validDice = [];
+            if (this.game.current_bid) {
+                if (this.game.is_palifico_round) {
+                    if (this.selectedQuantity > this.game.current_bid.quantity) {
+                        validDice.push(this.game.current_bid.dice);
+                    }
+                } else {
+                    if (this.game.current_bid.dice === 1) {
+                        if (this.selectedQuantity > this.game.current_bid.quantity) {
+                            validDice.push(1);
+                        }
+                        if (this.selectedQuantity > this.game.current_bid.quantity * 2) {
+                            validDice.push(2, 3, 4, 5, 6);
+                        }
+                    } else {
+                        if (this.selectedQuantity >= Math.floor((this.game.current_bid.quantity + 1) / 2)) {
+                            validDice.push(1);
+                        }
+                        if (this.selectedQuantity > this.game.current_bid.quantity) {
+                            validDice.push(2, 3, 4, 5, 6);
+                        } else if (this.selectedQuantity === this.game.current_bid.quantity) {
+                            validDice.push(this.game.current_bid.dice);
+                        }
+                    }
+                }
+            } else {
+                validDice.push(1, 2, 3, 4, 5, 6);
+            }
+            return validDice;
         },
         getMinQuantity: function () {
-            return 2;
+            if (this.game.current_bid) {
+                if (this.game.is_palifico_round) {
+                    return this.current_bid.quantity + 1;
+                } else {
+                    if (this.game.current_bid.dice === 1) {
+                        if (this.selectedFace === 1) {
+                            return this.game.current_bid.quantity + 1;
+                        } else {
+                            return this.game.current_bid.quantity * 2 + 1;
+                        }
+                    } else {
+                        if (this.selectedFace === 1) {
+                            return Math.floor((this.game.current_bid.quantity + 1) / 2);
+                        } else if (this.selectedFace > this.game.current_bid.dice) {
+                            return this.game.current_bid.quantity;
+                        } else {
+                            return this.game.current_bid.quantity + 1;
+                        }
+                    }
+                }
+            } else {
+                return 1;
+            }
         }
     },
     methods: {
