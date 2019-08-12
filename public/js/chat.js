@@ -61,7 +61,10 @@ const Chat = {
                                 <div class="container chat-message">
                                     <div class="row">
                                         <div class="col-8 col-md-8 col-lg-10">
-                                            <p><i><username :userid="msg.user_id"></username> bid {{msg.bid.quantity}} dice of {{msg.bid.dice}}.</i></p>
+                                            <p><i>
+                                                <username :userid="msg.user_id"></username> bid {{msg.bid.quantity}} dice of 
+                                                <span v-bind:class="'ml-2 dice dice-' + msg.bid.dice"></span>
+                                            </i></p>
                                         </div>
                                         <div class="col-2 offset-2 col-md-2 offset-md-2 col-lg-1 offset-lg-1">
                                             <span class="time-right">{{msg.date | formatDate}}</span>
@@ -246,7 +249,6 @@ const Chat = {
                     const actions = response.data.result.filter( elem => elem.index >= this.index);
                     this.index = this.index + actions.length;
                     this.messages.push(...actions);
-                    console.log(this.messages);
                 })
                 .catch(error => {
                     console.log(error.response.data.message);
