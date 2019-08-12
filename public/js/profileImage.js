@@ -7,7 +7,7 @@ const profileImage = {
                     </router-link>
                 </div>
                 
-                <input type="file" ref="inputFile" @change="loadImage" single hidden>
+                <input type="file" ref="inputFile" accept="image/*" @change="loadImage" hidden>
                 
                 <template v-if="canedit">
                     <button class="mt-1 btn btn-primary btn-block" @click.prevent="onEditClick">
@@ -51,21 +51,27 @@ const profileImage = {
         },
         loadImage: function() {
             const img = this.$refs.inputFile.files[0];
-            const reader  = new FileReader();
+            if(img) {
+                if(img.size > 65536) {
+                    alert("Image is too large. Maximum size is 64KB.");
+                    return;
+                }
+                const reader = new FileReader();
 
-            reader.onloadend = () => {
-                this.onnewimage(reader.result, this.onSuccess, this.onError);
-            };
+                reader.onloadend = () => {
+                    this.onnewimage(reader.result, this.onSuccess, this.onError);
+                };
 
-            reader.onabort = () => {
-                this.$refs.notifier.showError("Error during file reading! (Aborted).");
-            };
+                reader.onabort = () => {
+                    this.$refs.notifier.showError("Error during file reading! (Aborted).");
+                };
 
-            reader.onerror = () => {
-                this.$refs.notifier.showError("Error during file reading!");
-            };
+                reader.onerror = () => {
+                    this.$refs.notifier.showError("Error during file reading!");
+                };
 
-            reader.readAsDataURL(img);
+                reader.readAsDataURL(img);
+            }
 
         },
         onSuccess: function(message) {
