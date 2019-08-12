@@ -17,7 +17,11 @@ const gameLobby = {
 
                         <gameTurn v-bind:game="game"></gameTurn>
                         
-                        <br/>
+                        <hr class="hr-text" data-content="My dice" />
+                        
+                        <dice v-bind:game="game"></dice>
+                        
+                        <hr class="hr-text" data-content="Actions" />
                         
                         <diceSelector v-bind:game="game" v-bind:bid.sync="this.bid"></diceSelector>
                         <gameButtons v-bind:game="game" v-bind:bid="this.bid"></gameButtons>
@@ -40,7 +44,8 @@ const gameLobby = {
         'diceSelector': diceSelector,
         'gameButtons': GameButtons,
         'gameTurn': gameTurn,
-        'currentbid' : currentBid
+        'currentbid' : currentBid,
+        'dice': dice
     },
     data() {
         return {
