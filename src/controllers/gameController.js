@@ -235,15 +235,15 @@ exports.get_game_tick = function (req, res) {
 exports.create_game = function (req, res) {
     var new_game = req.body;
     if (!new_game.name || new_game.name.length < 3 || new_game.name.length > 20) {
-        res.status(400).send({ message: "'name' must consist of 3 to 30 characters." }).end();
+        res.status(400).send({ message: "'name' must consist of 3 to 30 characters.", error_code: 1 }).end();
     } else if (!new_game.players || new_game.players < 2 || new_game.players > 8) {
-        res.status(400).send({ message: "'players' must be between 2 and 8." }).end();
+        res.status(400).send({ message: "'players' must be between 2 and 8.", error_code: 2 }).end();
     } else if (!new_game.turn_time || new_game.turn_time < 10 || new_game.turn_time > 600) {
-        res.status(400).send({ message: "'turn_time' must be between 10 and 600 (seconds)." }).end();
+        res.status(400).send({ message: "'turn_time' must be between 10 and 600 (seconds).", error_code: 3 }).end();
     } else if (new_game.password && (new_game.password.length < 5 || new_game.password.length > 30)) {
-        res.status(400).send({ message: "'password' must consist of 5 to 30 characters." }).end();
+        res.status(400).send({ message: "'password' must consist of 5 to 30 characters.", error_code: 4 }).end();
     } else if (Array.from(games.values()).some(g => g.users.some(u => u.id === req.user._id))) {
-        res.status(400).send({ message: "Cannot create a new game while in another game." }).end();
+        res.status(400).send({ message: "Cannot create a new game while in another game.", error_code: 5 }).end();
     } else {
         if (!new_game.password) {
             new_game.password = null;
@@ -268,7 +268,7 @@ exports.create_game = function (req, res) {
                 new_game_io_notification(new_game.id);
                 res.status(200).send({ result: new_game }).end();
             } else {
-                res.status(500).send({ message: "[create_game] failed on adding owner." }).end();
+                res.status(500).send({ message: "[create_game] failed on adding owner.", error_code: 6 }).end();
             }
         });
     }
@@ -278,49 +278,49 @@ exports.join_start_game = function (req, res) {
     const op = req.body.operation;
     const id = parseInt(req.params.id);
     const game = games.get(id);
-    if (!game) {
-        res.status(400).send({ message: "Game does not exists." }).end();
-    } else if (game.started) {
-        res.status(400).send({ message: "This game is already started." }).end();
-    } else if (op === "join") {
-        if (game.users.length === game.players) {
-            res.status(400).send({ message: "This game is full." }).end();
-        } else if (game.password && game.password !== req.body.password) {
-            res.status(403).send({ message: "Invalid password." }).end();
-        } else if (game.users.some(u => u.id === req.user._id)) {
-            res.status(400).send({ message: "You are already in thin game." }).end();
-        } else if (Array.from(games.values()).some(g => g.id !== game.id && g.users.some(u => u.id === req.user._id))) {
-            res.status(400).send({ message: "You are already in another game." }).end();
-        } else {
-            add_user_to_game(game, req.user._id, success => {
-                if (success) {
-                    if (!game.owner_id) {
-                        game.owner_id = req.user._id;
+    if (assert_game_exists(game, req, res)) {
+        if (game.started) {
+            res.status(400).send({ message: "This game is already started.", error_code: 8 }).end();
+        } else if (op === "join") {
+            if (game.users.length === game.players) {
+                res.status(400).send({ message: "This game is full.", error_code: 9 }).end();
+            } else if (game.password && game.password !== req.body.password) {
+                res.status(403).send({ message: "Invalid password.", error_code: 10 }).end();
+            } else if (game.users.some(u => u.id === req.user._id)) {
+                res.status(400).send({ message: "You are already in this game.", error_code: 11 }).end();
+            } else if (Array.from(games.values()).some(g => g.id !== game.id && g.users.some(u => u.id === req.user._id))) {
+                res.status(400).send({ message: "You are already in another game.", error_code: 12 }).end();
+            } else {
+                add_user_to_game(game, req.user._id, success => {
+                    if (success) {
+                        if (!game.owner_id) {
+                            game.owner_id = req.user._id;
+                        }
+                        delete game.empty_from_date;
+                        if (gameTimeouts.get(game.id)) {
+                            clearTimeout(gameTimeouts.get(game.id));
+                        }
+                        gameTimeouts.delete(game.id);
+                        tick_game(game);
+                        res.status(200).send({ message: "Game joined.", result: game }).end();
+                    } else {
+                        res.status(500).send({ message: "Failed on adding user.", error_code: 13 }).end();
                     }
-                    delete game.empty_from_date;
-                    if (gameTimeouts.get(game.id)) {
-                        clearTimeout(gameTimeouts.get(game.id));
-                    }
-                    gameTimeouts.delete(game.id);
-                    tick_game(game);
-                    res.status(200).send({ message: "Game joined.", result: game }).end();
-                } else {
-                    res.status(500).send({ message: "Failed on adding user." }).end();
-                }
-            })
-        }
-    } else if (op === "start") {
-        if (game.owner_id !== req.user._id) {
-            res.status(400).send({ message: "Only the owner of the game can start." }).end();
-        } else if (game.users.length < 1) {
-            res.status(400).send({ message: "Need at least 2 user to start." }).end();
+                })
+            }
+        } else if (op === "start") {
+            if (game.owner_id !== req.user._id) {
+                res.status(400).send({ message: "Only the owner of the game can start.", error_code: 14 }).end();
+            } else if (game.users.length < 1) {
+                res.status(400).send({ message: "Need at least 2 user to start.", error_code: 15 }).end();
+            } else {
+                start_game(game);
+                tick_game(game, true);
+                res.status(200).send({ message: "Game started.", result: game }).end();
+            }
         } else {
-            start_game(game);
-            tick_game(game, true);
-            res.status(200).send({ message: "Game started.", result: game }).end();
+            res.status(400).send({ message: "'operation' must be start or join.", error_code: 16 }).end();
         }
-    } else {
-        res.status(400).send({ message: "'operation' must be start or join." }).end();
     }
 };
 
@@ -386,7 +386,7 @@ exports.action_doubt = function (req, res) {
             tick_game(game);
             res.status(200).send({ message: "Doubt done.", result: game }).end();
         } else {
-            res.status(400).send({ message: "Cannot doubt now." }).end();
+            res.status(400).send({ message: "Cannot doubt now.", error_code: 17 }).end();
         }
     }
 };
@@ -399,7 +399,7 @@ exports.action_bid = function (req, res) {
             tick_game(game);
             res.status(200).send({ message: "Bid done.", result: game }).end();
         } else {
-            res.status(400).send({ message: "Invalid bid." }).end();
+            res.status(400).send({ message: "Invalid bid.", error_code: 18 }).end();
         }
     }
 };
@@ -409,9 +409,9 @@ exports.action_spoton = function (req, res) {
     if (assert_in_game(game, req, res)) {
         if (game.current_turn_user_id === req.user._id || game.last_turn_user_id === req.user._id ||
             !game.current_bid || game.users.find(u => u.id === req.user._id).remaining_dice >= 5) {
-            res.status(400).send({ message: "You cannot spoton now." }).end();
+            res.status(400).send({ message: "You cannot spoton now.", error_code: 19 }).end();
         } else if (game.users.find(u => u.id === req.user._id).remaining_dice === 0) {
-            res.status(400).send({ message: "Deads cannot spoton." }).end();
+            res.status(400).send({ message: "Deads cannot spoton.", error_code: 20 }).end();
         } else {
             actions_add_spoton(game.id, req.user._id);
             const total_dice = count_dice(game);
@@ -439,7 +439,7 @@ exports.action_palifico = function (req, res) {
     const game = games.get(id);
     if (assert_in_game(game, req, res) && assert_game_started(game, req, res)) {
         if (game.current_bid || game.users.find(u => u.id === req.user._id).remaining_dice !== 1) {
-            res.status(400).send({ message: "You cannot palifico now." }).end();
+            res.status(400).send({ message: "You cannot palifico now.", error_code: 21 }).end();
         } else {
             if (game.users.find(u => u.id === req.user._id).can_palifico) {
                 actions_add_palifico(game.id, req.user._id);
@@ -448,7 +448,7 @@ exports.action_palifico = function (req, res) {
                 tick_game(game);
                 res.status(200).send({ message: "Palifico done.", result: game }).end();
             } else {
-                res.status(400).send({ message: "You already call palifico." }).end();
+                res.status(400).send({ message: "You already call palifico.", error_code: 22 }).end();
             }
         }
     }
@@ -481,7 +481,7 @@ exports.get_dice = function (req, res) {
             });
             res.status(200).send({ result: result }).end();
         } else {
-            res.status(400).send({ message: "Round does not exists yet." }).end();
+            res.status(400).send({ message: "Round does not exists yet.", error_code: 23 }).end();
         }
     }
 };
@@ -491,14 +491,14 @@ assert_game_started = function (game, req, res) {
     if (!assert_game_exists(game, req, res)) {
         return false;
     } else if (!game.started) {
-        res.status(400).send({ message: "Game is not started yet." }).end();
+        res.status(400).send({ message: "Game is not started yet.", error_code: 24 }).end();
         return false;
     }
     return true;
 };
 assert_game_exists = function (game, req, res) {
     if (!game) {
-        res.status(400).send({ message: "Game does not exists." }).end();
+        res.status(400).send({ message: "Game does not exists.", error_code: 25 }).end();
         return false;
     }
     return true;
@@ -507,7 +507,7 @@ assert_in_game = function (game, req, res) {
     if (!assert_game_exists(game, req, res)) {
         return false;
     } else if (!game.users.some(u => u.id === req.user._id)) {
-        res.status(400).send({ message: "You are not in this game." }).end();
+        res.status(400).send({ message: "You are not in this game.", error_code: 26 }).end();
         return false;
     }
     return true;
@@ -516,7 +516,7 @@ assert_is_my_turn = function (game, req, res) {
     if (!assert_game_started(game, req, res)) {
         return false;
     } else if (game.current_turn_user_id !== req.user._id) {
-        res.status(400).send({ message: "It is not your turn." }).end();
+        res.status(400).send({ message: "It is not your turn.", error_code: 27 }).end();
         return false;
     }
     return true;
@@ -607,5 +607,4 @@ add_action = function (game_id, action) {
         }, 50);
         actionNotificationTimeouts.set(game_id, { timer: t, count: count });
     }
-
 };
