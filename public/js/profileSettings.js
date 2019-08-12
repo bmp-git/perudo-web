@@ -47,32 +47,7 @@ const ProfileSettings = {
                     </div>
                 </div> 
                 
-                <div class="row">
-                    <div class="col-md-8 offset-md-2">
-                        
-                        <div class="input-group mb-2 mt-2">
-                            <div class="input-group-prepend">
-                                <div class="input-group-text"><i class="fas fa-key"></i></div>
-                            </div>
-                            <input v-model="newPassword" type="password" class="form-control" placeholder="New Password" required>
-                        </div>
-                        
-                        <div class="input-group mb-2 mt-2">
-                            <div class="input-group-prepend">
-                                <div class="input-group-text"><i class="fas fa-check-double"></i></div>
-                            </div>
-                            <input v-model="confirmNewPassword" type="password" class="form-control" placeholder="Confirm Password" required>
-                        </div>                        
-
-                        <errorSuccessNotifier ref="passwordNotifier"></errorSuccessNotifier>
-                        
-                        <div class="form-group" style="padding-top:10px">
-                            <input type="button" @click.prevent="changePassword" class="btn btn-primary btn-lg btn-block" value="Update password">
-                        </div>                      
-                    
-                    </div>
-                </div> 
-
+                <passwordChanger></passwordChanger>
 
                 <div class="row">
                     <div class="col-md-8 offset-md-2">
@@ -99,7 +74,8 @@ const ProfileSettings = {
     components: {
         'errorSuccessNotifier': errorSuccessNotifier,
         'editableForm': editableForm,
-        'profileImage': profileImage
+        'profileImage': profileImage,
+        'passwordChanger': passwordChanger
     },
     data() {
         return {
@@ -110,8 +86,6 @@ const ProfileSettings = {
                 username: '',
                 avatar: ''
             },
-            newPassword: '',
-            confirmNewPassword: '',
 
         }
     },
@@ -179,27 +153,6 @@ const ProfileSettings = {
                         store.commit('setToken', tokenRes.data.token);
                     }
                 );
-        },
-        changePassword: function() {
-            if (this.newPassword === '') {
-                this.$refs.passwordNotifier.showError("Password is empty!");
-                return;
-            }
-            if (this.newPassword !== this.confirmNewPassword) {
-                this.$refs.passwordNotifier.showError("Password does not match!");
-                return;
-            }
-
-            const authHeader = 'bearer '.concat(this.$store.state.token);
-            axios.put("/api/users/" + this.$store.state.user._id + "/password", {password: this.newPassword}, {headers: { Authorization: authHeader}})
-                .then(response => {
-                    this.$refs.passwordNotifier.showSuccess("Password changed successfully!");
-                    this.newPassword = '';
-                    this.confirmNewPassword = '';
-                })
-                .catch(error => {
-                    this.$refs.passwordNotifier.showError(error.response.data.message);
-                });
         },
         resetStats: function() {
             if(!confirm("Are you sure? All your stats and ranking will be erased.")) {
