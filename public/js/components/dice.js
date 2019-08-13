@@ -1,15 +1,13 @@
 const dice = {
     template: `
-            <div class="container">
+            <div class="col-12 col-sm-12 col-md-10 offset-md-1 col-lg-10 offset-lg-1 col-xl-8 offset-xl-2 pl-0 pr-0 justify-content-around">
+                    <div class="row justify-content-around">
+                        <template v-for="diceFace in this.dice">   
+                        <span style="font-size: 3em;" v-bind:class="'dice dice-' + diceFace"></span>                                 
+                        </template>  
+                    </div>
 
-                <div class="row d-flex justify-content-around">
-                    <template v-for="diceFace in this.dice">   
-                    <span style="font-size: 3em;" v-bind:class="'dice dice-' + diceFace"></span>                                 
-                    </template>                                                 
-                </div>
-
-
-            </div>     
+            </div>   
 `,
     components: {
 

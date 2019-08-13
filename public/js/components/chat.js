@@ -271,7 +271,6 @@ const Chat = {
     },
     mounted: function () {
         this.update();
-        socket.emit('watch game', this.gameid);
         socket.on('new action', game_id => {
             if(game_id === this.gameid) {
                 this.update();
