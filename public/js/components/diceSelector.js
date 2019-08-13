@@ -2,15 +2,29 @@ const diceSelector = {
     template: `
             <div class="container">
 
-                <div class="row d-flex justify-content-around">
-                    <input style="width: 60px;" type="number" class="form-control" name="quantity" v-model="bid.quantity">
-                    <p> dices of </p>
-                    <template v-for="diceFace in 6">
-                        <label class="m-0">
-                          <input class="dice-selector" type="radio" name="dice" v-bind:value="diceFace" v-model="bid.dice">
-                          <span style="font-size: 3em;" v-bind:class="'dice dice-' + diceFace"></span>
-                        </label>                                    
-                    </template>                                  
+
+
+                <div class="row">
+                    <div class="col-2 offset-3">
+                        <input style="width: 60px;" type="number" class="form-control" name="quantity" v-model="bid.quantity">
+                    </div>
+                    
+                    <div class="col-2">
+                        <p> dices of </p>
+                    </div>
+                    
+                    
+                    <div class="col-2">
+                      <div ref="carousel" class="carousel">
+                      
+                        <template v-for="diceFace in 6">
+                            <a v-bind:value="diceFace" class="carousel-item" href=""><span style="font-size: 3em;" v-bind:class="'dice dice-' + diceFace"></span></a>                                   
+                        </template>  
+
+                      </div>
+                    </div>
+                                          
+                                
                 
                 </div>
 
@@ -57,6 +71,9 @@ const diceSelector = {
         updateQuantity: function (newValue) {
             const minQuantity = this.getMinQuantity();
             this.bid.quantity = newValue >= minQuantity ? newValue : minQuantity;
+        },
+        selectedDiceChange: function (elem) {
+            this.bid.dice = elem.getAttribute('value');
         }
     },
     filters: {
@@ -76,6 +93,7 @@ const diceSelector = {
     },
     mounted: function () {
         console.log(this.bid);
+        M.Carousel.init(this.$refs.carousel, {padding:20, onCycleTo: this.selectedDiceChange});
         this.updateQuantity();
 
     },
