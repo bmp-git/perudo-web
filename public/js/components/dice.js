@@ -1,6 +1,6 @@
 const dice = {
     template: `
-            <div class="col-12 col-sm-12 col-md-10 offset-md-1 col-lg-10 offset-lg-1 col-xl-8 offset-xl-2 pl-0 pr-0 justify-content-around">
+            <div class="col-12 col-sm-12 col-md-10 offset-md-1 col-lg-10 offset-lg-1 col-xl-8 offset-xl-2 pl-0 pr-0">
                     <div class="row justify-content-around">
                         <template v-for="diceFace in this.dice">   
                         <span style="font-size: 3em;" v-bind:class="'dice dice-' + diceFace"></span>                                 

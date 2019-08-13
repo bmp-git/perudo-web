@@ -1,15 +1,16 @@
 const diceSelector = {
     template: `
-            <div class="container">
+            <div class="col-12 col-sm-12 col-md-10 offset-md-1 col-lg-10 offset-lg-1 col-xl-8 offset-xl-2 pl-0 pr-0">
 
 
 
-                <div class="row d-flex justify-content-center">
+                <div class="row d-flex justify-content-around">
 
-                        <button class="btn btn-primary m-2" v-bind:disabled="buttonMinusDisabled" @click.prevent="decrementQuantity"><i class="fa fa-minus"></i></button>
-                        <strong class="align-self-center">{{bid.quantity}}</strong>
-                        <button class="btn btn-primary m-2" @click.prevent="incrementQuantity"><i class="fa fa-plus"></i></button>
-
+                        <div>
+                            <button class="btn btn-primary m-2" v-bind:disabled="buttonMinusDisabled" @click.prevent="decrementQuantity"><i class="fa fa-minus"></i></button>
+                            <strong class="align-self-center">{{bid.quantity}}</strong>
+                            <button class="btn btn-primary m-2" @click.prevent="incrementQuantity"><i class="fa fa-plus"></i></button>
+                        </div>
                     
 
                         <span class="align-self-center"> dices of </span>
@@ -19,7 +20,7 @@ const diceSelector = {
                         <div ref="carousel" class="carousel">
                           
                             <template v-for="diceFace in 6">
-                                <a v-bind:value="diceFace" class="carousel-item" href=""><span style="font-size: 3em;" v-bind:class="'dice dice-' + diceFace"></span></a>                                   
+                                <i v-bind:value="diceFace" class="carousel-item"><span style="font-size: 3em;" v-bind:class="'dice dice-' + diceFace"></span></i>                                   
                             </template>  
         
                         </div>
