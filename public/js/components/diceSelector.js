@@ -85,7 +85,7 @@ const diceSelector = {
             this.bid.quantity = newValue >= minQuantity ? newValue : minQuantity;
         },
         selectedDiceChange: function (elem) {
-            this.bid.dice = elem.getAttribute('value');
+            this.bid.dice = Number(elem.getAttribute('value'));
             console.log(this.getMinQuantity());
             this.bid.quantity = this.getMinQuantity();
         }
