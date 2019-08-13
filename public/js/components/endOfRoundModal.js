@@ -1,10 +1,10 @@
 const EndOfRoundModal = {
   template: `
     <template v-if="visible">
-    <div id="myModal" class="modal" @click.prevent="close">
+    <div id="myModal" class="modal" @click.prevent="hide">
 
       <!-- Modal content -->
-      <div class="modal-content">
+      <div class="modal-content col-12 col-lg-6" @click.prevent="">
         <template v-if="game.last_round_recap.leave_user">
           <h4 class="text-center mb-4">
           <img v-bind:src="'/api/users/'+game.last_round_recap.leave_user+'/avatar'" width="48px" height="48px" style="object-fit: cover; border-radius: 50%; border: 1px solid #007BFF;">
@@ -72,7 +72,12 @@ const EndOfRoundModal = {
   components: {
     'username': Username,
   }, methods: {
-    close: function () {
+    toggle: function() {
+      if(this.game) {
+        this.visible = !this.visible;
+      }
+    },
+    hide: function () {
       this.visible = false;
     },
     show: function (game) {

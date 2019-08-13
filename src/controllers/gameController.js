@@ -513,7 +513,7 @@ exports.get_dice = function (req, res) {
 
     if (assert_game_started(game, req, res)) {
         const round = parseInt(req.query.round);
-        if (round === game.round && assert_in_game(game, req, res) && !game.is_over) {
+        if (round === game.round && !game.is_over && assert_in_game(game, req, res)) {
             res.status(200).send({ result: [{ user: req.user._id, dice: currentDice.get(game.id).get(req.user._id) }] }).end();
         } else if (round < game.round || game.is_over) {
             var result = [];
