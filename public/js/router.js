@@ -20,6 +20,9 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
     //console.log("Called beforeEach. requiresAuth: " + to.meta.requiresAuth + " requiresNotAuth: " + to.meta.requiresNotAuth);
     console.log("from: " + from.path + ", to:" + to.path);
+    if(to.name === "gamelobby") {
+        store.commit('clearNotifications');
+    }
     if (to.meta.requiresAuth) { // check the meta field
         if (localStorage.token) { // check if the user is authenticated
             next() // the next method allow the user to continue to the router
