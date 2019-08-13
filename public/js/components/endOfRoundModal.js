@@ -75,10 +75,15 @@ const EndOfRoundModal = {
     close() {
       this.visible = false;
     },
-    show(title, dice) {
-      this.dice = dice;
-      this.title = title;
-      this.visible = true;
+    show(game) {
+      console.log("ASDASDASDASD " + game.round);
+      this.game = game;
+      Api.get_dice(game.id, game.round - 1, dice => {
+        this.dice = dice;
+        this.visible = true;
+      }, error => {
+        console.log(error);
+      })
     },
     valid_dice(value, user) {
       return value === this.game.last_round_recap.bid.dice || (user === this.game.last_round_recap.bid_user && value === 1);
