@@ -484,6 +484,7 @@ exports.action_palifico = function (req, res) {
                 actions_add_palifico(game.id, req.user._id);
                 change_turn(game, req.user._id);
                 game.is_palifico_round = true;
+                game.users.find(u => u.id === req.user._id).can_palifico = false;
                 tick_game(game);
                 res.status(200).send({ message: "Palifico done.", result: game }).end();
             } else {
