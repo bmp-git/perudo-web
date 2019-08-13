@@ -142,20 +142,18 @@ change_turn = function (game, user_id) {
         go_next_turn(game);
     } else {
         actions_add_turn(game.id, user_id);
+        game.turn_start_time = new Date();
+        turnTimeouts.set(game.id, setTimeout(function () {
+            console.log(game.current_turn_user_id + " in game " + game.id + " is too slow, random bid and next turn.");
+            actions_add_event(game.id, game.users.find(u => u.id === game.current_turn_user_id).username + " is too slow, the game will bid automatically for him.", 2);
+            if (game.current_bid) {
+                make_bid(game, game.current_turn_user_id, game.current_bid.dice, game.current_bid.quantity + 1);
+            } else {
+                make_bid(game, game.current_turn_user_id, Math.floor(Math.random() * 6) + 1, 1);
+            }
+            tick_game(game);
+        }, game.turn_time * 1000));
     }
-
-    game.turn_start_time = new Date();
-
-    turnTimeouts.set(game.id, setTimeout(function () {
-        console.log(user_id + " in game " + game.id + " is too slow, random bid and next turn.");
-        actions_add_event(game.id, game.users.find(u => u.id === user_id).username + " is too slow, the game will bid automatically for him.", 2);
-        if (game.current_bid) {
-            make_bid(game, user_id, game.current_bid.dice, game.current_bid.quantity + 1);
-        } else {
-            make_bid(game, user_id, Math.floor(Math.random() * 6) + 1, 1);
-        }
-        tick_game(game);
-    }, game.turn_time * 1000));
 };
 go_next_turn = function (game) {
     var t = -1;
