@@ -8,6 +8,7 @@ const store = new Vuex.Store( {
         authenticated : false,
         token: "",
         in_game : false,
+        game_notifications : 0,
         game: {
             name: "",
             players: 0,
@@ -61,6 +62,12 @@ const store = new Vuex.Store( {
                 users: [],
                 tick: 0
             }
+        },
+        addNotifications(state, notifications) {
+            state.game_notifications += notifications;
+        },
+        clearNotifications(state) {
+            state.game_notifications = 0;
         }
     }
 });

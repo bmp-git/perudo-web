@@ -1,8 +1,9 @@
 const gameFooter = {
-    template: `<div class="container"><template v-if="this.$store.state.in_game">
-    <div class="row" @mouseover="footer_active = true" @mouseleave="footer_active = false">
-          <div class="gameFooter col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-12" >
-              <div id="content" v-show="footer_active">
+    template: `<div class="container" v-show="showFooter">
+    <div class="row">
+          <div class="gameFooter col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-12">
+              <div id="content">
+              <span class="badge badge-pill badge-light" v-show="this.$store.state.game_notifications > 0">{{this.$store.state.game_notifications}} new notifications! </span>
               <template v-if="this.$store.state.game.started">
                 <span class="badge badge-pill badge-danger" style="margin-right:10px">Game started</span>
               </template>
@@ -13,22 +14,32 @@ const gameFooter = {
               
               <i class=" fas fa-users ml-3" title="Number of users"> </i><small> {{usedSpaces}} </small>
               <i class="fas fa-stopwatch" title="Maximum time per turn"> </i> <small>{{turnTime}}</small>
-              
               </div>
           </div>
     </div></div>`,
     data() {
         return {
-            footer_active: false,
+            first_notification : true,
+            last_tick : 0,
         }
     },
     methods: {
+        updateNotification: function(game) {
+            if(this.showFooter) {
+                store.commit('addNotifications', this.first_notification ? 1 : (game.tick - this.last_tick));
+                this.first_notification = false;
+            }
+            this.last_tick = game.tick;
+        }
     },
     computed: {
-        usedSpaces: function () {
+        showFooter: function() {
+            return this.$store.state.in_game && this.$route.name !== "gamelobby";
+        },
+        usedSpaces: function() {
             return Object.keys(this.$store.state.game.users).length + "/" + this.$store.state.game.players;
         },
-        turnTime: function () {
+        turnTime: function() {
             if (this.$store.state.game.turn_time) { 
                 if(this.$store.state.game.turn_time % 60 === 0) {
                     return (this.$store.state.game.turn_time / 60) + " min";
@@ -43,5 +54,13 @@ const gameFooter = {
         getGameid: function() {
             return this.$store.state.game.id;
         }
+    },
+    mounted: function () {
+        socket.on('game changed', (g) => {
+            this.updateNotification(g);
+        });
+    },
+    destroyed: function () {
+        socket.off('game changed');
     }
 }
