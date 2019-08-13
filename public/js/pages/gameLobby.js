@@ -13,6 +13,8 @@ const gameLobby = {
                     <template v-else>
                     
                         <hr class="hr-text" v-bind:data-content="'In game: ' + game.name" />
+                        <roundTimer v-bind:game="game"></roundTimer>
+
                         <currentbid v-bind:game="game"></currentbid>
 
                         <gameTurn v-bind:game="game"></gameTurn>
@@ -49,7 +51,8 @@ const gameLobby = {
         'gameTurn': gameTurn,
         'currentbid' : currentBid,
         'dice': dice,
-        'endOfRoundComponent' : EndOfRoundModal
+        'endOfRoundComponent' : EndOfRoundModal,
+        'roundTimer' : roundTimer
     },
     data() {
         return {
