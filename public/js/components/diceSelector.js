@@ -4,27 +4,26 @@ const diceSelector = {
 
 
 
-                <div class="row">
-                    <div class="col-2 offset-3">
-                        <button class="btn btn-primary m-2" v-bind:disabled="buttonMinusDisabled" @click.prevent="decrementQuantity"><i class="fa fa-minus"></i></button>
-                        <strong>{{bid.quantity}}</strong>
-                        <button class="btn btn-primary m-2" @click.prevent="incrementQuantity"><i class="fa fa-plus"></i></button>
-                    </div>
-                    
-                    <div class="col-2">
-                        <p> dices of </p>
-                    </div>
-                    
-                    
-                    <div class="col-2">
-                      <div ref="carousel" class="carousel">
-                      
-                        <template v-for="diceFace in 6">
-                            <a v-bind:value="diceFace" class="carousel-item" href=""><span style="font-size: 3em;" v-bind:class="'dice dice-' + diceFace"></span></a>                                   
-                        </template>  
+                <div class="row d-flex justify-content-center">
 
-                      </div>
-                    </div>
+                        <button class="btn btn-primary m-2" v-bind:disabled="buttonMinusDisabled" @click.prevent="decrementQuantity"><i class="fa fa-minus"></i></button>
+                        <strong class="align-self-center">{{bid.quantity}}</strong>
+                        <button class="btn btn-primary m-2" @click.prevent="incrementQuantity"><i class="fa fa-plus"></i></button>
+
+                    
+
+                        <span class="align-self-center"> dices of </span>
+
+                    
+                    
+                        <div ref="carousel" class="carousel">
+                          
+                            <template v-for="diceFace in 6">
+                                <a v-bind:value="diceFace" class="carousel-item" href=""><span style="font-size: 3em;" v-bind:class="'dice dice-' + diceFace"></span></a>                                   
+                            </template>  
+        
+                        </div>
+
                                           
                                 
                 
