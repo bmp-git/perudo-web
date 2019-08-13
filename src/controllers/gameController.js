@@ -110,7 +110,7 @@ remove_one_dice = function (game, user_id) {
 reroll_dice = function (game) {
     const game_dice = new Map(); //user_id -> [dice values]
     game.users.forEach(u => {
-        const user_dice = []; //what if u.remaining_dice == 0?
+        const user_dice = []; //what if u.remaining_dice === 0?
         for (i = 0; i < u.remaining_dice; i++) {
             user_dice.push(Math.floor(Math.random() * 6) + 1);
         }
@@ -139,12 +139,17 @@ change_turn = function (game, user_id) {
         game.last_turn_user_id = null;
     }
     game.current_turn_user_id = user_id;
-    actions_add_turn(game.id, user_id);
+    if (game.users.find(u => u.id === game.current_turn_user_id).remaining_dice <= 0) {
+        go_next_turn(game);
+    } else {
+        actions_add_turn(game.id, user_id);
+    }
+
     game.turn_start_time = new Date();
 
     turnTimeouts.set(game.id, setTimeout(function () {
         console.log(user_id + " in game " + game.id + " is too slow, random bid and next turn.");
-        actions_add_event(game.id, game.users.find(u => u.id == user_id).username + " is too slow, the game will bid automatically for him.", 2);
+        actions_add_event(game.id, game.users.find(u => u.id === user_id).username + " is too slow, the game will bid automatically for him.", 2);
         if (game.current_bid) {
             make_bid(game, user_id, game.current_bid.dice, game.current_bid.quantity + 1);
         } else {
