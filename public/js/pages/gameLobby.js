@@ -25,7 +25,7 @@ const gameLobby = {
                         
                         <diceSelector v-bind:game="game" v-bind:bid.sync="this.bid"></diceSelector>
                         <gameButtons v-bind:game="game" v-bind:bid="this.bid"></gameButtons>
-
+                        <endOfRoundComponent ref="endOfRoundModal"></endOfRoundComponent>
                    
                     </template>
                 
@@ -45,7 +45,8 @@ const gameLobby = {
         'gameButtons': GameButtons,
         'gameTurn': gameTurn,
         'currentbid' : currentBid,
-        'dice': dice
+        'dice': dice,
+        'endOfRoundComponent' : EndOfRoundModal
     },
     data() {
         return {
@@ -66,10 +67,13 @@ const gameLobby = {
         reload: function() {
             axios.get("/api/games/" + this.$route.params.id, { headers: { Authorization: 'bearer '.concat(this.$store.state.token) } })
                 .then(response => {
+                    if(response.data.result.round > this.game.round || (response.data.result.is_over === true && this.game.is_over === false)) {
+                        this.$refs.endOfRoundModal.show(response.data.result);
+                    }
                     this.game = response.data.result;
-                    console.log(this.game);
                 })
                 .catch(error => {
+                    console.log(error);
                     router.push("/404")
                 });
         },
