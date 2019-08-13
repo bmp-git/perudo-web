@@ -67,7 +67,7 @@ const gameLobby = {
         reload: function() {
             axios.get("/api/games/" + this.$route.params.id, { headers: { Authorization: 'bearer '.concat(this.$store.state.token) } })
                 .then(response => {
-                    if(response.data.result.round > this.game.round) {
+                    if(response.data.result.round > this.game.round || (response.data.result.is_over === true && this.game.is_over === false)) {
                         this.$refs.endOfRoundModal.show(response.data.result);
                     }
                     this.game = response.data.result;

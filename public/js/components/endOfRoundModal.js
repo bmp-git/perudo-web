@@ -77,7 +77,7 @@ const EndOfRoundModal = {
     },
     show: function (game) {
       this.game = game;
-      Api.get_dice(game.id, game.round - 1, dice => {
+      Api.get_dice(game.id, game.round - (this.game.is_over ? 0 : 1), dice => {
         this.dice = dice;
         this.visible = true;
       }, error => {

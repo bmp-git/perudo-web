@@ -60,6 +60,7 @@ check_for_win = function (game) {
             clearTimeout(turnTimeouts.get(game.id));
         }
         actions_add_event(game.id, "The game is over!", 3);
+        oldDice.get(game.id).set(game.round, currentDice.get(game.id));
     }
 }
 
@@ -171,7 +172,7 @@ is_valid_bid = function (game, dice, quantity) {
         return false;
     }
     if (game.current_bid) {
-        if (quantity - game.current_bid.quantity > 100) { //avoid that a user bid with max int value
+        if ((quantity - game.current_bid.quantity) > 100) { //avoid that a user bid with max int value
             return false;
         }
         if (game.is_palifico_round) {
@@ -512,9 +513,9 @@ exports.get_dice = function (req, res) {
 
     if (assert_game_started(game, req, res)) {
         const round = parseInt(req.query.round);
-        if (round === game.round && assert_in_game(game, req, res)) {
+        if (round === game.round && assert_in_game(game, req, res) && !game.is_over) {
             res.status(200).send({ result: [{ user: req.user._id, dice: currentDice.get(game.id).get(req.user._id) }] }).end();
-        } else if (round < game.round) {
+        } else if (round < game.round || game.is_over) {
             var result = [];
             oldDice.get(game.id).get(round).forEach((v, k, m) => {
                 result.push({ user: k, dice: v });
