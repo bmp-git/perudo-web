@@ -1,8 +1,10 @@
 var usernames = new Map(); //user id -> username
+var waiting_username = new Map(); //user id -> true
 var username_observers = [];
 var cache_username = function(user_id, username) {
     usernames.set(user_id, username);
     username_observers.forEach(o => o());
+    console.log("new name for " + user_id + " set");
 };
 const Username = {
     template: `<template :key="count">{{username}}</template>`,
@@ -16,11 +18,13 @@ const Username = {
         updateUsername: function () {
             if (usernames.get(this.userid)) {
                 this.username = usernames.get(this.userid);
-            } else {
+            } else if(!waiting_username.get(this.userid)) {
+                waiting_username.set(this.userid, true);
                 axios.get("/api/users/" + this.userid + "/username")
                     .then(response => {
                         this.username = response.data.username;
-                        usernames.set(this.userid, this.username);
+                        cache_username(this.userid, this.username);
+                        waiting_username.delete(this.userid);
                     })
                     .catch(error => {
                         console.log(error);
