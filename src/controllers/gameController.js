@@ -451,7 +451,7 @@ exports.action_spoton = function (req, res) {
                         remove_one_dice(game, u.id);
                     }*/
                 })
-                actions_add_take_one_dice(game.id, user_id);
+                actions_add_take_one_dice(game.id, req.user._id);
                 game.users.find(u => u.id === req.user._id).remaining_dice++;
                 next_round(game, false, req.user._id);
             } else {
