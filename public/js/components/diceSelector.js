@@ -4,25 +4,26 @@ const diceSelector = {
 
 
 
-                <div class="row">
-                    <div class="col-2 offset-3">
-                        <input style="width: 60px;" type="number" class="form-control" name="quantity" v-model="bid.quantity">
-                    </div>
-                    
-                    <div class="col-2">
-                        <p> dices of </p>
-                    </div>
-                    
-                    
-                    <div class="col-2">
-                      <div ref="carousel" class="carousel">
-                      
-                        <template v-for="diceFace in 6">
-                            <a v-bind:value="diceFace" class="carousel-item" href=""><span style="font-size: 3em;" v-bind:class="'dice dice-' + diceFace"></span></a>                                   
-                        </template>  
+                <div class="row d-flex justify-content-center">
 
-                      </div>
-                    </div>
+                        <button class="btn btn-primary m-2" v-bind:disabled="buttonMinusDisabled" @click.prevent="decrementQuantity"><i class="fa fa-minus"></i></button>
+                        <strong class="align-self-center">{{bid.quantity}}</strong>
+                        <button class="btn btn-primary m-2" @click.prevent="incrementQuantity"><i class="fa fa-plus"></i></button>
+
+                    
+
+                        <span class="align-self-center"> dices of </span>
+
+                    
+                    
+                        <div ref="carousel" class="carousel">
+                          
+                            <template v-for="diceFace in 6">
+                                <a v-bind:value="diceFace" class="carousel-item" href=""><span style="font-size: 3em;" v-bind:class="'dice dice-' + diceFace"></span></a>                                   
+                            </template>  
+        
+                        </div>
+
                                           
                                 
                 
@@ -41,6 +42,10 @@ const diceSelector = {
     },
     props: ['bid', 'game'],
     computed: {
+        buttonMinusDisabled: function () {
+            console.log(this.bid.quantity === this.getMinQuantity());
+            return this.bid.quantity === this.getMinQuantity();
+        }
     },
     methods: {
         getMinQuantity: function () {
@@ -68,12 +73,20 @@ const diceSelector = {
                 return 1;
             }
         },
+        incrementQuantity: function() {
+            this.bid.quantity = this.bid.quantity + 1;
+        },
+        decrementQuantity: function() {
+            this.bid.quantity = this.bid.quantity - 1;
+        },
         updateQuantity: function (newValue) {
             const minQuantity = this.getMinQuantity();
             this.bid.quantity = newValue >= minQuantity ? newValue : minQuantity;
         },
         selectedDiceChange: function (elem) {
             this.bid.dice = elem.getAttribute('value');
+            console.log(this.getMinQuantity());
+            this.bid.quantity = this.getMinQuantity();
         }
     },
     filters: {

@@ -435,7 +435,7 @@ template {
 .carousel {
   overflow: hidden;
   position: relative;
-  width: 100%;
+  width: 12em;
   height: 60px;
   perspective: 500px;
   transform-style: preserve-3d;

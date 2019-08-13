@@ -67,8 +67,8 @@ const gameLobby = {
     computed: {
     },
     methods: {
-        reload: function() {
-            axios.get("/api/games/" + this.$route.params.id, { headers: { Authorization: 'bearer '.concat(this.$store.state.token) } })
+        reload: function(game_id) {
+            axios.get("/api/games/" + game_id, { headers: { Authorization: 'bearer '.concat(this.$store.state.token) } })
                 .then(response => {
                     if(response.data.result.round > this.game.round || (response.data.result.is_over === true && this.game.is_over === false)) {
                         this.$refs.endOfRoundModal.show(response.data.result);
@@ -80,14 +80,9 @@ const gameLobby = {
                     router.push("/404")
                 });
         },
-        gameRemoved: function (game_id) {
-            if (game_id === this.game.id) {
-                router.push({ name: 'games' });
-            }
-        },
         gameChanged: function (game) {
             if (game.id === this.game.id) {
-                this.reload();
+                this.reload(this.game.id);
             }
         },
         toggle_last_round: function () {
@@ -104,11 +99,10 @@ const gameLobby = {
         }
     },
     mounted: function () {
-        socket.on('game removed', this.gameRemoved);
         socket.on('game changed', this.gameChanged);
-        this.reload();
+        this.reload(this.$route.params.id);
     },
     destroyed: function () {
-        socket.off('game removed');
+        socket.off('game changed');
     }
 };
