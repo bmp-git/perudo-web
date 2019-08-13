@@ -13,20 +13,21 @@ const diceSelector = {
                         </div>
                     
 
-                        <span class="align-self-center"> dices of </span>
 
-                    
-                    
-                        <div ref="carousel" class="carousel">
+
+                        <template v-if="isPalificoWithBid">
+                            <span style="font-size: 3em;" v-bind:class="'dice dice-' + this.game.current_bid.dice"></span>
+                        </template>
                           
-                            <template v-for="diceFace in dices">
-                                <i v-bind:value="diceFace" class="carousel-item"><span style="font-size: 3em;" v-bind:class="'dice dice-' + diceFace"></span></i>                                   
-                            </template>  
-        
-                        </div>
+                        
 
-                                          
-                                
+                
+                        <div ref="carousel" class="carousel" v-show="!isPalificoWithBid">                         
+                            <template v-for="diceFace in 6">
+                                <a v-bind:value="diceFace" class="carousel-item"><span style="font-size: 3em;" v-bind:class="'dice dice-' + diceFace"></span></a>                                   
+                            </template>          
+                        </div>
+                             
                 
                 </div>
 
@@ -38,6 +39,7 @@ const diceSelector = {
     },
     data() {
         return {
+            lastSelectedDice: 1
         }
 
     },
@@ -46,14 +48,11 @@ const diceSelector = {
         buttonMinusDisabled: function () {
             return this.bid.quantity === this.getMinQuantity();
         },
-        dices: function () {
-            return this.isPalificoWithBid ? [this.game.current_bid.dice] : [1, 2, 3, 4, 5, 6];
-        },
         currentRound: function () {
             return this.game.round;
         },
         isPalificoWithBid: function () {
-            return this.game.is_palifico_round && this.game.current_bid;
+            return this.game.is_palifico_round && !!this.game.current_bid;
         }
     },
     methods: {
@@ -94,6 +93,8 @@ const diceSelector = {
         },
         selectedDiceChange: function (elem) {
             this.bid.dice = Number(elem.getAttribute('value'));
+            document.activeElement.blur();
+            this.lastSelectedDice = this.bid.dice;
             this.bid.quantity = this.getMinQuantity();
         }
     },
@@ -115,6 +116,13 @@ const diceSelector = {
         },
         currentRound: function () {
             this.bid.quantity = this.getMinQuantity();
+        },
+        isPalificoWithBid: function (value) {
+            if (value) {
+                this.bid.dice = this.game.current_bid.dice;
+            } else {
+                this.bid.dice = this.lastSelectedDice;
+            }
         }
     },
     mounted: function () {
