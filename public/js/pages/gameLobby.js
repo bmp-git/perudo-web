@@ -85,6 +85,12 @@ const gameLobby = {
         gameChanged: function (game) {
             if (game.id === this.game.id) {
                 this.reload();
+                socket.emit('watch game', this.game.id);
+                socket.on('new action', game_id => {
+                    if(game_id === this.game.id) {
+                        this.reload();
+                    }
+                });
             }
         }
     },
@@ -100,6 +106,7 @@ const gameLobby = {
     mounted: function () {
         socket.on('game removed', this.gameRemoved);
         socket.on('game changed', this.gameChanged);
+
         this.reload();
     },
     destroyed: function () {
