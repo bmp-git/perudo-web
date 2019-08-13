@@ -4,7 +4,8 @@ const EndOfRoundModal = {
     <div id="myModal" class="modal" @click.prevent="hide">
 
       <!-- Modal content -->
-      <div class="modal-content col-12 col-lg-6" @click.prevent="">
+      <div class="modal-content col-12 col-lg-6 col-xl-3 pt-0 pl-2 pr-2 pb-2" @click.prevent="">
+      <h6 class="text-right" style="color:gray"><i>round {{game.round}}</i></h6>
         <template v-if="game.last_round_recap.leave_user">
           <h4 class="text-center mb-4">
           <img v-bind:src="'/api/users/'+game.last_round_recap.leave_user+'/avatar'" width="48px" height="48px" style="object-fit: cover; border-radius: 50%; border: 1px solid #007BFF;">
@@ -18,18 +19,20 @@ const EndOfRoundModal = {
           <b class="text-primary"><username :userid="game.last_round_recap.bid_user"></username></b> bid!</h4>
         
           <template v-for="d in dice">
-            <h5 class="text-center">
-              <img v-bind:src="'/api/users/'+d.user+'/avatar'" width="32px" height="32px" style="object-fit: cover; border-radius: 50%; border: 1px solid #007BFF;">
-              <i v-bind:class="(game.last_round_recap.bid_user === d.user || game.last_round_recap.doubt_user === d.user || game.last_round_recap.spoton_user === d.user)?'text-primary':''"><username :userid="d.user"></username></i>
-              <template v-for="v in d.dice">
-                <template v-if="valid_dice(v, d.user)">
-                  <span v-bind:class="'ml-2 dice dice-' + v" style="background-color: rgba(255,0,0, 1);"></span>
+            <template v-if="d.dice.length > 0">
+              <h5 class="text-center">
+                <img v-bind:src="'/api/users/'+d.user+'/avatar'" width="32px" height="32px" style="object-fit: cover; border-radius: 50%; border: 1px solid #007BFF;">
+                <i v-bind:class="(game.last_round_recap.bid_user === d.user || game.last_round_recap.doubt_user === d.user || game.last_round_recap.spoton_user === d.user)?'text-primary':''"><username :userid="d.user"></username></i>
+                <template v-for="v in d.dice">
+                  <template v-if="valid_dice(v, d.user)">
+                    <span v-bind:class="'ml-2 dice dice-' + v" style="background-color: rgba(255,0,0, 1);"></span>
+                  </template>
+                  <template v-else>
+                    <span v-bind:class="'ml-2 dice dice-' + v"></span>
+                  </template>
                 </template>
-                <template v-else>
-                  <span v-bind:class="'ml-2 dice dice-' + v"></span>
-                </template>
-              </template>
-            </h5>
+              </h5>
+            </template>
           </template>
           <h4 class="text-center mt-3"><b class="text-info">Bid </b> is {{game.last_round_recap.bid.quantity}} dice of <span v-bind:class="'ml-2 dice dice-' + game.last_round_recap.bid.dice"></span></h4>
           <h6 class="text-center mb-3">Total count: {{total_count}}</h6>
@@ -90,7 +93,7 @@ const EndOfRoundModal = {
       });
     },
     valid_dice: function (value, user) {
-      return value === this.game.last_round_recap.bid.dice || (user === this.game.last_round_recap.bid_user && value === 1);
+      return (value === this.game.last_round_recap.bid.dice) || (user === this.game.last_round_recap.bid_user && value === 1);
     }
   },
   mounted: function () {

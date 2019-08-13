@@ -26,6 +26,9 @@ const gameLobby = {
                         <diceSelector v-bind:game="game" v-bind:bid.sync="this.bid"></diceSelector>
                         <gameButtons v-bind:game="game" v-bind:bid="this.bid"></gameButtons>
                         <endOfRoundComponent ref="endOfRoundModal"></endOfRoundComponent>
+                        <template v-if="game.last_round_recap">
+                            <button type="button" @click="toggle_last_round" class="btn btn-primary m-1">Last round</button>
+                        </template>
                    
                     </template>
                 
@@ -81,6 +84,9 @@ const gameLobby = {
             if (game.id === this.game.id) {
                 this.reload(this.game.id);
             }
+        },
+        toggle_last_round: function () {
+            this.$refs.endOfRoundModal.show(this.game);
         }
     },
     filters: {

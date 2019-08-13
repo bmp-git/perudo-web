@@ -6,7 +6,9 @@ const diceSelector = {
 
                 <div class="row">
                     <div class="col-2 offset-3">
-                        <input style="width: 60px;" type="number" class="form-control" name="quantity" v-model="bid.quantity">
+                        <button class="btn btn-primary m-2" v-bind:disabled="buttonMinusDisabled" @click.prevent="decrementQuantity"><i class="fa fa-minus"></i></button>
+                        <strong>{{bid.quantity}}</strong>
+                        <button class="btn btn-primary m-2" @click.prevent="incrementQuantity"><i class="fa fa-plus"></i></button>
                     </div>
                     
                     <div class="col-2">
@@ -41,6 +43,10 @@ const diceSelector = {
     },
     props: ['bid', 'game'],
     computed: {
+        buttonMinusDisabled: function () {
+            console.log(this.bid.quantity === this.getMinQuantity());
+            return this.bid.quantity === this.getMinQuantity();
+        }
     },
     methods: {
         getMinQuantity: function () {
@@ -68,12 +74,20 @@ const diceSelector = {
                 return 1;
             }
         },
+        incrementQuantity: function() {
+            this.bid.quantity = this.bid.quantity + 1;
+        },
+        decrementQuantity: function() {
+            this.bid.quantity = this.bid.quantity - 1;
+        },
         updateQuantity: function (newValue) {
             const minQuantity = this.getMinQuantity();
             this.bid.quantity = newValue >= minQuantity ? newValue : minQuantity;
         },
         selectedDiceChange: function (elem) {
             this.bid.dice = elem.getAttribute('value');
+            console.log(this.getMinQuantity());
+            this.bid.quantity = this.getMinQuantity();
         }
     },
     filters: {
