@@ -19,7 +19,7 @@ const diceSelector = {
                     
                         <div ref="carousel" class="carousel">
                           
-                            <template v-for="diceFace in 6">
+                            <template v-for="diceFace in dices">
                                 <i v-bind:value="diceFace" class="carousel-item"><span style="font-size: 3em;" v-bind:class="'dice dice-' + diceFace"></span></i>                                   
                             </template>  
         
@@ -44,8 +44,16 @@ const diceSelector = {
     props: ['bid', 'game'],
     computed: {
         buttonMinusDisabled: function () {
-            console.log(this.bid.quantity === this.getMinQuantity());
             return this.bid.quantity === this.getMinQuantity();
+        },
+        dices: function () {
+            return this.isPalificoWithBid ? [this.game.current_bid.dice] : [1, 2, 3, 4, 5, 6];
+        },
+        currentRound: function () {
+            return this.game.round;
+        },
+        isPalificoWithBid: function () {
+            return this.game.is_palifico_round && this.game.current_bid;
         }
     },
     methods: {
@@ -86,27 +94,30 @@ const diceSelector = {
         },
         selectedDiceChange: function (elem) {
             this.bid.dice = Number(elem.getAttribute('value'));
-            console.log(this.getMinQuantity());
             this.bid.quantity = this.getMinQuantity();
         }
     },
     filters: {
     },
     watch: {
-        game: function (newGame) {
-            this.updateQuantity(this.bid.quantity);
+        game: {
+            handler: function (newGame) {
+                this.updateQuantity(this.bid.quantity);
+            },
+            deep: true
         },
         bid: {
             handler: function (newBid) {
-                console.log(newBid);
                 this.updateQuantity(newBid.quantity);
                 this.$emit('update:bid', this.bid);
             },
             deep: true
+        },
+        currentRound: function () {
+            this.bid.quantity = this.getMinQuantity();
         }
     },
     mounted: function () {
-        console.log(this.bid);
         M.Carousel.init(this.$refs.carousel, {padding:20, onCycleTo: this.selectedDiceChange});
         this.updateQuantity();
 
