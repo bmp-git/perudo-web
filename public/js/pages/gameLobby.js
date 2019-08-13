@@ -71,9 +71,9 @@ const gameLobby = {
                         this.$refs.endOfRoundModal.show(response.data.result);
                     }
                     this.game = response.data.result;
-                    console.log(this.game);
                 })
                 .catch(error => {
+                    console.log(error);
                     router.push("/404")
                 });
         },

@@ -21,7 +21,7 @@ class Api {
     }
 
     static get_dice(game_id, round, succHandler, errorHandler) {
-        const authHeader = 'bearer '.concat(this.$store.state.token);
+        const authHeader = 'bearer '.concat(app.$store.state.token);
         axios.get("/api/games/" + game_id + "/dice", { params: { round }, headers: { Authorization: authHeader } })
             .then(response => {
                 succHandler(response.data.result);

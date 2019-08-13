@@ -72,20 +72,19 @@ const EndOfRoundModal = {
   components: {
     'username': Username,
   }, methods: {
-    close() {
+    close: function () {
       this.visible = false;
     },
-    show(game) {
-      console.log("ASDASDASDASD " + game.round);
+    show: function (game) {
       this.game = game;
       Api.get_dice(game.id, game.round - 1, dice => {
         this.dice = dice;
         this.visible = true;
       }, error => {
         console.log(error);
-      })
+      });
     },
-    valid_dice(value, user) {
+    valid_dice: function (value, user) {
       return value === this.game.last_round_recap.bid.dice || (user === this.game.last_round_recap.bid_user && value === 1);
     }
   },

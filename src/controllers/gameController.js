@@ -414,7 +414,7 @@ exports.action_doubt = function (req, res) {
             }
             remove_one_dice(game, lose_user_id);
             check_for_win(game);
-            game.last_round_recap = { bid: game.current_bid, bid_user: game.current_turn_user_id, doubt_user: req.user._id };
+            game.last_round_recap = { bid: game.current_bid, bid_user: game.last_turn_user_id, doubt_user: req.user._id };
             if (!game.is_over) {
                 next_round(game, false, lose_user_id);
             }
@@ -450,7 +450,7 @@ exports.action_spoton = function (req, res) {
         } else {
             actions_add_spoton(game.id, req.user._id);
             const total_dice = count_dice(game);
-            game.last_round_recap = { bid: game.current_bid, bid_user: game.current_turn_user_id, spoton_user: req.user._id };
+            game.last_round_recap = { bid: game.current_bid, bid_user: game.last_turn_user_id, spoton_user: req.user._id };
             if (total_dice === game.current_bid.quantity) {
                 game.users.forEach(u => {
                     /*if (u.id !== req.user._id) {
