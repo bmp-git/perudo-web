@@ -23,7 +23,6 @@ remove_game = function (game_id) {
     remove_game_io_notification(game_id);
     freeIds.push(game_id);
     console.log("Game " + game_id + " removed.");
-    //TODO destroy room watch game_id
 };
 
 add_user_to_game = function (game, userId, next) {
@@ -208,36 +207,24 @@ io.on('connection', function (socket) {
     socket.on('disconnect', function () {
         console.log('user disconnected');
     });
-
-    socket.on('watch game', function (game_id) {
-        console.log('watch game: ' + game_id);
-        socket.join('game ' + game_id);
-    });
-    socket.on('unwatch game', function (game_id) {
-        console.log('unwatch game: ' + game_id);
-        socket.leave('game ' + game_id);
-    });
 });
 tick_game = function (game, force_broadcast) {
     game.tick++;
-    //Notify all user that in this game the current tick in now 'game.tick'
+    //Notify that in this game the current tick in now 'game.tick'
     //If their local 'game.tick' is lower they should refresh with get '/api/games/:id'
     //Or the clients can do polling on get '/api/games/:id/tick'
-    if (game.started && !force_broadcast) { //notify only the player inside the game
-        io.to('game ' + game.id).emit('game changed', { id: game.id, tick: game.tick });
-    } else { //notify all ==> a user could have joined the game and this info is usefull for all
-        io.emit('game changed', { id: game.id, tick: game.tick });
-    }
+    io.emit('game changed', { id: game.id, tick: game.tick });
 };
 actions_notification = function (game_id) {
-    //Notify all user in that game that an actions has been added to 'game'.
-    //They should refresh with get '/api/games/:id/actions' from the index they are.
-    io.to('game ' + game_id).emit('new action', game_id);
+    //Notify that in this game a new action was posted
+    io.emit('new action', game_id);
 };
 new_game_io_notification = function (game_id) {
+    //Notify that a game was created
     io.emit('game added', game_id);
 }
 remove_game_io_notification = function (game_id) {
+    //Notify that a game was removed
     io.emit('game removed', game_id);
 }
 
@@ -436,8 +423,8 @@ exports.action_bid = function (req, res) {
     const id = parseInt(req.params.id);
     const game = games.get(id);
     if (assert_is_my_turn(game, req, res) && assert_game_is_not_over(game, req, res)) {
-        if (is_valid_bid(game, req.body.dice, req.body.quantity)) {
-            make_bid(game, req.user._id, req.body.dice, req.body.quantity);
+        if (is_valid_bid(game, parseInt(req.body.dice), parseInt(req.body.quantity))) {
+            make_bid(game, req.user._id, parseInt(req.body.dice), parseInt(req.body.quantity));
             tick_game(game);
             res.status(200).send({ message: "Bid done.", result: game }).end();
         } else {
@@ -519,7 +506,7 @@ exports.get_dice = function (req, res) {
 
     if (assert_game_started(game, req, res)) {
         const round = parseInt(req.query.round);
-        if (round === game.round && !game.is_over && assert_in_game(game, req, res)) {
+        if (round === game.round && !game.is_over && game.users.some(u => u.id === req.user._id)) {
             res.status(200).send({ result: [{ user: req.user._id, dice: currentDice.get(game.id).get(req.user._id) }] }).end();
         } else if (round < game.round || game.is_over) {
             var result = [];
