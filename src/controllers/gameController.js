@@ -33,13 +33,35 @@ add_user_to_game = function (game, userId, next) {
         } else {
             game.users.push({
                 id: userId, username: user.username,
-                avatar_url: "/api/users/" + userId + "/avatar",
+                avatar_url: "/api/users/" + userId + "/avatar", //TODO remove username and avatar_url
                 remaining_dice: 5, can_palifico: true
             });
             next(true);
         }
     });
 };
+
+check_for_win = function (game) {
+    var remaining_user = 0;
+    game.users.forEach(u => {
+        if (u.remaining_dice > 0) {
+            remaining_user++;
+        }
+    });
+    if (remaining_user === 1) {
+        game.winning_user = game.users.find(u => u.remaining_dice > 0).id;
+        game.is_over = true;
+    } else if (remaining_user === 0) {
+        game.is_over = true;
+    }
+
+    if (remaining_user <= 1) {
+        if (turnTimeouts.get(game.id)) {
+            clearTimeout(turnTimeouts.get(game.id));
+        }
+        actions_add_event(game.id, "The game is over!", 3);
+    }
+}
 
 start_game = function (game) {
     actions_add_event(game.id, "Welcome! The game is started!", 1);
@@ -54,6 +76,8 @@ start_game = function (game) {
     game.is_palifico_round = false;
     game.last_round_recap = null;
     game.round = 1;
+    game.winning_user = null;
+    game.is_over = false;
     change_turn(game, game.users[Math.floor(Math.random() * game.users.length)].id);
 };
 
@@ -280,7 +304,7 @@ exports.join_start_game = function (req, res) {
     const op = req.body.operation;
     const id = parseInt(req.params.id);
     const game = games.get(id);
-    if (assert_game_exists(game, req, res)) {
+    if (assert_game_exists(game, req, res) && assert_game_is_not_over(game, req, res)) {
         if (game.started) {
             res.status(400).send({ message: "This game is already started.", error_code: 8 }).end();
         } else if (op === "join") {
@@ -313,7 +337,7 @@ exports.join_start_game = function (req, res) {
         } else if (op === "start") {
             if (game.owner_id !== req.user._id) {
                 res.status(400).send({ message: "Only the owner of the game can start.", error_code: 14 }).end();
-            } else if (game.users.length < 1) {
+            } else if (game.users.length < 2) {
                 res.status(400).send({ message: "Need at least 2 user to start.", error_code: 15 }).end();
             } else {
                 start_game(game);
@@ -343,14 +367,18 @@ exports.leave_game = function (req, res) {
                     gameTimeouts.delete(game.id);
                 }, 60 * 1000));
             }
-        } else if (game.started) {
+        } else if (game.started && !game.is_over) {
             actions_add_left_game(game.id, req.user._id);
-            if (game.current_turn_user_id === req.user._id || game.last_turn_user_id === req.user._id) {
+            check_for_win(game);
+            if (game.is_over) {
                 game.last_round_recap = { leave_user: req.user._id };
-                next_round(game, false, null);
+            } else {
+                if (!game.is_over && (game.current_turn_user_id === req.user._id || game.last_turn_user_id === req.user._id)) {
+                    game.last_round_recap = { leave_user: req.user._id };
+                    next_round(game, false, null);
+                }
             }
-            //TODO check for win
-        } else { //not started and not empty
+        } else if (!game.started) { //not started and not empty
             if (game.owner_id === req.user._id) {
                 game.owner_id = game.users[0].id;
             }
@@ -374,7 +402,7 @@ exports.action_doubt = function (req, res) {
     const id = parseInt(req.params.id);
     const game = games.get(id);
 
-    if (assert_is_my_turn(game, req, res)) {
+    if (assert_is_my_turn(game, req, res) && assert_game_is_not_over(game, req, res)) {
         if (game.current_bid) {
             actions_add_doubt(game.id, req.user._id);
             const total_dice = count_dice(game);
@@ -385,8 +413,11 @@ exports.action_doubt = function (req, res) {
                 lose_user_id = game.last_turn_user_id;
             }
             remove_one_dice(game, lose_user_id);
+            check_for_win(game);
             game.last_round_recap = { bid: game.current_bid, bid_user: game.current_turn_user_id, doubt_user: req.user._id };
-            next_round(game, false, lose_user_id);
+            if (!game.is_over) {
+                next_round(game, false, lose_user_id);
+            }
             tick_game(game);
             res.status(200).send({ message: "Doubt done.", result: game }).end();
         } else {
@@ -397,7 +428,7 @@ exports.action_doubt = function (req, res) {
 exports.action_bid = function (req, res) {
     const id = parseInt(req.params.id);
     const game = games.get(id);
-    if (assert_is_my_turn(game, req, res)) {
+    if (assert_is_my_turn(game, req, res) && assert_game_is_not_over(game, req, res)) {
         if (is_valid_bid(game, req.body.dice, req.body.quantity)) {
             make_bid(game, req.user._id, req.body.dice, req.body.quantity);
             tick_game(game);
@@ -410,7 +441,7 @@ exports.action_bid = function (req, res) {
 exports.action_spoton = function (req, res) {
     const id = parseInt(req.params.id);
     const game = games.get(id);
-    if (assert_in_game(game, req, res)) {
+    if (assert_in_game(game, req, res) && assert_game_is_not_over(game, req, res)) {
         if (game.current_turn_user_id === req.user._id || game.last_turn_user_id === req.user._id ||
             !game.current_bid || game.users.find(u => u.id === req.user._id).remaining_dice >= 5) {
             res.status(400).send({ message: "You cannot spoton now.", error_code: 19 }).end();
@@ -422,16 +453,19 @@ exports.action_spoton = function (req, res) {
             game.last_round_recap = { bid: game.current_bid, bid_user: game.current_turn_user_id, spoton_user: req.user._id };
             if (total_dice === game.current_bid.quantity) {
                 game.users.forEach(u => {
-                    if (u.id !== req.user._id) {
+                    /*if (u.id !== req.user._id) {
                         remove_one_dice(game, u.id);
-                    }
-                    actions_add_take_one_dice(game.id, user_id);
-                    game.users.find(u => u.id === req.user._id).remaining_dice++;
+                    }*/
                 })
+                actions_add_take_one_dice(game.id, user_id);
+                game.users.find(u => u.id === req.user._id).remaining_dice++;
                 next_round(game, false, req.user._id);
             } else {
                 remove_one_dice(game, req.user._id);
-                next_round(game, false, req.user._id);
+                check_for_win(game);
+                if (!game.is_over) {
+                    next_round(game, false, req.user._id);
+                }
             }
             tick_game(game);
             res.status(200).send({ message: "Spoton done.", result: game }).end();
@@ -442,7 +476,7 @@ exports.action_spoton = function (req, res) {
 exports.action_palifico = function (req, res) {
     const id = parseInt(req.params.id);
     const game = games.get(id);
-    if (assert_in_game(game, req, res) && assert_game_started(game, req, res)) {
+    if (assert_in_game(game, req, res) && assert_game_started(game, req, res) && assert_game_is_not_over(game, req, res)) {
         if (game.current_bid || game.users.find(u => u.id === req.user._id).remaining_dice !== 1) {
             res.status(400).send({ message: "You cannot palifico now.", error_code: 21 }).end();
         } else {
@@ -464,7 +498,7 @@ exports.get_actions = function (req, res) {
     const game = games.get(id);
 
     if (assert_game_exists(game, req, res)) {
-        const from = req.query.from_index;
+        const from = parseInt(req.query.from_index);
         const type = req.query.type;
         res.status(200).send({ result: actions.get(game.id).filter(a => (!from || a.index >= from) && (!type || a.type === type)) }).end();
     }
@@ -526,7 +560,15 @@ assert_is_my_turn = function (game, req, res) {
     }
     return true;
 };
-
+assert_game_is_not_over = function (game, req, res) {
+    if (!assert_game_exists(game, req, res)) {
+        return false;
+    } else if (game.is_over) {
+        res.status(400).send({ message: "Game is over.", error_code: 28 }).end();
+        return false;
+    }
+    return true;
+};
 
 
 
@@ -557,7 +599,7 @@ actions_add_message = function (game_id, user_id, message) {
     add_action(game_id, { type: "message", user_id: user_id, content: message });
 };
 actions_add_event = function (game_id, message, code) {
-    add_action(game_id, { type: "event", content: message, code: code});
+    add_action(game_id, { type: "event", content: message, code: code });
 };
 actions_add_palifico = function (game_id, user_id) {
     add_action(game_id, { type: "palifico", user_id: user_id });
