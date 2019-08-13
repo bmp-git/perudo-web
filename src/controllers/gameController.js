@@ -379,12 +379,13 @@ exports.leave_game = function (req, res) {
                     next_round(game, false, null);
                 }
             }
+            tick_game(game);
         } else if (!game.started) { //not started and not empty
             if (game.owner_id === req.user._id) {
                 game.owner_id = game.users[0].id;
             }
+            tick_game(game);
         }
-        tick_game(game);
         res.status(200).send({ message: "Removed from game.", result: game }).end();
     }
 };
