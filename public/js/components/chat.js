@@ -28,7 +28,7 @@ const Chat = {
                                 <div class="container chat-message">
                                     <div class="row">
                                         <div class="col-8 col-md-8 col-lg-10">
-                                            <p><i>{{msg.content}}</i></p>
+                                            <div><i class="text-secondary">{{msg.content}}</i></div>
                                         </div>
                                         <div class="col-2 offset-2 col-md-2 offset-md-2 col-lg-1 offset-lg-1">
                                             <span class="time-right">{{msg.date | formatDate}}</span>
@@ -45,7 +45,7 @@ const Chat = {
                                 <div class="container chat-message">
                                     <div class="row">
                                         <div class="col-8 col-md-8 col-lg-10">
-                                            <p><i><username :userid="msg.user_id"></username> called Palifico.</i></p>
+                                            <div><strong><username :userid="msg.user_id"></username></strong><i> called</i><i class="text-primary"> Palifico</i><i>.</i></div>
                                         </div>
                                         <div class="col-2 offset-2 col-md-2 offset-md-2 col-lg-1 offset-lg-1">
                                             <span class="time-right">{{msg.date | formatDate}}</span>
@@ -61,10 +61,16 @@ const Chat = {
                                 <div class="container chat-message">
                                     <div class="row">
                                         <div class="col-8 col-md-8 col-lg-10">
-                                            <p><i>
-                                                <username :userid="msg.user_id"></username> bid {{msg.bid.quantity}} dice of 
-                                                <span v-bind:class="'ml-1 dice dice-' + msg.bid.dice"></span>
-                                            </i></p>
+                                            <div>
+                                                <strong><username :userid="msg.user_id"></username></strong>
+                                                <i>
+                                                    <span class="text-primary"> bid</span>
+                                                    <strong> {{msg.bid.quantity}}</strong>
+                                                    dice of 
+                                                    <span v-bind:class="'ml-1 dice dice-' + msg.bid.dice"></span>
+                                                </i>
+                                            
+                                            </div>
                                         </div>
                                         <div class="col-2 offset-2 col-md-2 offset-md-2 col-lg-1 offset-lg-1">
                                             <span class="time-right">{{msg.date | formatDate}}</span>
@@ -80,7 +86,7 @@ const Chat = {
                                 <div class="container chat-message">
                                     <div class="row">
                                         <div class="col-8 col-md-8 col-lg-10">
-                                            <p><i><username :userid="msg.user_id"></username> doubted.</i></p>
+                                            <div><strong><username :userid="msg.user_id"></username></strong><i class="text-primary"> doubted</i><i>.</i></div>
                                         </div>
                                         <div class="col-2 offset-2 col-md-2 offset-md-2 col-lg-1 offset-lg-1">
                                             <span class="time-right">{{msg.date | formatDate}}</span>
@@ -96,7 +102,7 @@ const Chat = {
                                 <div class="container chat-message">
                                     <div class="row">
                                         <div class="col-8 col-md-8 col-lg-10">
-                                            <p><i><username :userid="msg.user_id"></username> spotted on.</i></p>
+                                            <div><strong><username :userid="msg.user_id"></username></strong><i class="text-primary"> spotted on</i><i>.</i></div>
                                         </div>
                                         <div class="col-2 offset-2 col-md-2 offset-md-2 col-lg-1 offset-lg-1">
                                             <span class="time-right">{{msg.date | formatDate}}</span>
@@ -112,7 +118,7 @@ const Chat = {
                                 <div class="container chat-message">
                                     <div class="row">
                                         <div class="col-8 col-md-8 col-lg-10">
-                                            <p><i>Started game round {{msg.round}}</i></p>
+                                            <div><i class="text-info">Started game round {{msg.round}}</i></div>
                                         </div>
                                         <div class="col-2 offset-2 col-md-2 offset-md-2 col-lg-1 offset-lg-1">
                                             <span class="time-right">{{msg.date | formatDate}}</span>
@@ -128,7 +134,7 @@ const Chat = {
                                 <div class="container chat-message">
                                     <div class="row">
                                         <div class="col-8 col-md-8 col-lg-10">
-                                            <p><i>Turn of <username :userid="msg.user_id"></username></i></p>
+                                            <div><i class="text-warning">Turn of </i><strong><username :userid="msg.user_id"></username></strong></div>
                                         </div>
                                         <div class="col-2 offset-2 col-md-2 offset-md-2 col-lg-1 offset-lg-1">
                                             <span class="time-right">{{msg.date | formatDate}}</span>
@@ -144,7 +150,7 @@ const Chat = {
                                 <div class="container chat-message">
                                     <div class="row">
                                         <div class="col-8 col-md-8 col-lg-10">
-                                            <p><i><username :userid="msg.user_id"></username> left the game.</i></p>
+                                            <div><strong><username :userid="msg.user_id"></username></strong><i class="text-danger"> left the game.</i></div>
                                         </div>
                                         <div class="col-2 offset-2 col-md-2 offset-md-2 col-lg-1 offset-lg-1">
                                             <span class="time-right">{{msg.date | formatDate}}</span>
@@ -160,7 +166,7 @@ const Chat = {
                                 <div class="container chat-message">
                                     <div class="row">
                                         <div class="col-8 col-md-8 col-lg-10">
-                                            <p><i><username :userid="msg.user_id"></username> lost a dice.</i></p>
+                                            <div><strong><username :userid="msg.user_id"></username></strong><i class="text-danger"> lost</i><i> a dice.</i></div>
                                         </div>
                                         <div class="col-2 offset-2 col-md-2 offset-md-2 col-lg-1 offset-lg-1">
                                             <span class="time-right">{{msg.date | formatDate}}</span>
@@ -176,7 +182,7 @@ const Chat = {
                                 <div class="container chat-message">
                                     <div class="row">
                                         <div class="col-8 col-md-8 col-lg-10">
-                                            <p><i><username :userid="msg.user_id"></username> gained a dice.</i></p>
+                                            <div><strong><username :userid="msg.user_id"></username></strong><i class="text-success"> gained</i><i> a dice.</i></div>
                                         </div>
                                         <div class="col-2 offset-2 col-md-2 offset-md-2 col-lg-1 offset-lg-1">
                                             <span class="time-right">{{msg.date | formatDate}}</span>
