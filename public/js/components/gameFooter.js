@@ -1,5 +1,5 @@
 const gameFooter = {
-    template: `<div class="container" v-show="showFooter">
+    template: `<div class="container" v-if="showFooter">
     <div class="row">
           <div class="gameFooter col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-12">
               <div id="content">
