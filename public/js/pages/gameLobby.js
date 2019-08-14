@@ -11,37 +11,50 @@ const gameLobby = {
                    
                     </template>
                     <template v-else>
-                    
+                    <div class="container">
+                        <div class="col-12 col-sm-12 col-md-10 offset-md-1 col-lg-10 offset-lg-1 col-xl-8 offset-xl-2 pl-0 pr-0">
                         <hr class="hr-text" v-bind:data-content="'In game: ' + game.name" />
-                        <roundTimer v-bind:game="game" v-bind:refresh_time_ms="100"></roundTimer>
 
-                        <currentbid v-bind:game="game"></currentbid>
+                        <div class="row row-with-margin">
+                            <currentbid v-bind:game="game"></currentbid>
+                        </div>
+                        <div class="row row-with-margin">
+                            <roundTimer v-bind:game="game" v-bind:refresh_time_ms="100"></roundTimer>
+                        </div>
 
-                        <gameTurn v-bind:game="game"></gameTurn>
+                        <div class="row row-with-margin">
+                            <gameTurn v-bind:game="game"></gameTurn>
+                        </div>
+
+                        <div class="row row-with-margin">
+                            <dice v-bind:game="game"></dice>
+                        </div>
+
+                        <div class="row row-with-margin">
+                            <diceSelector v-bind:game="game" v-bind:bid.sync="this.bid"></diceSelector>
+                        </div>
                         
-                        <hr class="hr-text" data-content="My dice" />
+                        <div class="row row-with-margin">
+                            <gameButtons v-bind:game="game" v-bind:bid="this.bid"></gameButtons>
+                        </div>
+
                         
-                        <dice v-bind:game="game"></dice>
-                        
-                        <hr class="hr-text" data-content="Actions" />
-                        
-                        <diceSelector v-bind:game="game" v-bind:bid.sync="this.bid"></diceSelector>
-                        <gameButtons v-bind:game="game" v-bind:bid="this.bid"></gameButtons>
+                        <div class="row row-with-margin">
+                        <div class="col-12 col-sm-12 col-md-10 offset-md-1 col-lg-10 offset-lg-1 col-xl-8 offset-xl-2 pl-0 pr-0" v-if="game.last_round_recap">
+                            <div class="row d-flex justify-content-around">
+                                <button type="button" @click="toggle_last_round" class="btn btn-primary btn-sm m-1">Last round</button>
+                            </div>
+                        </div>
+                        </div>
                         <endOfRoundComponent ref="endOfRoundModal"></endOfRoundComponent>
-                        <template v-if="game.last_round_recap">
-                            <button type="button" @click="toggle_last_round" class="btn btn-primary m-1">Last round</button>
-                        </template>
-                   
+                        </div>
+                    </div>
                     </template>
                 
-                    <hr class="hr-text" data-content="Chat" />
                     <chat ref="chat" :gameid="game.id"></chat>
                 
-                
-                
             </template>
-
-            </div>     
+        </div>     
 `,
     components: {
         'gameComponent': Game,
