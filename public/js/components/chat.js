@@ -150,7 +150,7 @@ const Chat = {
                                 <div class="container chat-message">
                                     <div class="row">
                                         <div class="col-8 col-md-8 col-lg-10">
-                                            <div><strong><username :userid="msg.user_id"></username></strong><i class="text-danger"> left the game.</i></div>
+                                            <div><strong><username :userid="msg.user_id"></username></strong><i class="text-danger"> left</i><i> the game.</i></div>
                                         </div>
                                         <div class="col-2 offset-2 col-md-2 offset-md-2 col-lg-1 offset-lg-1">
                                             <span class="time-right">{{msg.date | formatDate}}</span>
@@ -160,6 +160,39 @@ const Chat = {
                                 </div>                              
                             
                             </template>
+                            
+                            <template v-else-if="msg.type === 'lost'">
+                            
+                                <div class="container chat-message">
+                                    <div class="row">
+                                        <div class="col-8 col-md-8 col-lg-10">
+                                            <div><strong><username :userid="msg.user_id"></username></strong><i class="text-danger"> lost</i><i> the game.</i></div>
+                                        </div>
+                                        <div class="col-2 offset-2 col-md-2 offset-md-2 col-lg-1 offset-lg-1">
+                                            <span class="time-right">{{msg.date | formatDate}}</span>
+                                        </div>                                          
+                                    
+                                    </div>
+                                </div>                              
+                            
+                            </template>  
+                            
+                            
+                            <template v-else-if="msg.type === 'win'">
+                            
+                                <div class="container chat-message">
+                                    <div class="row">
+                                        <div class="col-8 col-md-8 col-lg-10">
+                                            <div><strong><username :userid="msg.user_id"></username></strong><i class="text-success"> wins</i><i> the game.</i></div>
+                                        </div>
+                                        <div class="col-2 offset-2 col-md-2 offset-md-2 col-lg-1 offset-lg-1">
+                                            <span class="time-right">{{msg.date | formatDate}}</span>
+                                        </div>                                          
+                                    
+                                    </div>
+                                </div>                              
+                            
+                            </template>                                                        
                                                     
                             <template v-else-if="msg.type === 'dice_lost'">
                             
@@ -192,6 +225,29 @@ const Chat = {
                                 </div>                              
                             
                             </template>
+                            
+                            <template v-else-if="msg.type === 'too_slow'">
+                            
+                                <div class="container chat-message">
+                                    <div class="row">
+                                        <div class="col-8 col-md-8 col-lg-10">
+                                            <div>
+                                                <strong><username :userid="msg.user_id"></username></strong>
+                                                <i> has</i>
+                                                <i class="text-info"> not</i>
+                                                <i> made a play</i>
+                                                <i class="text-info"> in time</i><i>!</i>
+                                                <i> Forcing a default play.</i>
+                                            </div>
+                                        </div>
+                                        <div class="col-2 offset-2 col-md-2 offset-md-2 col-lg-1 offset-lg-1">
+                                            <span class="time-right">{{msg.date | formatDate}}</span>
+                                        </div>                                          
+                                    
+                                    </div>
+                                </div>                              
+                            
+                            </template>                            
                             </div>
                         </template>
                     

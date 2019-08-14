@@ -64,7 +64,12 @@ check_for_win = function (game) {
 }
 
 update_ranking = function(game, game_action) {
-    return rankController.on_game_finish(game, game_action);
+    return rankController.on_game_finish(game, game_action).then(res => {
+        /* [ { _id:"5d4bd25fb9976803582381a5" ', delta_points: 0, points: 0 }, {...} ] */
+        game.ranks = res;
+        console.log(res);
+        tick_game(game);
+    });
 };
 
 start_game = function (game) {
@@ -373,7 +378,7 @@ exports.leave_game = function (req, res) {
             if (game.is_over) {
                 game.last_round_recap = { leave_user: req.user._id };
             } else {
-                if (!game.is_over && (game.current_turn_user_id === req.user._id || game.last_turn_user_id === req.user._id)) {
+                if (!game.is_over && game.users.find(u => u.id === req.user._id).remaining_dice > 0) {
                     game.last_round_recap = { leave_user: req.user._id };
                     next_round(game, false, null);
                 }
@@ -383,6 +388,8 @@ exports.leave_game = function (req, res) {
             if (game.owner_id === req.user._id) {
                 game.owner_id = game.users[0].id;
             }
+            tick_game(game);
+        } else if(game.is_over) {
             tick_game(game);
         }
         res.status(200).send({ message: "Removed from game.", result: game }).end();

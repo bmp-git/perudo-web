@@ -10,7 +10,7 @@ get_users_place = function(game_actions) {
     for(let i = 0; i < game_actions.length; i++) {
         if(game_actions[i].type === 'lost') {
             places.push({ _id: game_actions[i].user_id});
-        } else if(game_actions[i].type === 'leave') {
+        } else if(game_actions[i].type === 'left') {
             places.push({ _id:game_actions[i].user_id});
             leavers.push({ _id:game_actions[i].user_id});
         }
@@ -76,7 +76,7 @@ get_leave_date = function(user_id, actions) {
     for(let i = 0; i < actions.length; i++) {
         if(actions[i].type === 'event' && actions[i].code === 3) {
             return actions[i].date;
-        } else if(actions[i].type === 'leave' && actions[i].user_id === user_id) {
+        } else if(actions[i].type === 'left' && actions[i].user_id == user_id) {
             return actions[i].date;
         }
     }
@@ -112,9 +112,9 @@ exports.on_game_finish = function (game, game_actions) {
                 }
             });
         }
-        return points;
+        return points.reverse();
     });
 };
 
 
-//exports.on_game_finish(examples.example_game, examples.example_actions);
+exports.on_game_finish(examples.example_game, examples.example_actions);
