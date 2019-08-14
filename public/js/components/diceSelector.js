@@ -13,7 +13,6 @@ const diceSelector = {
                         </div>
                     
 
-                        <span class="align-self-center"> dices of </span>
 
 
                         <template v-if="isPalificoWithBid">
@@ -94,6 +93,7 @@ const diceSelector = {
         },
         selectedDiceChange: function (elem) {
             this.bid.dice = Number(elem.getAttribute('value'));
+            document.activeElement.blur();
             this.lastSelectedDice = this.bid.dice;
             this.bid.quantity = this.getMinQuantity();
         }

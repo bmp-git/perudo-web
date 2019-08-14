@@ -38,7 +38,7 @@ const Profile = {
                                 <strong>Global ranking</strong>
                             </div>
                             <div class="col-4">
-                                <p class="float-right" style="font-size:23px">2039</p>
+                                <p class="float-right" style="font-size:23px">{{globalRank}}</p>
                             </div>                            
                         </div>
                         <div class="row">
@@ -46,7 +46,7 @@ const Profile = {
                                 <strong>Country ranking</strong>
                             </div>
                             <div class="col-4">
-                                <p class="float-right">234</p>
+                                <p class="float-right">{{globalRank}}</p>
                             </div>                            
                         </div>                        
                         <div class="row">
@@ -63,7 +63,7 @@ const Profile = {
                 
                 <div class="row">
                     <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-12">
-                        <LineChart></LineChart>
+                        <line-chart :data="{'2017-05-13': 2, '2017-05-14': 5}"></line-chart>
                     </div>
                 </div>
                 
@@ -154,7 +154,7 @@ const Profile = {
                 
                 <div class="row">
                     <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-12">
-                        <LineChart></LineChart>                                
+                        <line-chart :data="{'2017-05-13': 2, '2017-05-14': 5}"></line-chart>                                
                     </div>           
                          
                 </div>
@@ -162,8 +162,7 @@ const Profile = {
         </div>
 `,
     components: {
-        'profileImage': profileImage,
-        'LineChart': LineChart
+        'profileImage': profileImage
     },
     data() {
         return {
@@ -177,7 +176,8 @@ const Profile = {
                 playTime: 0,
                 totalPlayTime: 0,
                 avatar: ""
-            }
+            },
+            globalRank : -1
 
         }
     },
@@ -186,6 +186,13 @@ const Profile = {
             axios.get("/api/users/" + this.$route.params.id + "/info")
                 .then(response => {
                     this.user = response.data.user
+                })
+                .catch(error => {
+                    router.push("/404")
+                });
+            axios.get("/api/users/" + this.$route.params.id + "/rank")
+                .then(response => {
+                    this.globalRank = response.data.rank;
                 })
                 .catch(error => {
                     router.push("/404")
