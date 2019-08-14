@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const User = mongoose.model('User');
 
+var rankController = require('./rankController');
+
 var games = new Map(); // game id -> game
 var actions = new Map(); //game id -> [actions]
 var currentDice = new Map(); //game id -> {user id -> [dice values]}
@@ -31,43 +33,38 @@ add_user_to_game = function (game, userId, next) {
             next(false);
         } else {
             game.users.push({
-                id: userId, username: user.username,
-                avatar_url: "/api/users/" + userId + "/avatar", //TODO remove username and avatar_url
-                remaining_dice: 5, can_palifico: true
+                id: userId,
+                remaining_dice: 5, 
+                can_palifico: true
             });
+            /* should be better => involves a mega-refactor
+            game.users[userId] = {
+                remaining_dice: 5, 
+                can_palifico: true
+            };
+            */
             next(true);
         }
     });
 };
 
 check_for_win = function (game) {
-    var remaining_user = 0;
-    game.users.forEach(u => {
-        if (u.remaining_dice > 0) {
-            remaining_user++;
-        }
-    });
+    var remaining_user = game.users.filter(u => u.remaining_dice > 0).length;
     if (remaining_user === 1) {
         game.winning_user = game.users.find(u => u.remaining_dice > 0).id;
         game.is_over = true;
-    } else if (remaining_user === 0) {
-        game.is_over = true;
-    }
-
-    if (remaining_user <= 1) {
         if (turnTimeouts.get(game.id)) {
             clearTimeout(turnTimeouts.get(game.id));
         }
         actions_add_event(game.id, "The game is over!", 3);
         oldDice.get(game.id).set(game.round, currentDice.get(game.id));
-
         update_ranking(game, actions.get(game.id));
     }
 }
 
 update_ranking = function(game, game_action) {
-    //TODO move from here
-}
+    rankController.on_game_finish(game, game_action);
+};
 
 start_game = function (game) {
     actions_add_event(game.id, "Welcome! The game is started!", 1);
@@ -111,7 +108,7 @@ make_bid = function (game, user_id, dice, quantity) {
 remove_one_dice = function (game, user_id) {
     game.users.find(u => u.id === user_id).remaining_dice--;
     actions_add_loses_one_dice(game.id, user_id);
-    if(game.users.find(u => u.id === user_id).remaining_dice) {
+    if(game.users.find(u => u.id === user_id).remaining_dice <= 0) {
         actions_add_lost(game.id, user_id);
     }
 };
