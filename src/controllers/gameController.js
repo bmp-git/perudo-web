@@ -64,7 +64,12 @@ check_for_win = function (game) {
 }
 
 update_ranking = function(game, game_action) {
-    return rankController.on_game_finish(game, game_action);
+    return rankController.on_game_finish(game, game_action).then(res => {
+        /* [ { _id:"5d4bd25fb9976803582381a5" ', delta_points: 0, points: 0 }, {...} ] */
+        game.ranks = res;
+        console.log(res);
+        tick_game(game);
+    });
 };
 
 start_game = function (game) {
