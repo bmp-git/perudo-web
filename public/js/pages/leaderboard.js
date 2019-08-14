@@ -95,6 +95,13 @@ const Leaderboard = {
     components: {
         'useravatar': Useravatar
     },
+    watch: {
+        $route: function(to, from) {
+            if(to.name === 'leaderboard') {
+                this.reload();
+            }
+        }
+    },
     methods: {
         reload: function () {
             axios.get("/api/leaderboard", { params: { page: this.page, pageLenght: this.page_lenght } })
