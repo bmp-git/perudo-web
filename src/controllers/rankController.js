@@ -3,9 +3,6 @@ const User = mongoose.model('User');
 
 var examples = require('./exampleInstances');
 
-const pl = ['5d4bd25fb9976803582381a5', '5d4c5775dfcf490e889e66ca'];
-
-
 
 get_users_place = function(game_actions) {
     let places = [];
@@ -31,7 +28,7 @@ compute_points = function(players, current_points) {
     let pointsBid = 0;
     for(let i = 0; i < players.length; i++) {
         const player = players[i];
-        let cp = current_points.find(e => e._id === player._id);
+        let cp = current_points.find(e => e._id == player._id);
         cp = cp ? cp.points : 0;
         player.points = points_function(i, cp);
         pointsBid += cp * 0.10;
@@ -43,7 +40,6 @@ compute_points = function(players, current_points) {
 
         result.push(player);
     }
-    console.log(result);
     return result;
 };
 
@@ -52,13 +48,20 @@ get_users = function(players_id) {
 };
 
 update_user_stats = function(user, game, new_points, leaveDate) {
+    if (!(leaveDate instanceof Date)) {
+        leaveDate = new Date(leaveDate);
+    }
+
+    if (!(game.game_start_time instanceof Date)) {
+        game.game_start_time = new Date(game.game_start_time);
+    }
     return {
         _id: user._id,
         points: new_points,
-        wins: game.winning_user === user._id ? user.wins + 1 : user.wins,
-        losses: game.winning_user === user._id ? user.losses : user.losses + 1,
-        playTime: user.playTime + leaveDate - game.game_start_time,
-        totalPlayTime: user.totalPlayTime + leaveDate - game.game_start_time,
+        wins: game.winning_user == user._id ? user.wins + 1 : user.wins,
+        losses: game.winning_user == user._id ? user.losses : user.losses + 1,
+        playTime: user.playTime + Math.abs(leaveDate - game.game_start_time),
+        totalPlayTime: user.totalPlayTime + Math.abs(leaveDate - game.game_start_time),
     };
 
 };
@@ -85,19 +88,21 @@ exports.on_game_finish = function (game, game_actions) {
         const points = compute_points(players.places, currentPoints);
         for(let i = 0; i < points.length; i++) {
             const leaveDate = get_leave_date(points[i]._id, game_actions);
-            //console.log(res);
-            //console.log(res.find(e => e._id === points[i]._id));
-            //console.log(update_user_stats(res.find(e => e._id === points[i]._id), game, points[i].points,leaveDate));
+            const user = res.find(e => e._id == points[i]._id);
+            const updated_user = update_user_stats(user, game, points[i].points,leaveDate);
+            User.findByIdAndUpdate(user._id, updated_user, function (err, result) {
+                if (err) {
+                    console.log("Cannot update user stats.");
+                } else if (result) {
+                    console.log(user._id + " user stats updated.");
+                } else {
+                    console.log("User id not found during stats update.");
+                }
+            });
         }
 
     });
 };
 
-exports.update_profile_stats = function (players) {
-    console.log("Update profile stats called!");
-    User.find({ _id : { $in : players }}).exec(function (err, result) {
-        //console.log(result);
-    })
-};
 
 //exports.on_game_finish(examples.example_game, examples.example_actions);
