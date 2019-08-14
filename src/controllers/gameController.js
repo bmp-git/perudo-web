@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const User = mongoose.model('User');
 
+var rankController = require('./rankController');
+
 var games = new Map(); // game id -> game
 var actions = new Map(); //game id -> [actions]
 var currentDice = new Map(); //game id -> {user id -> [dice values]}
@@ -61,8 +63,8 @@ check_for_win = function (game) {
 }
 
 update_ranking = function(game, game_action) {
-    //TODO move from here
-}
+    rankController.on_game_finish(game, game_action);
+};
 
 start_game = function (game) {
     actions_add_event(game.id, "Welcome! The game is started!", 1);
@@ -106,7 +108,7 @@ make_bid = function (game, user_id, dice, quantity) {
 remove_one_dice = function (game, user_id) {
     game.users.find(u => u.id === user_id).remaining_dice--;
     actions_add_loses_one_dice(game.id, user_id);
-    if(game.users.find(u => u.id === user_id).remaining_dice) {
+    if(game.users.find(u => u.id === user_id).remaining_dice <= 0) {
         actions_add_lost(game.id, user_id);
     }
 };
