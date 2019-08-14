@@ -63,7 +63,7 @@ check_for_win = function (game) {
 }
 
 update_ranking = function(game, game_action) {
-    rankController.on_game_finish(game, game_action);
+    return rankController.on_game_finish(game, game_action);
 };
 
 start_game = function (game) {
