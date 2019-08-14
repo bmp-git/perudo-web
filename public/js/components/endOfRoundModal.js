@@ -66,7 +66,7 @@ const EndOfRoundModal = {
               <useravatar :userid="user._id" style="width: 32px; height: 32px; border-width: 1px;"/>
               <username :userid="user._id"></username>
             </h6>
-            <p class="text-center mt-0 mb-0"><tag v-if="user.delta_points < 0" class="text-danger">-{{user.delta_points}}</tag><tag v-if="user.delta_points >= 0" class="text-primary">+{{user.delta_points}}</tag> points</p>
+            <p class="text-center mt-0 mb-0"><tag v-if="user.delta_points < 0" class="text-danger">{{user.delta_points}}</tag><tag v-if="user.delta_points >= 0" class="text-primary">+{{user.delta_points}}</tag> points</p>
             <p class="text-center mt-0 mb-4">Total points: {{user.points}}</p>
             
           </template>

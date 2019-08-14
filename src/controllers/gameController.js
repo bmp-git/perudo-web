@@ -378,10 +378,10 @@ exports.leave_game = function (req, res) {
             if (game.is_over) {
                 game.last_round_recap = { leave_user: req.user._id };
             } else {
-                if (!game.is_over && (game.current_turn_user_id === req.user._id || game.last_turn_user_id === req.user._id)) {
+                //if (!game.is_over && (game.current_turn_user_id === req.user._id || game.last_turn_user_id === req.user._id)) {
                     game.last_round_recap = { leave_user: req.user._id };
                     next_round(game, false, null);
-                }
+                //}
             }
             tick_game(game);
         } else if (!game.started) { //not started and not empty
