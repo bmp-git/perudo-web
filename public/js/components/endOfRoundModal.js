@@ -4,11 +4,11 @@ const EndOfRoundModal = {
     <div id="myModal" class="modal" @click.prevent="hide">
 
       <!-- Modal content -->
-      <div class="modal-content col-12 col-lg-6 col-xl-3 pt-0 pl-2 pr-2 pb-2" @click.prevent="">
+      <div class="modal-content col-12 col-lg-6 col-xl-3 pt-1 pl-2 pr-2 pb-3" @click.prevent="">
       <h6 class="text-right" style="color:gray"><i>round {{game.round}}</i></h6>
         <template v-if="game.last_round_recap.leave_user">
           <h4 class="text-center mb-4">
-          <img v-bind:src="'/api/users/'+game.last_round_recap.leave_user+'/avatar'" width="48px" height="48px" style="object-fit: cover; border-radius: 50%; border: 1px solid #007BFF;">
+          <useravatar :userid="game.last_round_recap.leave_user" style="width: 48px; height: 48px; opacity: 0.5;"/>
           <b class="text-primary"><username :userid="game.last_round_recap.leave_user"></username></b> left the game</h4>
          
         </template>
@@ -21,7 +21,7 @@ const EndOfRoundModal = {
           <template v-for="d in dice">
             <template v-if="d.dice.length > 0">
               <h5 class="text-center">
-                <img v-bind:src="'/api/users/'+d.user+'/avatar'" width="32px" height="32px" style="object-fit: cover; border-radius: 50%; border: 1px solid #007BFF;">
+                <useravatar :userid="d.user" style="width: 32px; height: 32px; border-width: 1px;"/>
                 <i v-bind:class="(game.last_round_recap.bid_user === d.user || game.last_round_recap.doubt_user === d.user || game.last_round_recap.spoton_user === d.user)?'text-primary':''"><username :userid="d.user"></username></i>
                 <template v-for="v in d.dice">
                   <template v-if="valid_dice(v, d.user)">
@@ -53,7 +53,7 @@ const EndOfRoundModal = {
 
         <template v-if="game.is_over">
           <h4 class="text-center mt-3"><b class="text-primary"><username :userid="game.winning_user"></username></b> won</h4>
-          <img v-bind:src="'/api/users/'+game.winning_user+'/avatar'" class="mx-auto d-block" width="128px" height="128px" style="object-fit: cover; border-radius: 25%; border: 1px solid #007BFF;">
+            <useravatar :userid="game.winning_user" class="mx-auto d-block" style="width: 64px; height: 64px;"/>
           </template>
           <template v-else>
             <h6 class="text-center mt-4">A new round is started</h6>
@@ -74,6 +74,7 @@ const EndOfRoundModal = {
   },
   components: {
     'username': Username,
+    'useravatar': Useravatar
   }, methods: {
     toggle: function() {
       if(this.game) {

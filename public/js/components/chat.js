@@ -8,7 +8,7 @@ const Chat = {
                                 <div class="container chat-message">
                                     <div class="row">
                                         <div class="col-2 col-md-2 col-lg-1">
-                                            <img v-bind:src="'/api/users/' + msg.user_id +'/avatar'">
+                                            <useravatar :userid="msg.user_id"/>
                                         </div>
                                         <div class="col-8 col-md-8 col-lg-10">
                                             <strong><username :userid="msg.user_id"></username></strong>
@@ -210,7 +210,8 @@ const Chat = {
                 </div>  
 `,
     components: {
-        'username': Username
+        'username': Username,
+        'useravatar': Useravatar
     },
     /*
     *   content: "Hey come stai?"

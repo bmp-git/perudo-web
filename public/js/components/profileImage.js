@@ -4,7 +4,7 @@ const profileImage = {
                 <div class="profileImage">
                     <template v-if="this.userid">
                         <router-link :to="{ name: 'profile', params: { id: this.userid }}">
-                            <img v-bind:src="imageURL"/>
+                            <useravatar ref="avatar" :userid="userid" style="border: 0px"/>
                         </router-link>
                     </template>
                 </div>
@@ -28,18 +28,18 @@ const profileImage = {
 `,
     data() {
         return {
-            imageURL: '/api/users/' + this.userid + '/avatar'
         }
     },
     props: ['userid', 'canedit', 'onnewimage'],
     components: {
-        'errorSuccessNotifier': errorSuccessNotifier
+        'errorSuccessNotifier': errorSuccessNotifier,
+        'useravatar': Useravatar
     },
     computed: {
     },
     methods: {
         reload: function() {
-            this.imageURL = this.imageURL + ' '; //workaround to reload image
+            this.$refs.avatar.reload();
         },
         onEditClick: function() {
             this.$refs.inputFile.click();

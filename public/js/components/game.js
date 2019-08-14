@@ -8,7 +8,7 @@ const Game = {
         <template v-else>
             <span class="badge badge-pill badge-success" style="margin-bottom:10px">In lobby</span>
         </template>
-    <h6 class="card-title">
+        <h6 class="card-title">
         <router-link :to="{ name: 'gamelobby', params: { id: gameid }}">{{game.name}}</router-link>&emsp;
         <template v-if="game.password != null"> <i class="fas fa-lock mr-3" data-toggle="tooltip" data-placement="bottom" title="Password needed"></i> </template> 
         <template v-else> <i class="mr-3 fas fa-lock-open" data-toggle="tooltip" data-placement="bottom" title="No password needed"></i> </template>
@@ -45,7 +45,7 @@ const Game = {
         <div class="col-4 col-md-2 text-center pl-3 pr-3">
 
                 <router-link :to="{ name: 'profile', params: { id: user.id }}">
-                    <img v-bind:src="user.avatar_url" class="ig-avatar" width="64px" height="64px" style="object-fit: cover; border-radius: 50%; border: 2px solid #007BFF;">
+                    <useravatar v-bind:userid="user.id" size="64"></useravatar> 
                 </router-link>
 
                 <router-link :to="{ name: 'profile', params: { id: user.id }}" style="margin-bottom:0px">
@@ -60,10 +60,10 @@ const Game = {
         <template v-for="i in freeSpaces" v-bind:key="i">
             <div class="col-4 col-md-2 text-center">
                 <a href="" @click.prevent="joinGame">
-                    <img src="/img/avatar"  class="ig-avatar" width="64px" height="64px" style="object-fit: cover; border-radius: 50%;">
+                    <useravatar size="64"></useravatar> 
                  </a>
                 <a href="" @click.prevent="joinGame" style="color:black; text-decoration: none; background-color: none;">
-                    <p>Empty</p>
+                    <p><i>Empty</i></p>
                 </a>
             </div>
         </template>
@@ -75,7 +75,8 @@ const Game = {
    
 </div>`,
     components: {
-        'username': Username
+        'username': Username,
+        'useravatar': Useravatar
     },
     props: ['gameid', 'includedivisor'],
     data() {

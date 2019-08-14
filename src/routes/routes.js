@@ -101,6 +101,9 @@ module.exports = function (app) {
 	app.route('/img/avatar').get((req, res) => {
 		res.sendFile(appRoot + '/www/img/avatar.png');
 	});
+	app.route('/img/empty').get((req, res) => {
+		res.sendFile(appRoot + '/www/img/empty.png');
+	});
 
 	app.use(function (req, res) {
 		res.sendFile(appRoot + '/www/index.html');

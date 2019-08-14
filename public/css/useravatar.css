@@ -1,0 +1,10 @@
+.useravatar {
+    object-fit: cover;
+    border: 2px solid #007BFF; 
+    border-radius:50%;
+    width: 64px;
+    height: 64px;
+}
+.emptyuseravatar {
+    opacity: 0.7;
+}

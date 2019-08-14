@@ -1,4 +1,5 @@
-const Leaderboard = { template: `<div class="container">
+const Leaderboard = {
+    template: `<div class="container">
 <hr class="hr-text" data-content="Global leaderboard">
 
 <div class="row">
@@ -31,7 +32,7 @@ const Leaderboard = { template: `<div class="container">
             <th scope="row">{{user.rank}}</th>
             <td>
                 <router-link :to="{ name: 'profile', params: { id: user.id }}">
-                        <img v-bind:src="avatar_url(user.id)" class="ig-avatar" width="32px" height="32px" style="object-fit: cover; border-radius: 50%; border: 2px solid #007BFF;">
+                <useravatar :userid="user.id" style="width: 32px; height: 32px; border-width: 1px;"/>
                 </router-link>
                 <router-link :to="{ name: 'profile', params: { id: user.id }}">
                 {{user.username}}
@@ -83,52 +84,52 @@ const Leaderboard = { template: `<div class="container">
     </div>
 </div>
 </div>`,
-data() {
-    return {
-        page : 1,
-        page_lenght : 10,
-        total : 0,
-        users: []
-    }
- },
- methods: {
-     reload: function () {
-        axios.get("/api/leaderboard", { params: { page : this.page, pageLenght : this.page_lenght } })
-            .then(response => {
-                this.users = response.data.result;
-                this.total = response.data.total;
-            })
-            .catch(error => {
-                console.log(error.data);
-            });
+    data() {
+        return {
+            page: 1,
+            page_lenght: 10,
+            total: 0,
+            users: []
+        }
     },
-    changePageLenght: function () {
-        this.page = 1;
+    components: {
+        'useravatar': Useravatar
+    },
+    methods: {
+        reload: function () {
+            axios.get("/api/leaderboard", { params: { page: this.page, pageLenght: this.page_lenght } })
+                .then(response => {
+                    this.users = response.data.result;
+                    this.total = response.data.total;
+                })
+                .catch(error => {
+                    console.log(error.data);
+                });
+        },
+        changePageLenght: function () {
+            this.page = 1;
+            this.reload();
+        },
+        changePage: function (n) {
+            this.page = n;
+            this.reload();
+        }
+    },
+    computed: {
+        lastUser: function () {
+            return this.firstUser + Object.keys(this.users).length - 1;
+        },
+        firstUser: function () {
+            return (this.page - 1) * this.page_lenght + 1;
+        },
+        lastPage: function () {
+            return this.lastUser == this.total;
+        },
+        pages: function () {
+            return Math.ceil(this.total / this.page_lenght);
+        }
+    },
+    mounted: function () {
         this.reload();
-    },
-    changePage: function (n) {
-        this.page = n;
-        this.reload();
-    },
-    avatar_url: function(user_id) {
-        return "/api/users/" + user_id + "/avatar";
     }
- },
- computed: {
-    lastUser: function () {
-        return this.firstUser + Object.keys(this.users).length - 1;
-    },
-    firstUser: function () {
-        return (this.page - 1) * this.page_lenght + 1;
-    },
-    lastPage: function () {
-        return this.lastUser == this.total;
-    },
-    pages: function () {
-        return Math.ceil(this.total / this.page_lenght);
-    }
- },
- mounted: function () {
-    this.reload();
- }
 }
