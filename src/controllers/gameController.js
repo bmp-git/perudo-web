@@ -64,7 +64,12 @@ check_for_win = function (game) {
 }
 
 update_ranking = function(game, game_action) {
-    return rankController.on_game_finish(game, game_action);
+    return rankController.on_game_finish(game, game_action).then(res => {
+        /* [ { _id:"5d4bd25fb9976803582381a5" ', delta_points: 0, points: 0 }, {...} ] */
+        game.ranks = res;
+        console.log(res);
+        tick_game(game);
+    });
 };
 
 start_game = function (game) {
@@ -373,10 +378,10 @@ exports.leave_game = function (req, res) {
             if (game.is_over) {
                 game.last_round_recap = { leave_user: req.user._id };
             } else {
-                if (!game.is_over && (game.current_turn_user_id === req.user._id || game.last_turn_user_id === req.user._id)) {
+                //if (!game.is_over && (game.current_turn_user_id === req.user._id || game.last_turn_user_id === req.user._id)) {
                     game.last_round_recap = { leave_user: req.user._id };
                     next_round(game, false, null);
-                }
+                //}
             }
             tick_game(game);
         } else if (!game.started) { //not started and not empty

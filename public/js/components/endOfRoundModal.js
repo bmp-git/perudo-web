@@ -4,7 +4,7 @@ const EndOfRoundModal = {
     <div id="myModal" class="modal" @click.prevent="hide">
 
       <!-- Modal content -->
-      <div class="modal-content col-12 col-lg-6 col-xl-3 pt-1 pl-2 pr-2 pb-3 animated fadeIn faster" @click.prevent="">
+      <div class="modal-content col-12 col-lg-6 col-xl-3 pt-1 pl-2 pr-2 pb-0 animated fadeIn faster" @click.prevent="">
       <h6 class="text-right" style="color:gray"><i>round {{game.round}}</i></h6>
         <template v-if="game.last_round_recap.leave_user">
           <h4 class="text-center mb-4">
@@ -58,6 +58,19 @@ const EndOfRoundModal = {
           <template v-else>
             <h6 class="text-center mt-4 animated infinite pulse slower">A new round is started</h6>
         </template>
+
+        <div v-if="game.ranks" class="mt-0">
+          <hr class="hr-text" data-content="Points" style="opacity: 0.5;">
+          <template v-for="user in game.ranks">
+            <h6 class="text-center mb-0">
+              <useravatar :userid="user._id" style="width: 32px; height: 32px; border-width: 1px;"/>
+              <username :userid="user._id"></username>
+            </h6>
+            <p class="text-center mt-0 mb-0"><tag v-if="user.delta_points < 0" class="text-danger">{{user.delta_points}}</tag><tag v-if="user.delta_points >= 0" class="text-primary">+{{user.delta_points}}</tag> points</p>
+            <p class="text-center mt-0 mb-4">Total points: {{user.points}}</p>
+            
+          </template>
+        </div>
       </div>
      
 
