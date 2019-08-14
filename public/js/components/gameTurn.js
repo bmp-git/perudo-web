@@ -1,6 +1,4 @@
 const gameTurn = { template: `
-<div class="container">
-    <div class="row">
         <div class="col-12 col-sm-12 col-md-10 offset-md-1 col-lg-10 offset-lg-1 col-xl-8 offset-xl-2 pl-0 pr-0">
             <div class="row justify-content-around">
                 <div v-bind:class="isUserTurn(user.id) ? 'animated pulse infinite slow' : ''" v-for="user in this.game.users">
@@ -10,7 +8,6 @@ const gameTurn = { template: `
                         <div class="row d-flex justify-content-center">
                             <router-link :to="{ name: 'profile', params: { id: user.id }}">
                                 <template v-if="user.remaining_dice <= 0">
-                                    <useravatar :userid="user.id" v-bind:style="[!isMe(user.id) ? {'border': '2px solid #AAAAAA'} : {}]" style="opacity: 0.5;"/>
                                     <useravatar :userid="user.id" v-bind:style="[!isMe(user.id) ? {'border': '2px solid #AAAAAA'} : {}]" style="opacity: 0.5;"/>
                                 </template>
                                 <template v-else>
@@ -30,10 +27,7 @@ const gameTurn = { template: `
                         </template>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
-`,
+        </div>`,
  props: ['game'],
  components: {
      'useravatar' : Useravatar,

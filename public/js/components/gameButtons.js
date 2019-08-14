@@ -1,14 +1,14 @@
 const GameButtons = { 
- template: `<div class="container">
-                    <div class="row d-flex justify-content-center m-1">
+ template: `<div class="col-12 col-sm-12 col-md-10 offset-md-1 col-lg-10 offset-lg-1 col-xl-8 offset-xl-2 pl-0 pr-0">
+                    <div class="row d-flex justify-content-around">
                             <template v-if="gameOver()">
-                                <button type="button" @click="leaveGame" class="btn btn btn-danger m-1">Leave game</button>
+                                <button type="button" @click="leaveGame" class="btn btn btn-danger ml-1 mr-1">Leave game</button>
                             </template>
                             <template v-else>
-                                <button type="button" @click="doBid" class="btn btn-primary m-1" v-bind:disabled="!canBid()">Bid</button>
-                                <button type="button" @click="doubt" class="btn btn-primary m-1" v-bind:disabled="!canDoubt()">Dubt</button>
-                                <button type="button" @click="spotOn" class="btn btn-primary m-1" v-bind:disabled="!canSpotOn()">Spot on</button>
-                                <button type="button" @click="palifico" class="btn btn-primary m-1" v-bind:disabled="!canPalifico()">Palifico</button>
+                                <button type="button" @click="doBid" class="btn btn-primary ml-1 mr-1" v-bind:disabled="!canBid()">Bid</button>
+                                <button type="button" @click="doubt" class="btn btn-primary ml-1 mr-1" v-bind:disabled="!canDoubt()">Dubt</button>
+                                <button type="button" @click="spotOn" class="btn btn-primary ml-1 mr-1" v-bind:disabled="!canSpotOn()">Spot on</button>
+                                <button type="button" @click="palifico" class="btn btn-primary ml-1 mr-1" v-bind:disabled="!canPalifico()">Palifico</button>
                             </template>
                     </div>  
             </div>`,

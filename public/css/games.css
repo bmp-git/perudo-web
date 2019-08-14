@@ -15,3 +15,8 @@
     font-size: 12px;
     line-height: 1.42857;
 }
+
+.row-with-margin {
+    margin-top:15px;
+    margin-bottom:15px
+}
