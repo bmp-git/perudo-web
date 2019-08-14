@@ -13,7 +13,7 @@ const gameLobby = {
                     <template v-else>
                     
                         <hr class="hr-text" v-bind:data-content="'In game: ' + game.name" />
-                        <roundTimer v-bind:game="game"></roundTimer>
+                        <roundTimer v-bind:game="game" v-bind:refresh_time_ms="100"></roundTimer>
 
                         <currentbid v-bind:game="game"></currentbid>
 
