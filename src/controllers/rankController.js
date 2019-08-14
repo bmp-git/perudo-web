@@ -5,18 +5,19 @@ var examples = require('./exampleInstances');
 
 
 get_users_place = function(game_actions) {
-    let places = [];
+    let ranks = [];
     let leavers = [];
     for(let i = 0; i < game_actions.length; i++) {
-        if(game_actions[i].type === 'lost') {
-            places.push({ _id: game_actions[i].user_id});
-        } else if(game_actions[i].type === 'left') {
-            places.push({ _id:game_actions[i].user_id});
-            leavers.push({ _id:game_actions[i].user_id});
+        const action = game_actions[i];
+        if(action.type === 'lost') {
+            ranks.push({ _id: action.user_id});
+        } else if(action.type === 'left' && !ranks.find(e => e._id == action.user_id)) {
+            ranks.push({ _id: action.user_id});
+            leavers.push({ _id: action.user_id});
         }
     }
 
-    return {places, leavers};
+    return {ranks, leavers};
 };
 
 points_function = function(place, cp) {
@@ -85,13 +86,13 @@ get_leave_date = function(user_id, actions) {
 exports.on_game_finish = function (game, game_actions) {
     const winner = { _id:game.winning_user};
     const players = get_users_place(game_actions);
-    players.places.push(winner);
-    return get_users(players.places.map(elem => elem._id)).then(res => {
+    players.ranks.push(winner);
+    return get_users(players.ranks.map(elem => elem._id)).then(res => {
         const currentPoints = res.map(elem => {
             return {_id: elem._id, points: elem.points};
         });
 
-        const points = compute_points(players.places, currentPoints);
+        const points = compute_points(players.ranks, currentPoints);
         for(let i = 0; i < points.length; i++) {
             const leaveDate = get_leave_date(points[i]._id, game_actions);
             const user = res.find(e => e._id == points[i]._id);
@@ -117,4 +118,4 @@ exports.on_game_finish = function (game, game_actions) {
 };
 
 
-exports.on_game_finish(examples.example_game, examples.example_actions);
+//exports.on_game_finish(examples.example_game, examples.example_actions);
