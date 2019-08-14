@@ -60,7 +60,13 @@ check_for_win = function (game) {
         }
         actions_add_event(game.id, "The game is over!", 3);
         oldDice.get(game.id).set(game.round, currentDice.get(game.id));
+
+        update_ranking(game, actions.get(game.id));
     }
+}
+
+update_ranking = function(game, game_action) {
+    //TODO move from here
 }
 
 start_game = function (game) {
@@ -105,7 +111,11 @@ make_bid = function (game, user_id, dice, quantity) {
 remove_one_dice = function (game, user_id) {
     game.users.find(u => u.id === user_id).remaining_dice--;
     actions_add_loses_one_dice(game.id, user_id);
+    if(game.users.find(u => u.id === user_id).remaining_dice) {
+        actions_add_lost(game.id, user_id);
+    }
 };
+
 reroll_dice = function (game) {
     const game_dice = new Map(); //user_id -> [dice values]
     game.users.forEach(u => {
@@ -614,6 +624,9 @@ actions_add_turn = function (game_id, user_id) {
 };
 actions_add_left_game = function (game_id, user_id) {
     add_action(game_id, { type: "left", user_id: user_id });
+};
+actions_add_lost = function (game_id, user_id) {
+    add_action(game_id, { type: "lost", user_id: user_id });
 };
 actions_add_loses_one_dice = function (game_id, user_id) {
     add_action(game_id, { type: "dice_lost", user_id: user_id });
