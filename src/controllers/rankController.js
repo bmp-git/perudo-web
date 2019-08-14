@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const User = mongoose.model('User');
+const RankHistory = mongoose.model('RankHistory');
 
 var examples = require('./exampleInstances');
 
@@ -117,5 +118,14 @@ exports.on_game_finish = function (game, game_actions) {
     });
 };
 
-
+/*
+const new_rank = new RankHistory({ user_id : '5d4bd25fb9976803582381a5' });
+new_rank.save((err, res) => {
+    if(err) {
+        console.log("error");
+    } else {
+        console.log(res);
+    }
+});
+*/
 //exports.on_game_finish(examples.example_game, examples.example_actions);
