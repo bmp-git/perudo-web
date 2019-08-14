@@ -112,7 +112,7 @@ exports.on_game_finish = function (game, game_actions) {
                 }
             });
         }
-        return points;
+        return points.reverse();
     });
 };
 
