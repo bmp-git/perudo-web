@@ -51,15 +51,20 @@ const GameButtons = {
         this.makeAction("palifico");
      },
      leaveGame: function() {
-        const authHeader = 'bearer '.concat(this.$store.state.token);
-        axios.delete("/api/games/" + this.game.id, { headers: { Authorization: authHeader } })
-            .then(response => {
-                store.commit('unsetGame');
-                router.push({ name: 'games' });
-            })
-            .catch(error => {
-                console.log(error);
-            });
+        if(this.game.users.find(u => u.id === this.$store.state.user._id)) {
+            const authHeader = 'bearer '.concat(this.$store.state.token);
+            axios.delete("/api/games/" + this.game.id, { headers: { Authorization: authHeader } })
+               .then(response => {
+                  store.commit('unsetGame');
+                  router.push({ name: 'games' });
+               })
+               .catch(error => {
+                  console.log(error);
+               });
+        } else {
+            router.push({ name: 'games' });
+        }
+        
      },
      assert_is_my_turn: function() {
         return this.game.current_turn_user_id === this.$store.state.user._id;
