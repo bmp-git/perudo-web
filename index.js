@@ -1,7 +1,9 @@
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
+mongoose.set('useCreateIndex', true);
 require('./src/models/user');
+require('./src/models/rankHistory');
 const bodyParser = require('body-parser');
 
 

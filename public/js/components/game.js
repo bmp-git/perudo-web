@@ -23,7 +23,7 @@ const Game = {
                 </template>
                 <template v-else>
                     <template v-if="userIsOwner">
-                        <button type="button" @click.prevent="startGame" class="btn btn-primary btn-sm float-right">Start game!</button>
+                        <button type="button" @click.prevent="startGame" class="btn btn-primary btn-sm float-right" v-bind:disabled="userNumber < 2">Start game!</button>
                     </template>
                     <template v-if="!currentUserInside">
                         <div class="input-group-append float-right">
@@ -36,6 +36,9 @@ const Game = {
                 </template>
                 <template v-if="currentUserInside">
                     <button type="button" @click.prevent="leaveGame" class="btn btn-primary btn-sm float-right mr-2">Leave</button>
+                </template>
+                <template v-else>
+                    <button type="button" @click.prevent="spectateGame" class="btn btn-secondary btn-sm float-right mr-2">Spectate</button>
                 </template>
             </template>
             </h6>
@@ -178,6 +181,9 @@ const Game = {
                     console.log(error);
                 });
         },
+        spectateGame: function() {
+            router.push({ name: 'gamelobby', params: { id: this.gameid } });
+        },
         gameChanged: function (game) {
             if (game.id === this.gameid && game.tick > this.game.tick) {
                 this.updateGameFromWeb();
@@ -223,17 +229,20 @@ const Game = {
             }
             return false;
         },
+        userNumber: function () {
+            return Object.keys(this.game.users).length;
+        },
         freeSpaceAvailable: function () {
-            return Object.keys(this.game.users).length < this.game.players;
+            return this.userNumber < this.game.players;
         },
         userIsOwner: function () {
             return this.game.owner_id === this.$store.state.user._id;
         },
         usedSpaces: function () {
-            return Object.keys(this.game.users).length + "/" + this.game.players;
+            return this.userNumber + "/" + this.game.players;
         },
         freeSpaces: function () {
-            return this.game.players - Object.keys(this.game.users).length;
+            return this.game.players - this.userNumber;
         },
         users: function () {
             var res = "";
