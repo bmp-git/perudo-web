@@ -76,7 +76,7 @@ get_leave_date = function(user_id, actions) {
     for(let i = 0; i < actions.length; i++) {
         if(actions[i].type === 'event' && actions[i].code === 3) {
             return actions[i].date;
-        } else if(actions[i].type === 'left' && actions[i].user_id === user_id) {
+        } else if(actions[i].type === 'left' && actions[i].user_id == user_id) {
             return actions[i].date;
         }
     }
