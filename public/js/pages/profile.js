@@ -97,7 +97,7 @@ const Profile = {
                                 <strong>Total play time</strong>
                             </div>
                             <div class="col-4">
-                                <p class="float-right">{{user.totalPlayTime}} hours</p>
+                                <p class="float-right">{{user.totalPlayTime | formatToHours}} hours</p>
                             </div>                            
                         </div>                         
                         <div class="row">
@@ -105,7 +105,7 @@ const Profile = {
                                 <strong>Play time since reset</strong>
                             </div>
                             <div class="col-4">
-                                <p class="float-right">{{user.playTime}} hours</p>
+                                <p class="float-right">{{user.playTime | formatToHours}} hours</p>
                             </div>                            
                         </div>                         
                         <div class="row">
@@ -212,6 +212,9 @@ const Profile = {
             if (value) {
                 return moment(String(value)).format("MM/DD/YYYY");
             }
+        },
+        formatToHours: function(milliseconds) {
+            return (milliseconds / (1000 * 60 * 60)).toFixed(2);
         },
         ratio: function(wins, losses) {
             if (losses > 0) {

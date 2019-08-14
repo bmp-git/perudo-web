@@ -4,7 +4,7 @@ const EndOfRoundModal = {
     <div id="myModal" class="modal" @click.prevent="hide">
 
       <!-- Modal content -->
-      <div class="modal-content col-12 col-lg-6 col-xl-3 pt-1 pl-2 pr-2 pb-3" @click.prevent="">
+      <div class="modal-content col-12 col-lg-6 col-xl-3 pt-1 pl-2 pr-2 pb-3 animated fadeIn faster" @click.prevent="">
       <h6 class="text-right" style="color:gray"><i>round {{game.round}}</i></h6>
         <template v-if="game.last_round_recap.leave_user">
           <h4 class="text-center mb-4">
@@ -13,14 +13,14 @@ const EndOfRoundModal = {
          
         </template>
         <template v-else>
-          <h4 class="text-center mb-4">
+          <h4 class="text-center mb-4  animated slideInRight faster">
           <template v-if="game.last_round_recap.spoton_user"><b class="text-primary"><username :userid="game.last_round_recap.spoton_user"></username></b> spoton </template>
           <template v-if="game.last_round_recap.doubt_user"><b class="text-primary"><username :userid="game.last_round_recap.doubt_user"></username></b> doubt on </template>
           <b class="text-primary"><username :userid="game.last_round_recap.bid_user"></username></b> bid!</h4>
         
           <template v-for="d in dice">
             <template v-if="d.dice.length > 0">
-              <h5 class="text-center">
+              <h5 class="text-center animated slideInLeft faster">
                 <useravatar :userid="d.user" style="width: 32px; height: 32px; border-width: 1px;"/>
                 <i v-bind:class="(game.last_round_recap.bid_user === d.user || game.last_round_recap.doubt_user === d.user || game.last_round_recap.spoton_user === d.user)?'text-primary':''"><username :userid="d.user"></username></i>
                 <template v-for="v in d.dice">
@@ -34,20 +34,20 @@ const EndOfRoundModal = {
               </h5>
             </template>
           </template>
-          <h4 class="text-center mt-3"><b class="text-info">Bid </b> is {{game.last_round_recap.bid.quantity}} dice of <span v-bind:class="'ml-2 dice dice-' + game.last_round_recap.bid.dice"></span></h4>
-          <h6 class="text-center mb-3">Total count: {{total_count}}</h6>
+          <h4 class="text-center mt-3 animated slideInRight faster"><b class="text-info">Bid </b> is {{game.last_round_recap.bid.quantity}} dice of <span v-bind:class="'ml-2 dice dice-' + game.last_round_recap.bid.dice"></span></h4>
+          <h6 class="text-center mb-3 animated slideInLeft faster">Total count: {{total_count}}</h6>
 
           <template v-if="spoton_failed">
-            <h6 class="text-center">Spoton was a <b class="text-danger">mistake</b>! <b class="text-primary"><username :userid="game.last_round_recap.spoton_user"></username></b> loses a dice</h6>
+            <h6 class="text-center animated slideInRight faster">Spoton was a <b class="text-danger">mistake</b>! <b class="text-primary"><username :userid="game.last_round_recap.spoton_user"></username></b> loses a dice</h6>
           </template>
           <template v-if="spoton_successful">
-            <h6 class="text-center">Spoton was <b class="text-success">successful</b> and <b class="text-primary"><username :userid="game.last_round_recap.spoton_user"></username></b> earns a dice</h6>
+            <h6 class="text-center animated slideInRight faster">Spoton was <b class="text-success">successful</b> and <b class="text-primary"><username :userid="game.last_round_recap.spoton_user"></username></b> earns a dice</h6>
           </template>
           <template v-if="doubt_failed">
-            <h6 class="text-center">Doubt was a <b class="text-danger">mistake</b>! <b class="text-primary"><username :userid="game.last_round_recap.doubt_user"></username></b> loses a dice</h6>
+            <h6 class="text-center animated slideInRight faster">Doubt was a <b class="text-danger">mistake</b>! <b class="text-primary"><username :userid="game.last_round_recap.doubt_user"></username></b> loses a dice</h6>
           </template>
           <template v-if="doubt_successful">
-            <h6 class="text-center"> <b class="text-primary"><username :userid="game.last_round_recap.doubt_user"></username></b> was right to doubt! <b class="text-primary"><username :userid="game.last_round_recap.bid_user"></username></b> loses a dice</h6>
+            <h6 class="text-center animated slideInRight faster"> <b class="text-primary"><username :userid="game.last_round_recap.doubt_user"></username></b> was right to doubt! <b class="text-primary"><username :userid="game.last_round_recap.bid_user"></username></b> loses a dice</h6>
           </template>
         </template>
 
@@ -56,7 +56,7 @@ const EndOfRoundModal = {
             <useravatar :userid="game.winning_user" class="mx-auto d-block" style="width: 64px; height: 64px;"/>
           </template>
           <template v-else>
-            <h6 class="text-center mt-4">A new round is started</h6>
+            <h6 class="text-center mt-4 animated infinite pulse slower">A new round is started</h6>
         </template>
       </div>
      
