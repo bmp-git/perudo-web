@@ -364,6 +364,7 @@ exports.leave_game = function (req, res) {
                     remove_game(game.id);
                     gameTimeouts.delete(game.id);
                 }, 60 * 1000));
+                tick_game(game);
             }
         } else if (game.started && !game.is_over) {
             actions_add_left_game(game.id, req.user._id);
