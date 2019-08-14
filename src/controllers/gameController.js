@@ -56,6 +56,7 @@ check_for_win = function (game) {
         if (turnTimeouts.get(game.id)) {
             clearTimeout(turnTimeouts.get(game.id));
         }
+        actions_add_win(game.id, game.winning_user);
         actions_add_event(game.id, "The game is over!", 3);
         oldDice.get(game.id).set(game.round, currentDice.get(game.id));
         update_ranking(game, actions.get(game.id));
@@ -152,7 +153,7 @@ change_turn = function (game, user_id) {
         game.turn_start_time = new Date();
         turnTimeouts.set(game.id, setTimeout(function () {
             console.log(game.current_turn_user_id + " in game " + game.id + " is too slow, random bid and next turn.");
-            actions_add_event(game.id, game.users.find(u => u.id === game.current_turn_user_id).username + " is too slow, the game will bid automatically for him.", 2);
+            actions_add_too_slow(game.id, game.current_turn_user_id);
             if (game.current_bid) {
                 make_bid(game, game.current_turn_user_id, game.current_bid.dice, game.current_bid.quantity + 1);
             } else {
@@ -626,11 +627,17 @@ actions_add_left_game = function (game_id, user_id) {
 actions_add_lost = function (game_id, user_id) {
     add_action(game_id, { type: "lost", user_id: user_id });
 };
+actions_add_win = function (game_id, user_id) {
+    add_action(game_id, { type: "win", user_id: user_id });
+};
 actions_add_loses_one_dice = function (game_id, user_id) {
     add_action(game_id, { type: "dice_lost", user_id: user_id });
 };
 actions_add_take_one_dice = function (game_id, user_id) {
     add_action(game_id, { type: "dice_win", user_id: user_id });
+};
+actions_add_too_slow = function (game_id, user_id) {
+    add_action(game_id, { type: "too_slow", user_id: user_id });
 };
 
 var actionNotificationTimeouts = new Map(); //game id -> { timer: ..., count: ...}
