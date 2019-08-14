@@ -389,6 +389,8 @@ exports.leave_game = function (req, res) {
                 game.owner_id = game.users[0].id;
             }
             tick_game(game);
+        } else if(game.is_over) {
+            tick_game(game);
         }
         res.status(200).send({ message: "Removed from game.", result: game }).end();
     }
