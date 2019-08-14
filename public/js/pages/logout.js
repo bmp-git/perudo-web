@@ -7,6 +7,7 @@ const Logout = { template: `<div class="row">
 	},
 	methods: {
 		logout: function(){
+			unloadToken();
 			store.commit('unsetToken');
             router.push("/signin");
 		}

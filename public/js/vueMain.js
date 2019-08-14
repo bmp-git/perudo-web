@@ -1,9 +1,29 @@
+var socket = io();
+//this fires every time a game is removed
+socket.on('game removed', function (game_id) {
+    console.log("game removed: " + game_id);
+});
+//this fires every time a game is added
+socket.on('game added', function (game_id) {
+    console.log("game added: " + game_id);
+});
+//this fires everytime the game changed
+socket.on('game changed', function (game) {
+    console.log("game changed: " + game.id + ", current tick: " + game.tick);
+});
+//this will fires every time a new action is posted (ex. messages, bids, turn change, end of round...)
+socket.on('new action', function (game_id) {
+    console.log("new action: " + game_id);
+});
+
 var setTokenTimeout = function (tokenData) {
     setTimeout(function () {
         const authHeader = 'bearer '.concat(localStorage.token);
         axios.get("/api/users/" + tokenData.user._id + "/token", { headers: { Authorization: authHeader } })
             .then(
                 tokenRes => {
+                    socket.emit("offline", localStorage.token);
+                    socket.emit("online", tokenRes.data.token);
                     store.commit('setToken', tokenRes.data.token);
                     var tokenData = JSON.parse(atob(tokenRes.data.token.split('.')[1]));
                     setTokenTimeout(tokenData);
@@ -23,8 +43,12 @@ var loadToken = function () {
             store.commit('unsetToken');
         } else {
             setTokenTimeout(tokenData);
+            socket.emit("online", localStorage.token);
         }
     }
+}
+var unloadToken = function() {
+    socket.emit("offline", localStorage.token);
 }
 loadToken();
 
@@ -55,23 +79,4 @@ const app = new Vue({
             });
 
     }
-});
-
-
-var socket = io();
-//this fires every time a game is removed
-socket.on('game removed', function (game_id) {
-    console.log("game removed: " + game_id);
-});
-//this fires every time a game is added
-socket.on('game added', function (game_id) {
-    console.log("game added: " + game_id);
-});
-//this fires everytime the game changed
-socket.on('game changed', function (game) {
-    console.log("game changed: " + game.id + ", current tick: " + game.tick);
-});
-//this will fires every time a new action is posted (ex. messages, bids, turn change, end of round...)
-socket.on('new action', function (game_id) {
-    console.log("new action: " + game_id);
 });

@@ -34,7 +34,7 @@ add_user_to_game = function (game, userId, next) {
         } else {
             game.users.push({
                 id: userId,
-                remaining_dice: 5, 
+                remaining_dice: 5,
                 can_palifico: true
             });
             /* should be better => involves a mega-refactor
@@ -63,7 +63,7 @@ check_for_win = function (game) {
     }
 }
 
-update_ranking = function(game, game_action) {
+update_ranking = function (game, game_action) {
     return rankController.on_game_finish(game, game_action).then(res => {
         /* [ { _id:"5d4bd25fb9976803582381a5" ', delta_points: 0, points: 0 }, {...} ] */
         game.ranks = res;
@@ -114,7 +114,7 @@ make_bid = function (game, user_id, dice, quantity) {
 remove_one_dice = function (game, user_id) {
     game.users.find(u => u.id === user_id).remaining_dice--;
     actions_add_loses_one_dice(game.id, user_id);
-    if(game.users.find(u => u.id === user_id).remaining_dice <= 0) {
+    if (game.users.find(u => u.id === user_id).remaining_dice <= 0) {
         actions_add_lost(game.id, user_id);
     }
 };
@@ -212,11 +212,43 @@ is_valid_bid = function (game, dice, quantity) {
     }
 };
 
+var onlineUsers = new Map(); //socket_id -> user id
+var jwt = require('jsonwebtoken');
 var io = require('../../index.js').get_io();
+var socket_id = 0;
 io.on('connection', function (socket) {
     console.log('a user connected');
+    var id = socket_id;
+    socket_id++;
     socket.on('disconnect', function () {
-        console.log('user disconnected');
+        console.log('user disconnected ' + id);
+        onlineUsers.delete(id);
+        console.log(onlineUsers);
+    });
+
+    //TODO: move this outside this file, make api calls [get: /api/online/users], make api calls for declare online
+    socket.on('online', function (token) {
+        jwt.verify(token, 'secretkey', (err, authData) => {
+            if (err) {
+                console.log("online: token not valid");
+            } else {
+                console.log("online: " + id + " => " + authData.user._id);
+                onlineUsers.set(id, authData.user._id);
+                console.log(onlineUsers);
+            }
+        });
+    });
+    socket.on('offline', function (token) {
+        jwt.verify(token, 'secretkey', (err, authData) => {
+            if (err) {
+                console.log("offline: token not valid");
+            } else {
+                console.log("offline: " + id + " => " + authData.user._id);
+                onlineUsers.delete(id);
+                console.log(onlineUsers);
+            }
+        });
+
     });
 });
 tick_game = function (game, force_broadcast) {
@@ -389,7 +421,7 @@ exports.leave_game = function (req, res) {
                 game.owner_id = game.users[0].id;
             }
             tick_game(game);
-        } else if(game.is_over) {
+        } else if (game.is_over) {
             tick_game(game);
         }
         res.status(200).send({ message: "Removed from game.", result: game }).end();

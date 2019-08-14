@@ -1,5 +1,4 @@
 var allGames = new Map(); //game id -> game
-var socket = io();
 const Games = {
     template: `
     <div class="container">
