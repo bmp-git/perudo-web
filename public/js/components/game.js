@@ -2,12 +2,7 @@ const Game = {
     template: `
 <div class="row">
     <div class="col-12 col-sm-12 col-md-10 offset-md-1 col-lg-10 offset-lg-1 col-xl-8 offset-xl-2">
-        <template v-if="game.started">
-            <span class="badge badge-pill badge-danger" style="margin-bottom:10px">Game started</span>
-        </template>
-        <template v-else>
-            <span class="badge badge-pill badge-success" style="margin-bottom:10px">In lobby</span>
-        </template>
+            <gameBadge v-bind:game="game"></gameBadge>
         
             <h6 class="card-title">
             <template v-if="this.$store.state.authenticated">
@@ -84,7 +79,8 @@ const Game = {
 </div>`,
     components: {
         'username': Username,
-        'useravatar': Useravatar
+        'useravatar': Useravatar,
+        'gameBadge' : gameBadge
     },
     props: ['gameid', 'includedivisor'],
     data() {
