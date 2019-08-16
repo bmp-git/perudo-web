@@ -3,21 +3,29 @@ const Games = {
     template: `
     <div class="container">
         <hr class="hr-text" data-content="All games" />
-        <template v-for="(val,index) in games_index.slice().reverse()">
-            <template v-if="index === (games_index.length - 1)">
-                <gameComponent :gameid="val" includedivisor=""></gameComponent>
-            </template>
-            <template v-if="index < (games_index.length - 1)">
-                <gameComponent :gameid="val" includedivisor="true"></gameComponent>
+        <template v-if="!emptyList()">
+            <template v-for="(val,index) in games_index.slice().reverse()">
+                <template v-if="index === (games_index.length - 1)">
+                    <gameComponent :gameid="val" includedivisor=""></gameComponent>
+                </template>
+                <template v-if="index < (games_index.length - 1)">
+                    <gameComponent :gameid="val" includedivisor="true"></gameComponent>
+                </template>
             </template>
         </template>
-        <template v-if="this.$store.state.authenticated && !isUserInGame()">
-            <div class="row mt-5">
-                <div class="col-12 col-sm-12 col-md-10 offset-md-1 col-lg-10 offset-lg-1 col-xl-8 offset-xl-2">
-                    <button type="button" class="btn btn-primary btn-circle btn-xl animated tada" @click.prevent="newGame" style="float: right"><i class="fas fa-plus"></i></button>
-                    <errorSuccessNotifier ref="new_game_notifier" class="mt-4"></errorSuccessNotifier>
-                </div>
+        <template v-else>
+            <div class="empty-page">
+                <template v-if="this.$store.state.authenticated">
+                    <p> There aren't games at the moment, create a new one clicking the plus button in the right bottom of this page! </p>
+                </template>
+                <template v-else>
+                    <p> There aren't games at the moment, in order to create a new game and play, please <router-link to="/signup">sign-up</router-link> and <router-link to="/signin">sign-in</router-link>!</p>
+                </template>
             </div>
+        </template>
+        <template v-if="this.$store.state.authenticated && !isUserInGame">
+            <button type="button" class="btn btn-primary btn-circle btn-xl animated tada" @click.prevent="newGame"><i class="fas fa-plus"></i></button>
+            <errorSuccessNotifier ref="new_game_notifier" class="mt-4"></errorSuccessNotifier>
         </template>
     </div>`,
     components: {
@@ -29,7 +37,15 @@ const Games = {
             games_index: [],
         }
     },
+    computed: {
+        isUserInGame: function () {
+            return this.$store.state.in_game;
+        }
+    },
     methods: {
+        emptyList: function() {
+            return this.games_index.length === 0;
+        },
         updateGames: function () {
             axios.get("/api/games")
                 .then(response => {
@@ -44,20 +60,11 @@ const Games = {
                 });
         },
         newGame: function () {
-            if(!this.isUserInGame()) {
+            if(!this.isUserInGame) {
                 router.push({ name: 'new_game' });
             } else {
                 this.$refs.new_game_notifier.showError("Cannot create a new game while in another game", 1000);
             }
-        },
-        isUserInGame: function () {
-            var result = false;
-            allGames.forEach(g => {
-                if (g.users.some(u => u.id === this.$store.state.user._id)) {
-                    result = true;
-                }
-            });
-            return result;
         }
     },
     mounted: function () {

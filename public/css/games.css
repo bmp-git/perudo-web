@@ -30,3 +30,39 @@
     margin-top:15px;
     margin-bottom:15px
 }
+
+.empty-page {
+    text-align: center;
+}
+
+.empty-page p {
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+.perudo-title {
+    text-align: center;
+    color: #f35626;
+    background-image: linear-gradient(92deg, #f35626 0%,#feab3a 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: hue 60s infinite linear;
+}
+
+@media (min-width: 650px) {
+  .mega {
+    font-size: 6rem;
+    line-height: 1;
+  }
+}
+
+@keyframes hue {
+    from {
+      filter: hue-rotate(0deg);
+    }
+    
+    to {
+      filter: hue-rotate(-360deg);
+    }
+  }
