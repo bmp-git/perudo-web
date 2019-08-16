@@ -21,10 +21,6 @@ get_users_place = function(game_actions) {
     return {ranks, leavers};
 };
 
-points_function = function(place, cp) {
-    return cp - cp * 0.10 + place * 100;
-};
-
 compute_points = function(players, current_points) {
     let result = [];
     let pointsBid = 0;
@@ -44,7 +40,9 @@ compute_points = function(players, current_points) {
             player.delta_points += pointsBid;
         }
 
-        player.points = cp + Math.round(player.delta_points);
+        player.delta_points = Math.round(player.delta_points);
+
+        player.points = cp + player.delta_points;
 
         result.push(player);
     }
