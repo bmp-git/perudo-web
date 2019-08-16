@@ -1,3 +1,28 @@
+const default_port = 3000;
+const argv = require('minimist')(process.argv.slice(2), {
+  alias: {
+    p: 'port',
+    s: 'https',
+    c: 'cert',
+    k: 'key'
+  },
+  default: {
+    port: default_port,
+    https: false,
+    cert: './cert.crt',
+    key: './key.key'
+  },
+  boolean: 'https',
+  string: ['cert', 'key']
+});
+
+//check if port is a valid number
+if (isNaN(argv.port) || argv.port < 0 || argv.port > 65535 ) {
+  argv.port = default_port;
+  argv.p = default_port;
+}
+
+
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
@@ -16,8 +41,22 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use('/static', express.static(__dirname + '/public'));
 
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
+
+let server = null;
+
+if (argv.https) {
+  const fs = require('fs');
+  const options = {
+    key: fs.readFileSync(argv.key),
+    cert: fs.readFileSync(argv.cert)
+  };
+  server = require('https').createServer(options, app);
+} else {
+  server = require('http').Server(app);
+}
+
+
+var io = require('socket.io')(server);
 
 exports.get_io = function () {
   return io;
@@ -33,8 +72,8 @@ app.use(function(req, res) {
   res.status(404).send({url: req.originalUrl + ' not found'})
 });
 
-http.listen(3000, function () {
-  console.log('Node API server started on port 3000!');
+server.listen(argv.port, function () {
+  console.log('Node API server started on port ' + argv.port + '!');
 });
 
 global.appRoot = path.resolve(__dirname);
