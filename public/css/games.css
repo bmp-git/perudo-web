@@ -40,6 +40,14 @@
     line-height: 1.6;
 }
 
+.home-page {
+    text-align: center;
+}
+
+.home-page h1 {
+    font-size: 4rem;
+}
+
 .perudo-title {
     text-align: center;
     color: #f35626;
