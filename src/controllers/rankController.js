@@ -116,8 +116,80 @@ exports.on_game_finish = function (game, game_actions) {
     });
 };
 
+function todayDate() {
+    const today = new Date();
+    today.setUTCHours(0, 0, 0, 0);
+    return today;
+}
+
+function snapshotRanks() {
+    return User.find({}, '_id').sort({points: -1}).exec().then(res => res, err => {
+        console.log("Error during rank snapshot: " + err);
+    });
+}
+
+function updatePlayerRankHistory(user_id, rank) {
+    const today = todayDate();
+    return RankHistory.bulkWrite([
+        {
+            updateOne: {
+                filter: { user_id: user_id },
+                update: {
+                    "$setOnInsert": {
+                            user_id: user_id,
+                            history: []
+                        }
+                },
+                upsert: true
+            }
+        },
+        {
+            updateOne: {
+                filter: { user_id:user_id, 'history.date': today },
+                update: {
+                    'history.$.plays': 200,
+                    'history.$.rank': rank
+                }
+            }
+        },
+        {
+            updateOne: {
+                filter: { user_id: user_id, 'history.date': { '$ne': today } },
+                update: {
+                    "$push": { history: {
+                        date: today,
+                        plays: 200,
+                        rank: rank
+                    }}
+                }
+            }
+        }
+        ],
+        {
+            ordered: true
+        });
+}
+
+function updateRankHistory() {
+    snapshotRanks().then(ranks => {
+        const today = todayDate();
+        for(let rank = 0; rank < ranks.length; rank++) {
+            updatePlayerRankHistory(ranks[rank]._id, rank).then(res => console.log(res), err => console.log(err));
+        }
+    });
+}
+
 /*
-const new_rank = new RankHistory({ user_id : '5d4bd25fb9976803582381a5' });
+updateRankHistory();
+
+const user_id = '5d4bd25fb9976803582381a5';
+const today = todayDate();
+RankHistory.updateOne({user_id:user_id, 'history.date': today}, {'$set': {
+        'history.$.plays': 200
+    }}).then(res => console.log(res), err => console.log(err));
+
+
+const new_rank = new RankHistory({ user_id : '5d4bd25fb9976803582381a5' , history: [{date: todayDate(), rank: 20, plays: 2}] });
 new_rank.save((err, res) => {
     if(err) {
         console.log("error");
@@ -126,4 +198,5 @@ new_rank.save((err, res) => {
     }
 });
 */
+
 //exports.on_game_finish(examples.example_game, examples.example_actions);

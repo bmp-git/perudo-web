@@ -5,7 +5,7 @@ var Schema = mongoose.Schema;
 var HistoryRecord = new Schema({
     date: {
         type: Date,
-        default: Date.now
+        require: true
     },
     rank: {
         type: Number,
