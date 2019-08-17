@@ -114,10 +114,10 @@ function todayDate() {
 }
 
 function snapshotRanks() {
-    return User.find({}, '_id').sort({points: -1}).exec();
+    return User.find({}, '_id points').sort({points: -1}).exec();
 }
 
-function updatePlayerRankHistory(user_id, rank, new_wins = 0, new_losses = 0) {
+function updatePlayerRankHistory(user_id, rank, points, time_to_add = 0, wins_to_add = 0, losses_to_add = 0) {
     const today = todayDate();
     return RankHistory.bulkWrite([
         {
@@ -137,11 +137,13 @@ function updatePlayerRankHistory(user_id, rank, new_wins = 0, new_losses = 0) {
                 filter: { user_id:user_id, 'history.date': today },
                 update: {
                     $set: {
-                        'history.$.rank': rank
+                        'history.$.rank': rank,
+                        'history.$.points': points
                     },
                     $inc : {
-                        'history.$.wins' : new_wins,
-                        'history.$.losses' : new_losses,
+                        'history.$.wins' : wins_to_add,
+                        'history.$.losses' : losses_to_add,
+                        'history.$.time_played' : time_to_add,
                     }
                 }
             }
@@ -152,9 +154,11 @@ function updatePlayerRankHistory(user_id, rank, new_wins = 0, new_losses = 0) {
                 update: {
                     $push: { history: {
                         date: today,
-                        wins: new_wins,
-                        losses: new_losses,
-                        rank: rank
+                        rank: rank,
+                        points: points,
+                        time_played: time_to_add,
+                        wins: wins_to_add,
+                        losses: losses_to_add,
                     }}
                 }
             }
@@ -177,9 +181,10 @@ function updateRankHistory(players) {
         const promises = [];
         for(let rank = 0; rank < ranks.length; rank++) {
             const user_id = ranks[rank]._id;
-            const new_wins = (winner && user_id == winner._id) ? 1 : 0;
-            const new_losses = losers.find(u => u._id == user_id) ? 1 : 0;
-            const promise = updatePlayerRankHistory(user_id, rank + 1, new_wins, new_losses).then(() => {
+            const points = ranks[rank].points;
+            const wins_to_add = (winner && user_id == winner._id) ? 1 : 0;
+            const losses_to_add = losers.find(u => u._id == user_id) ? 1 : 0;
+            const promise = updatePlayerRankHistory(user_id, rank + 1, points, 0, wins_to_add, losses_to_add).then(() => {
                 console.log("User "+ user_id + " history updated.")
             }, err => {
                 console.log("Cannot update user " + user_id + " history." + err)

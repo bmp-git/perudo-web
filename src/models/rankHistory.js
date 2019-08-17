@@ -11,6 +11,14 @@ var HistoryRecord = new Schema({
         type: Number,
         required: 'The rank is required'
     },
+    points: {
+        type: Number,
+        required: 'Points are required'
+    },
+    time_played: {
+        type: Number,
+        default: 0
+    },
     wins: {
         type: Number,
         default: 0
