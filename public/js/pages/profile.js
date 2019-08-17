@@ -63,7 +63,7 @@ const Profile = {
                 
                 <div class="row">
                     <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-12">
-                        <line-chart :data="{'2017-05-13': 2, '2017-05-14': 5}"></line-chart>
+                        <line-chart :data="rankHistory"></line-chart>
                     </div>
                 </div>
                 
@@ -154,7 +154,7 @@ const Profile = {
                 
                 <div class="row">
                     <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-12">
-                        <line-chart :data="{'2017-05-13': 2, '2017-05-14': 5}"></line-chart>                                
+                        <line-chart :data="playHistory"></line-chart>                                
                     </div>           
                          
                 </div>
@@ -177,8 +177,9 @@ const Profile = {
                 totalPlayTime: 0,
                 avatar: ""
             },
-            globalRank : -1
-
+            globalRank : -1,
+            rankHistory : [],
+            playHistory : []
         }
     },
     methods: {
@@ -193,6 +194,15 @@ const Profile = {
             axios.get("/api/users/" + this.$route.params.id + "/rank")
                 .then(response => {
                     this.globalRank = response.data.rank;
+                })
+                .catch(error => {
+                    router.push("/404")
+                });
+            axios.get("/api/users/" + this.$route.params.id + "/history")
+                .then(response => {
+                    const history = response.data;
+                    this.rankHistory = history.map(e => ([e.date, e.rank]));
+                    this.playHistory = history.map(e => ([e.date, e.wins + e.losses]));
                 })
                 .catch(error => {
                     router.push("/404")
