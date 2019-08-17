@@ -205,4 +205,4 @@ exports.on_game_finish = function (game, game_actions) {
 };
 
 
-exports.on_game_finish(examples.example_game, examples.example_actions);
+//exports.on_game_finish(examples.example_game, examples.example_actions);
