@@ -4,6 +4,7 @@ module.exports = function (app) {
 	var loginController = require('../controllers/loginController');
 	var userController = require('../controllers/userController');
 	var gameController = require('../controllers/gameController');
+	var rankController = require('../controllers/rankController');
 
 	app.route('/').get(function (req, res) {
 		res.sendFile(appRoot + '/www/index.html');
@@ -48,6 +49,10 @@ module.exports = function (app) {
 
 	app.route('/api/users/:id/info')
 		.delete(autheticate, userController.reset_user_stats);
+
+	app.route('/api/users/:id/history')
+		.get(rankController.get_user_history);
+
 
 
 	app.route('/api/leaderboard')
