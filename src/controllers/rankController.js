@@ -53,42 +53,40 @@ get_users = function(players_id) {
     return User.find({ _id : { $in : players_id }}).exec().then(res => res,  () => []);
 };
 
-update_user_stats = function(user, game, new_points, leaveDate) {
-    if (!(leaveDate instanceof Date)) {
-        leaveDate = new Date(leaveDate);
-    }
+function get_time_played(game_start_time, leave_time) {
+    const start = new Date(game_start_time);
+    const end = new Date(leave_time);
+    return Math.abs(end - start);
+}
 
-    if (!(game.game_start_time instanceof Date)) {
-        game.game_start_time = new Date(game.game_start_time);
-    }
-    return {
-        _id: user._id,
-        points: new_points,
-        wins: game.winning_user == user._id ? user.wins + 1 : user.wins,
-        losses: game.winning_user == user._id ? user.losses : user.losses + 1,
-        playTime: user.playTime + Math.abs(leaveDate - game.game_start_time),
-        totalPlayTime: user.totalPlayTime + Math.abs(leaveDate - game.game_start_time),
-    };
+function update_user_stats(user_id, points_to_add, wins_to_add, losses_to_add, time_to_add) {
+    return User.findByIdAndUpdate(user_id,
+        {
+            $inc : {
+                points: points_to_add,
+                wins: wins_to_add,
+                losses: losses_to_add,
+                playTime: time_to_add,
+                totalPlayTime: time_to_add
+            }
+        }).exec();
+}
 
-};
-
-function update_users_stats(points, users, game, game_actions) {
+function update_users_stats(points, game, game_actions) {
     const promises = [];
     for(let i = 0; i < points.length; i++) {
-        const leaveDate = get_leave_date(points[i]._id, game_actions);
-        const user = users.find(e => e._id == points[i]._id);
+        const user_id = points[i]._id;
+        const points_to_add = points[i].delta_points;
+        const leave_time = get_leave_date(points[i]._id, game_actions);
+        const time_played = get_time_played(game.game_start_time, leave_time);
 
-        if(!user) {
-            continue; //If user not found in database.
-        }
+        const wins_to_add = game.winning_user == user_id ? 1 : 0;
+        const losses_to_add = game.winning_user == user_id ? 0 : 1;
 
-        const updated_user = update_user_stats(user, game, points[i].points,leaveDate);
-
-        const promise = User.findByIdAndUpdate(user._id, updated_user).exec().then(() => {
-            console.log("User "+ user._id + " stats updated.")
-        }, err => {
-            console.log("Cannot update user " + user._id + " stats." + err)
+        const promise = update_user_stats(user_id, points_to_add, wins_to_add, losses_to_add, time_played).then(() => {
+            console.log("User "+ user_id + " stats updated.")
         });
+
         promises.push(promise);
     }
     return Promise.all(promises);
@@ -201,7 +199,7 @@ exports.on_game_finish = function (game, game_actions) {
     players.ranks.push(winner);
     return get_users(players.ranks.map(elem => elem._id)).then(res => {
         const points = compute_points(players.ranks, res);
-        update_users_stats(points, res, game, game_actions).then(() => {
+        update_users_stats(points, game, game_actions).then(() => {
             console.log("Users stats updated!");
             return updateRankHistory(players).then( () => console.log("Users rank history updated!"));
         }).catch(err => console.log("Error during user stats or history update: " + err));
