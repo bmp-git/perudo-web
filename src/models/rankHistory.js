@@ -11,7 +11,11 @@ var HistoryRecord = new Schema({
         type: Number,
         required: 'The rank is required'
     },
-    plays: {
+    wins: {
+        type: Number,
+        default: 0
+    },
+    losses: {
         type: Number,
         default: 0
     }

@@ -72,6 +72,29 @@ update_user_stats = function(user, game, new_points, leaveDate) {
 
 };
 
+function update_users_stats(points, users, game, game_actions) {
+    const promises = [];
+    for(let i = 0; i < points.length; i++) {
+        const leaveDate = get_leave_date(points[i]._id, game_actions);
+        const user = users.find(e => e._id == points[i]._id);
+
+        if(!user) {
+            continue; //If user not found in database.
+        }
+
+        const updated_user = update_user_stats(user, game, points[i].points,leaveDate);
+
+        const promise = User.findByIdAndUpdate(user._id, updated_user).exec().then(() => {
+            console.log("User "+ user._id + " stats updated.")
+        }, err => {
+            console.log("Cannot update user " + user._id + " stats." + err)
+        });
+        promises.push(promise);
+    }
+    return Promise.all(promises);
+}
+
+
 get_leave_date = function(user_id, actions) {
     for(let i = 0; i < actions.length; i++) {
         if(actions[i].type === 'event' && actions[i].code === 3) {
@@ -82,39 +105,7 @@ get_leave_date = function(user_id, actions) {
     }
 };
 
-exports.on_game_finish = function (game, game_actions) {
-    const winner = { _id:game.winning_user};
-    const players = get_users_place(game_actions);
-    players.ranks.push(winner);
-    return get_users(players.ranks.map(elem => elem._id)).then(res => {
-        const currentPoints = res.map(elem => {
-            return {_id: elem._id, points: elem.points};
-        });
 
-        const points = compute_points(players.ranks, currentPoints);
-        for(let i = 0; i < points.length; i++) {
-            const leaveDate = get_leave_date(points[i]._id, game_actions);
-            const user = res.find(e => e._id == points[i]._id);
-
-            if(!user) {
-                continue; //If user not found in database.
-            }
-
-            const updated_user = update_user_stats(user, game, points[i].points,leaveDate);
-
-            User.findByIdAndUpdate(user._id, updated_user, function (err, result) {
-                if (err) {
-                    console.log("Cannot update user " + user._id + " stats.");
-                } else if (result) {
-                    console.log("User "+ user._id + " stats updated.");
-                } else {
-                    console.log("User id not found during stats update.");
-                }
-            });
-        }
-        return points.reverse();
-    });
-};
 
 function todayDate() {
     const today = new Date();
@@ -123,19 +114,17 @@ function todayDate() {
 }
 
 function snapshotRanks() {
-    return User.find({}, '_id').sort({points: -1}).exec().then(res => res, err => {
-        console.log("Error during rank snapshot: " + err);
-    });
+    return User.find({}, '_id').sort({points: -1}).exec();
 }
 
-function updatePlayerRankHistory(user_id, rank) {
+function updatePlayerRankHistory(user_id, rank, new_wins = 0, new_losses = 0) {
     const today = todayDate();
     return RankHistory.bulkWrite([
         {
             updateOne: {
                 filter: { user_id: user_id },
                 update: {
-                    "$setOnInsert": {
+                    $setOnInsert: {
                             user_id: user_id,
                             history: []
                         }
@@ -147,18 +136,24 @@ function updatePlayerRankHistory(user_id, rank) {
             updateOne: {
                 filter: { user_id:user_id, 'history.date': today },
                 update: {
-                    'history.$.plays': 200,
-                    'history.$.rank': rank
+                    $set: {
+                        'history.$.rank': rank
+                    },
+                    $inc : {
+                        'history.$.wins' : new_wins,
+                        'history.$.losses' : new_losses,
+                    }
                 }
             }
         },
         {
             updateOne: {
-                filter: { user_id: user_id, 'history.date': { '$ne': today } },
+                filter: { user_id: user_id, 'history.date': { $ne: today } },
                 update: {
-                    "$push": { history: {
+                    $push: { history: {
                         date: today,
-                        plays: 200,
+                        wins: new_wins,
+                        losses: new_losses,
                         rank: rank
                     }}
                 }
@@ -170,33 +165,44 @@ function updatePlayerRankHistory(user_id, rank) {
         });
 }
 
-function updateRankHistory() {
-    snapshotRanks().then(ranks => {
-        const today = todayDate();
-        for(let rank = 0; rank < ranks.length; rank++) {
-            updatePlayerRankHistory(ranks[rank]._id, rank).then(res => console.log(res), err => console.log(err));
+function updateRankHistory(players) {
+    return snapshotRanks().then(ranks => {
+        let winner = null;
+        let losers = [];
+        if(players && players.ranks.length > 0) {
+            winner = players.ranks[players.ranks.length - 1];
+            losers = players.ranks.slice(0, players.ranks.length - 1);
         }
+
+        const promises = [];
+        for(let rank = 0; rank < ranks.length; rank++) {
+            const user_id = ranks[rank]._id;
+            const new_wins = (winner && user_id == winner._id) ? 1 : 0;
+            const new_losses = losers.find(u => u._id == user_id) ? 1 : 0;
+            const promise = updatePlayerRankHistory(user_id, rank + 1, new_wins, new_losses).then(() => {
+                console.log("User "+ user_id + " history updated.")
+            }, err => {
+                console.log("Cannot update user " + user_id + " history." + err)
+            });
+            promises.push(promise);
+        }
+        return Promise.all(promises);
     });
 }
 
-/*
-updateRankHistory();
+exports.on_game_finish = function (game, game_actions) {
+    const winner = { _id:game.winning_user};
+    const players = get_users_place(game_actions);
+    players.ranks.push(winner);
+    return get_users(players.ranks.map(elem => elem._id)).then(res => {
+        const points = compute_points(players.ranks, res);
+        update_users_stats(points, res, game, game_actions).then(() => {
+            console.log("Users stats updated!");
+            return updateRankHistory(players).then( () => console.log("Users rank history updated!"));
+        }).catch(err => console.log("Error during user stats or history update: " + err));
+        return points.slice().reverse(); //slice to force copy, reverse is in-place
+    });
+};
 
-const user_id = '5d4bd25fb9976803582381a5';
-const today = todayDate();
-RankHistory.updateOne({user_id:user_id, 'history.date': today}, {'$set': {
-        'history.$.plays': 200
-    }}).then(res => console.log(res), err => console.log(err));
 
-
-const new_rank = new RankHistory({ user_id : '5d4bd25fb9976803582381a5' , history: [{date: todayDate(), rank: 20, plays: 2}] });
-new_rank.save((err, res) => {
-    if(err) {
-        console.log("error");
-    } else {
-        console.log(res);
-    }
-});
-*/
-
-//exports.on_game_finish(examples.example_game, examples.example_actions);
+exports.on_game_finish(examples.example_game, examples.example_actions);
