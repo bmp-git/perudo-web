@@ -39,7 +39,9 @@ const profileImage = {
     },
     methods: {
         reload: function() {
-            this.$refs.avatar.reload();
+            if(this.$refs.avatar) {
+                this.$refs.avatar.reload();
+            }
         },
         onEditClick: function() {
             this.$refs.inputFile.click();
