@@ -43,7 +43,7 @@ module.exports = function (app) {
 
 	app.route('/api/users/:id/info')
 		.get(userController.get_user_info);
-	
+
 	app.route('/api/users/:id/rank')
 		.get(userController.get_user_rank);
 
@@ -59,7 +59,8 @@ module.exports = function (app) {
 	app.route('/api/online')
 		.put(autheticate, gameController.set_online);
 
-
+	app.route('/api/date')
+		.get(userController.get_date);
 
 	app.route('/api/leaderboard')
 		.get(userController.get_leaderboard);

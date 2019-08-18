@@ -48,5 +48,21 @@ class Api {
             });
     }
 
+    static get_date(succHandler, errorHandler) {
+        axios.get("/api/date")
+            .then(response => {
+                if (succHandler) {
+                    succHandler(response.data.date);
+                }
+            })
+            .catch(error => {
+                if (errorHandler) {
+                    errorHandler(error);
+                } else {
+                    console.log(error);
+                }
+            });
+    }
+
     //TODO rest of api calls...
 }

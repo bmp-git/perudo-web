@@ -76,6 +76,9 @@ const Games = {
                     Vue.delete(this.games_index, i);
                 }
             }
+            if(this.$store.state.game && this.$store.state.game.id === game_id) {
+                this.$store.commit('unsetGame');
+            }
         });
         socket.on('game added', game_id => {
             axios.get("/api/games/" + game_id)
