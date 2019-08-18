@@ -2,6 +2,10 @@ var socket = io();
 socket.on('you are connected', function (game_id) {
     socket.emit("online", localStorage.token);
 });
+socket.on('new online or offline user', function (game_id) {
+    console.log("refreshing online users");
+    Api.get_online_users();
+});
 
 //this fires every time a game is removed
 socket.on('game removed', function (game_id) {
