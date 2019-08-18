@@ -1,4 +1,4 @@
-const Home = { template: `<div class="container" style="height:100vh" v-on:click="stopAnimation">
+const Home = { template: `<div class="container" style="height:100vh; overflow: hidden" v-on:click="stopAnimation">
                             <div class="row home-page">
                                 <div class="offset-md-3 col-md-6 col-12">
                                     <h1 v-show="welcome_animation != ''" v-bind:class="welcome_animation">Welcome</h1>
