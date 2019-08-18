@@ -51,15 +51,19 @@ exports.change_user_avatar = function (req, res) {
     if (tokenId !== id) {
         res.status(400).send({ message: "Id and token aren't compatible." }).end();
     } else {
-        User.findByIdAndUpdate(id, { avatar: avatar }, function (err, result) {
-            if (err) {
-                res.status(500).send({ message: err }).end();
-            } else if (result) {
-                res.status(200).send({ message: "New avatar set." }).end();
-            } else {
-                res.status(401).send({ message: "Incorrect user id." }).end();
-            }
-        });
+        if (avatar.split(',')[0].split(';')[0].split(':')[1].split('/')[0] !== "image") {
+            res.status(400).send({ message: "Please upload only image." }).end();
+        } else {
+            User.findByIdAndUpdate(id, { avatar: avatar }, function (err, result) {
+                if (err) {
+                    res.status(500).send({ message: err }).end();
+                } else if (result) {
+                    res.status(200).send({ message: "New avatar set." }).end();
+                } else {
+                    res.status(401).send({ message: "Incorrect user id." }).end();
+                }
+            });
+        }
     }
 };
 
@@ -74,7 +78,7 @@ exports.get_user_avatar = function (req, res) {
                 var data = result.avatar.split(',');
                 var img = Buffer.from(data[1], 'base64');
                 res.writeHead(200, {
-                    'Content-Type': data[0].split(';')[0].split(':')[1],
+                    'Content-Type': "image/" + data[0].split(';')[0].split(':')[1].split('/')[1],
                     'Content-Length': img.length
                 });
                 res.end(img);
@@ -192,12 +196,12 @@ exports.reset_user_stats = function (req, res) {
 
 exports.get_user_rank = function (req, res) {
     const id = req.params.id;
-    User.find({}).sort({points: -1}).exec(function (err, result) {
+    User.find({}).sort({ points: -1 }).exec(function (err, result) {
         if (err) {
             res.status(500).send({ message: err }).end();
         } else if (result) {
             rank = result.findIndex(u => u._id == id) + 1;
-            if(rank != 0) {
+            if (rank != 0) {
                 res.status(200).send({ rank: rank }).end();
             } else {
                 res.status(401).send({ message: "Incorrect user id." }).end();
@@ -213,15 +217,15 @@ exports.get_leaderboard = function (req, res) {
     const pageLenght = req.query.pageLenght;
     if (page && pageLenght && /^[1-9]\d*$/.test(page) && /^[1-9]\d*$/.test(pageLenght)) {
         let skip = (page - 1) * pageLenght;
-        User.countDocuments({}, function(err, count) {
-            if(err) {
+        User.countDocuments({}, function (err, count) {
+            if (err) {
                 res.status(500).send({ message: err });
             } else {
-                User.find().sort({points: -1}).skip(skip).limit(parseInt(pageLenght, 10)).exec( function (err, result) {
+                User.find().sort({ points: -1 }).skip(skip).limit(parseInt(pageLenght, 10)).exec(function (err, result) {
                     if (err) {
                         res.status(500).send({ message: err });
                     } else {
-                        let leaderboard = { total: count , result: [] };
+                        let leaderboard = { total: count, result: [] };
                         let i = skip + 1;
                         result.forEach(function (user) {
                             leaderboard.result.push({ rank: i++, id: user._id, username: user.username, points: user.points });
