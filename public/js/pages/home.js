@@ -1,6 +1,6 @@
 const Home = { template: `<div class="container" style="height:100vh" v-on:click="stopAnimation">
                             <div class="row home-page">
-                                <div class="col">
+                                <div class="offset-md-3 col-md-6 col-12">
                                     <h1 v-show="welcome_animation != ''" v-bind:class="welcome_animation">Welcome</h1>
                                     <h1 v-show="to_animation != ''" v-bind:class="to_animation">
                                         <span v-bind:class="'dice home-dice dice-' + left_dice" v-bind:style="'transform: rotate('+left_dice_r+'deg)'" style="margin-bottom:-15px; margin-right:20px;"></span>
@@ -12,15 +12,12 @@ const Home = { template: `<div class="container" style="height:100vh" v-on:click
                                     </div>
                                 </div>
                             </div>
-                            <div class="row home-page">
-                                <div v-show="button_animation != ''" class="col">
-                                    <router-link to="/games" v-bind:class="button_animation" class="btn btn-home btn-outline-primary btn-lg"><i class="fas fa-dice"></i> Play</router-link>
-                                </div>
-                                <div v-show="button_animation != ''" class="col">
-                                    <router-link to="/gamesrules" v-bind:class="button_animation" class="btn btn-home btn-outline-primary btn-lg"><i class="fas fa-book"></i> Rules</router-link>
+                            <div class="row">
+                                <div class="offset-md-3 col-md-6 col-12 d-flex justify-content-center">
+                                    <router-link to="/games" v-show="button_animation != ''" v-bind:class="button_animation" class="btn btn-home btn-outline-primary btn-lg mr-4"><i class="fas fa-dice"></i> Play</router-link>
+                                    <router-link to="/gamesrules" v-show="button_animation != ''" v-bind:class="button_animation" class="btn btn-home btn-outline-primary btn-lg ml-4"><i class="fas fa-book"></i> Rules</router-link>
                                 </div>
                             </div>
-
                             <template v-if="online_users_animation != ''">
                             <div class="row home-page mt-5" v-bind:class="online_users_animation">
                                 <div class="col">
