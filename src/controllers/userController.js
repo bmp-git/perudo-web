@@ -51,7 +51,7 @@ exports.change_user_avatar = function (req, res) {
     if (tokenId !== id) {
         res.status(400).send({ message: "Id and token aren't compatible." }).end();
     } else {
-        if (avatar.split(',')[0].split(';')[0].split(':')[1].split('/')[0] !== "image") {
+        if (avatar !== '' && avatar.split(',')[0].split(';')[0].split(':')[1].split('/')[0] !== "image") {
             res.status(400).send({ message: "Please upload only image." }).end();
         } else {
             User.findByIdAndUpdate(id, { avatar: avatar }, function (err, result) {
