@@ -1,3 +1,4 @@
+/*
 const LineChart = {
     extends: VueChartJs.Line,
     mounted () {
@@ -12,4 +13,4 @@ const LineChart = {
             ]
         }, {responsive: true, maintainAspectRatio: false})
     }
-};
+};*/

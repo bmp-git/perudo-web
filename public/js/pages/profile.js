@@ -62,8 +62,26 @@ const Profile = {
                 </div>
                 
                 <div class="row">
+                    <div class="col-md-8 offset-md-2">
+                        <hr class="hr-text" data-content="Rank History" />
+                    </div>
+                </div>
+                
+                <div class="row">
                     <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-12">
-                        <line-chart :data="rankHistory"></line-chart>
+                        <apexchart type=area height=350 :options="chartOptions" :series="rank_series" />
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-8 offset-md-2">
+                        <hr class="hr-text" data-content="Points History" />
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-12">
+                        <apexchart type=area height=350 :options="chartOptions" :series="points_series" />
                     </div>
                 </div>
                 
@@ -154,15 +172,29 @@ const Profile = {
                 
                 <div class="row">
                     <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-12">
-                        <line-chart :data="playHistory"></line-chart>                                
+                        <apexchart type=bar height=350 :options="chartOptions" :series="plays_series" />                                
                     </div>           
                          
                 </div>
                 
+                <div class="row">
+                    <div class="col-md-8 offset-md-2">
+                        <hr class="hr-text" data-content="Played time history" />
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-12">
+                        <apexchart type=bar height=350 :options="chartOptions" :series="time_played_series" />                                
+                    </div>           
+                         
+                </div>                
+                
         </div>
 `,
     components: {
-        'profileImage': profileImage
+        'profileImage': profileImage,
+         'apexchart': VueApexCharts
     },
     data() {
         return {
@@ -179,7 +211,40 @@ const Profile = {
             },
             globalRank : -1,
             rankHistory : [],
-            playHistory : []
+            pointsHistory : [],
+            playHistory : [],
+
+
+            rank_series: [],
+            points_series: [],
+            plays_series: [],
+            time_played_series: [],
+            chartOptions: {
+                chart: {
+                    stacked: true,
+                    toolbar: {
+                        show: true
+                    },
+                    zoom: {
+                        enabled: true
+                    }
+                },
+                dataLabels: {
+                    enabled: true
+                },
+                stroke: {
+                    curve: 'smooth'
+                },
+                xaxis: {
+                    type: 'datetime',
+                    categories: [],
+                },
+                tooltip: {
+                    x: {
+                        format: 'dd/MM/yy'
+                    }
+                }
+            }
         }
     },
     methods: {
@@ -201,13 +266,58 @@ const Profile = {
             axios.get("/api/users/" + this.$route.params.id + "/history")
                 .then(response => {
                     const history = response.data;
-                    this.rankHistory = history.map(e => ([e.date, e.rank]));
-                    this.playHistory = history.map(e => ([e.date, e.wins + e.losses]));
+                    const dates = history.map(e => e.date);
+                    this.updateChartXAxis(dates);
+
+                    this.rank_series[0] = {
+                        name: 'Rank',
+                        data: history.map(e => e.rank)
+                    };
+
+                    this.points_series[0] = {
+                        name: 'Points',
+                        data: history.map(e => e.points)
+                    };
+
+                    this.plays_series[0] = {
+                        name: 'Wins',
+                        data: history.map(e => e.wins)
+                    };
+
+                    this.plays_series[1] = {
+                        name: 'Losses',
+                        data: history.map(e => e.losses)
+                    };
+
+                    this.time_played_series[0] = {
+                        name: 'Hours played',
+                        data: history.map(e => (e.time_played / (1000 * 60 * 60)).toFixed(2))
+                    }
                 })
                 .catch(error => {
                     router.push("/404")
                 });
             this.$refs.profileImage.reload();
+        },
+        updateChartXAxis: function (categories) {
+            this.chartOptions= {
+                dataLabels: {
+                    enabled: false
+                },
+                stroke: {
+                    curve: 'smooth'
+                },
+
+                xaxis: {
+                    type: 'datetime',
+                    categories: categories,
+                },
+                tooltip: {
+                    x: {
+                        format: 'dd/MM/yy'
+                    }
+                }
+            }
         }
     },
     watch: {
