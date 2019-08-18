@@ -142,6 +142,13 @@ count_dice = function (game) {
     });
     return total_dice;
 };
+total_dice = function (game) {
+    var total_dice = 0;
+    currentDice.get(game.id).forEach((v, k, m) => {
+        total_dice += v.length;
+    });
+    return total_dice;
+};
 change_turn = function (game, user_id) {
     clearTimeout(turnTimeouts.get(game.id));
     turnTimeouts.delete(game.id);
@@ -158,10 +165,13 @@ change_turn = function (game, user_id) {
         actions_add_turn(game.id, user_id);
         game.turn_start_time = new Date();
         turnTimeouts.set(game.id, setTimeout(function () {
-            console.log(game.current_turn_user_id + " in game " + game.id + " is too slow, random bid and next turn.");
             actions_add_too_slow(game.id, game.current_turn_user_id);
             if (game.current_bid) {
-                make_bid(game, game.current_turn_user_id, game.current_bid.dice, game.current_bid.quantity + 1);
+                if (game.current_bid.quantity >= total_dice(game)) {
+                    doubt(game, game.current_turn_user_id);
+                } else {
+                    make_bid(game, game.current_turn_user_id, game.current_bid.dice, game.current_bid.quantity + 1);
+                }
             } else {
                 make_bid(game, game.current_turn_user_id, Math.floor(Math.random() * 6) + 1, 1);
             }
@@ -213,8 +223,9 @@ is_valid_bid = function (game, dice, quantity) {
     }
 };
 
-var online_users = new Map(); //socket_id -> user id
-var online_users_timeout = new Map(); //socket_id -> timeout
+var online_users = new Map(); //[socket_id / user id] -> user id
+var jwt_online_users_timeout = new Map(); //socket_id -> timeout
+var api_online_users_timeout = new Map(); //user id -> timeout
 var distinct_online_users = [];
 var jwt = require('jsonwebtoken');
 var io = require('../../index.js').get_io();
@@ -222,50 +233,44 @@ var socket_id = 0;
 io.on('connection', function (socket) {
     var id = socket_id;
     socket_id++;
-    console.log('a user connected ' + id);
     socket.emit('you are connected'); //needed for smartphone sleep
     socket.on('disconnect', function () {
-        console.log('user disconnected ' + id);
-        online_users.delete(id);
-        if (online_users_timeout.get(id)) {
-            clearTimeout(online_users_timeout.get(id));
-        }
-        online_users_timeout.delete(id);
-        refresh_distinct_online_users();
+        set_socket_offline(id);
     });
 
-    //TODO: move this outside this file, make api calls [get: /api/online/users], make api calls for declare online
+    //TODO: move this outside this file
     socket.on('online', function (token) {
         jwt.verify(token, 'secretkey', (err, authData) => {
             if (err) {
                 console.log("online: token not valid");
             } else {
-                console.log("online: " + id + " => " + authData.user._id);
-                online_users.set(id, authData.user._id);
-                refresh_distinct_online_users();
-
-                if (online_users_timeout.get(id)) {
-                    clearTimeout(online_users_timeout.get(id));
-                }
-                online_users_timeout.set(id, setTimeout(() => {
-                    console.log("offline: " + id + " => " + authData.user._id + " (jwt expired)");
-                    online_users.delete(id);
-                    refresh_distinct_online_users();
-                    online_users_timeout.delete(id);
-                }, authData.exp * 1000 - Date.now()));
+                set_socket_online(id, authData);
             }
         });
     });
     socket.on('offline', function (token) {
-        console.log("offline: " + id);
-        online_users.delete(id);
-        if (online_users_timeout.get(id)) {
-            clearTimeout(online_users_timeout.get(id));
-        }
-        online_users_timeout.delete(id);
-        refresh_distinct_online_users();
+        set_socket_offline(id);
     });
 });
+set_socket_online = function (socket_id, authData) {
+    online_users.set(socket_id, authData.user._id);
+    if (jwt_online_users_timeout.get(socket_id)) {
+        clearTimeout(jwt_online_users_timeout.get(socket_id));
+    }
+    jwt_online_users_timeout.set(socket_id, setTimeout(() => { //when jwt expire
+        jwt_online_users_timeout.delete(socket_id);
+        set_socket_offline(socket_id);
+    }, authData.exp * 1000 - Date.now()));
+    refresh_distinct_online_users();
+}
+set_socket_offline = function (socket_id) {
+    online_users.delete(socket_id);
+    if (jwt_online_users_timeout.get(socket_id)) {
+        clearTimeout(jwt_online_users_timeout.get(socket_id));
+    }
+    jwt_online_users_timeout.delete(socket_id);
+    refresh_distinct_online_users();
+}
 refresh_distinct_online_users = function () {
     distinct_online_users = [];
     online_users.forEach((v, k, map) => {
@@ -278,6 +283,20 @@ refresh_distinct_online_users = function () {
 exports.online_users = function (req, res) {
     res.status(200).send({ result: distinct_online_users }).end();
 };
+
+exports.set_online = function (req, res) {
+    const EXPIRATION_MINUTES = 2;
+    online_users.set(req.user._id, req.user._id);
+    if (api_online_users_timeout.get(req.user._id)) {
+        clearTimeout(api_online_users_timeout.get(req.user._id));
+    }
+    api_online_users_timeout.set(req.user._id, setTimeout(() => { //when jwt expire
+        online_users.delete(req.user._id);
+    }, EXPIRATION_MINUTES * 60 * 1000));
+    refresh_distinct_online_users();
+    res.status(200).send({ message: "Done.", exp: EXPIRATION_MINUTES + " mins" }).end();
+};
+
 
 tick_game = function (game, force_broadcast) {
     game.tick++;
@@ -472,26 +491,31 @@ exports.action_message = function (req, res) {
         res.status(200).send({ message: "Message posted." }).end();
     }
 };
+
+doubt = function (game, doubt_user) {
+    actions_add_doubt(game.id, doubt_user);
+    const total_dice = count_dice(game);
+    var lose_user_id = null;
+    if (total_dice >= game.current_bid.quantity) {
+        lose_user_id = game.current_turn_user_id;
+    } else {
+        lose_user_id = game.last_turn_user_id;
+    }
+    remove_one_dice(game, lose_user_id);
+    check_for_win(game);
+    game.last_round_recap = { bid: game.current_bid, bid_user: game.last_turn_user_id, doubt_user: doubt_user };
+    if (!game.is_over) {
+        next_round(game, false, lose_user_id);
+    }
+}
+
 exports.action_doubt = function (req, res) {
     const id = parseInt(req.params.id);
     const game = games.get(id);
 
     if (assert_is_my_turn(game, req, res) && assert_game_is_not_over(game, req, res)) {
         if (game.current_bid) {
-            actions_add_doubt(game.id, req.user._id);
-            const total_dice = count_dice(game);
-            var lose_user_id = null;
-            if (total_dice >= game.current_bid.quantity) {
-                lose_user_id = game.current_turn_user_id;
-            } else {
-                lose_user_id = game.last_turn_user_id;
-            }
-            remove_one_dice(game, lose_user_id);
-            check_for_win(game);
-            game.last_round_recap = { bid: game.current_bid, bid_user: game.last_turn_user_id, doubt_user: req.user._id };
-            if (!game.is_over) {
-                next_round(game, false, lose_user_id);
-            }
+            doubt(game, req.user._id);
             tick_game(game);
             res.status(200).send({ message: "Doubt done.", result: game }).end();
         } else {

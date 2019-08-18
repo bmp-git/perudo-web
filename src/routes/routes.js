@@ -56,6 +56,9 @@ module.exports = function (app) {
 	app.route('/api/online/users')
 		.get(gameController.online_users);
 
+	app.route('/api/online')
+		.put(autheticate, gameController.set_online);
+
 
 
 	app.route('/api/leaderboard')
