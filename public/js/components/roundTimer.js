@@ -1,7 +1,7 @@
 const roundTimer = { template: `
 <div class="container">
     <div class="progress">
-        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" v-bind:style="'width: '+ progress_bar +'%'">{{Math.ceil(remaining_time/1000)}}</div>
+    <div class="progress-bar progress-bar-striped progress-bar-animated" v-bind:class="isUserTurn() ? remaining_time < 5000 ? 'bg-danger' : '' : 'bg-secondary'" role="progressbar" v-bind:style="'width: '+ progress_bar +'%'">{{Math.ceil(remaining_time/1000)}}</div>
     </div>
   </div>
 </div>
@@ -26,9 +26,13 @@ props: ['game','refresh_time_ms'],
             if(this.remaining_time < 0) {
                 clearInterval(this.current_interval);
                 this.remaining_time = 0;
+                this.progress_bar = 0;
             }
         }, this.refresh_time_ms)
-     }
+     },
+     isUserTurn: function() {
+        return this.game.current_turn_user_id === this.$store.state.user._id;
+    }
  },
  mounted: function () {
     var send_time = new Date();
