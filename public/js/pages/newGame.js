@@ -17,7 +17,7 @@ const NewGame = {
                     <div class="input-group-text"><i class="fas fa-users"></i></div>
                 </div>
                 <select v-bind:class="'form-control '+players_valid" v-model="game_info.players">
-                    <option disabled value="0">Player number</option>
+                    <option disabled value="0">Player count</option>
                     <option value="2">2 players</option>
                     <option value="3">3 players</option>
                     <option value="4">4 players</option>

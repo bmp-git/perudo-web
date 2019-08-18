@@ -7,7 +7,7 @@ const NotFound = {
                 <h2>
                     404 Not Found</h2>
                 <div class="error-details">
-                    Sorry, an error has occured, Requested page not found!
+                    Sorry, an error has occured, requested page not found!
                 </div>
                 <div class="error-actions">
                     <router-link class="btn btn-primary btn-lg" to="/"><span class="glyphicon glyphicon-home"></span> Take Me Home </router-link>

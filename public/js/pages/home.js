@@ -66,6 +66,7 @@ const Home = { template: `<div class="container">
         this.to_animation = '';
         this.perudo_animation =  '';
         this.button_animation = '';
+        this.online_users_animation = '';
         
         this.left_dice_r = Math.floor(360*Math.random())+1;
         this.right_dice_r = Math.floor(360*Math.random())+1;

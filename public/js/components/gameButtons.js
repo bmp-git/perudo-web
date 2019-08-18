@@ -6,7 +6,7 @@ const GameButtons = {
                             </template>
                             <template v-else>
                                 <button type="button" @click="doBid" class="btn btn-primary ml-1 mr-1" v-bind:disabled="!canBid()">Bid</button>
-                                <button type="button" @click="doubt" class="btn btn-primary ml-1 mr-1" v-bind:disabled="!canDoubt()">Dubt</button>
+                                <button type="button" @click="doubt" class="btn btn-primary ml-1 mr-1" v-bind:disabled="!canDoubt()">Doubt</button>
                                 <button type="button" @click="spotOn" class="btn btn-primary ml-1 mr-1" v-bind:disabled="!canSpotOn()">Spot on</button>
                                 <button type="button" @click="palifico" class="btn btn-primary ml-1 mr-1" v-bind:disabled="!canPalifico()">Palifico</button>
                             </template>

@@ -23,7 +23,7 @@ const Navbar = {
 					</a>
 					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
 						<router-link class="dropdown-item" data-toggle="collapse" data-target=".navbar-collapse.show" :to="{ name: 'profile', params: { id: this.$store.state.user._id }}">My profile</router-link>
-						<router-link class="dropdown-item" data-toggle="collapse" data-target=".navbar-collapse.show" to="/settings">Setting</router-link>
+						<router-link class="dropdown-item" data-toggle="collapse" data-target=".navbar-collapse.show" to="/settings">Settings</router-link>
 						<div class="dropdown-divider"></div>
 						<router-link class="dropdown-item" data-toggle="collapse" data-target=".navbar-collapse.show" to="/signout">Sign Out</router-link>
 					</div>
