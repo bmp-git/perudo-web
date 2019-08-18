@@ -62,10 +62,10 @@ const gameLobby = {
         'diceSelector': diceSelector,
         'gameButtons': GameButtons,
         'gameTurn': gameTurn,
-        'currentbid' : currentBid,
+        'currentbid': currentBid,
         'dice': dice,
-        'endOfRoundComponent' : EndOfRoundModal,
-        'roundTimer' : roundTimer
+        'endOfRoundComponent': EndOfRoundModal,
+        'roundTimer': roundTimer
     },
     data() {
         return {
@@ -83,10 +83,10 @@ const gameLobby = {
     computed: {
     },
     methods: {
-        reload: function(game_id) {
+        reload: function (game_id) {
             axios.get("/api/games/" + game_id, { headers: { Authorization: 'bearer '.concat(this.$store.state.token) } })
                 .then(response => {
-                    if(response.data.result.round > this.game.round || (response.data.result.is_over === true && this.game.is_over === false)) {
+                    if (response.data.result.round > this.game.round || (response.data.result.is_over === true && this.game.is_over === false)) {
                         this.$refs.endOfRoundModal.show(response.data.result);
                     }
                     this.game = response.data.result;
@@ -103,22 +103,29 @@ const gameLobby = {
         },
         toggle_last_round: function () {
             this.$refs.endOfRoundModal.show(this.game);
+        },
+        game_removed: function(game_id) {
+            if (this.$router.currentRoute.name !== "games" && this.game && game_id === this.game.id) {
+                router.push({ name: 'games' });
+            }
         }
     },
     filters: {
     },
     watch: {
-        $route: function(to, from) {
-            if(to.name === 'gamelobby') {
+        $route: function (to, from) {
+            if (to.name === 'gamelobby') {
                 this.$refs.chat.scrollChatToBottom();
             }
         }
     },
     mounted: function () {
         socket.on('game changed', this.gameChanged);
+        socket.on('game removed', this.game_removed);
         this.reload(this.$route.params.id);
     },
     destroyed: function () {
-        socket.off('game changed');
+        socket.off('game changed', this.gameChanged);
+        socket.off('game removed', this.game_removed);
     }
 };
