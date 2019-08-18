@@ -1,4 +1,8 @@
 var socket = io();
+socket.on('you are connected', function (game_id) {
+    socket.emit("online", localStorage.token);
+});
+
 //this fires every time a game is removed
 socket.on('game removed', function (game_id) {
     console.log("game removed: " + game_id);
@@ -22,7 +26,6 @@ var setTokenTimeout = function (tokenData) {
         axios.get("/api/users/" + tokenData.user._id + "/token", { headers: { Authorization: authHeader } })
             .then(
                 tokenRes => {
-                    socket.emit("offline", localStorage.token);
                     socket.emit("online", tokenRes.data.token);
                     store.commit('setToken', tokenRes.data.token);
                     var tokenData = JSON.parse(atob(tokenRes.data.token.split('.')[1]));
@@ -38,9 +41,10 @@ var loadToken = function () {
         store.commit('setToken', localStorage.token);
 
         var tokenData = JSON.parse(atob(localStorage.token.split('.')[1]));
-        if ((tokenData.exp * 1000 - Date.now()) <= 1000 * 60) { //token expired or exipre in less than a minute
+        if ((tokenData.exp * 1000 - Date.now()) <= 1000 * 60) { //token expired or exipre in less than a minute, TODO: timezones?
             console.log("Token is expired");
             store.commit('unsetToken');
+            socket.emit("offline");
         } else {
             setTokenTimeout(tokenData);
             socket.emit("online", localStorage.token);

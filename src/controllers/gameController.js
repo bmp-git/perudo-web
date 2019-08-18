@@ -213,18 +213,25 @@ is_valid_bid = function (game, dice, quantity) {
     }
 };
 
-var onlineUsers = new Map(); //socket_id -> user id
+var online_users = new Map(); //socket_id -> user id
+var online_users_timeout = new Map(); //socket_id -> timeout
+var distinct_online_users = [];
 var jwt = require('jsonwebtoken');
 var io = require('../../index.js').get_io();
 var socket_id = 0;
 io.on('connection', function (socket) {
-    console.log('a user connected');
     var id = socket_id;
     socket_id++;
+    console.log('a user connected ' + id);
+    socket.emit('you are connected'); //needed for smartphone sleep
     socket.on('disconnect', function () {
         console.log('user disconnected ' + id);
-        onlineUsers.delete(id);
-        console.log(onlineUsers);
+        online_users.delete(id);
+        if (online_users_timeout.get(id)) {
+            clearTimeout(online_users_timeout.get(id));
+        }
+        online_users_timeout.delete(id);
+        refresh_distinct_online_users();
     });
 
     //TODO: move this outside this file, make api calls [get: /api/online/users], make api calls for declare online
@@ -234,24 +241,43 @@ io.on('connection', function (socket) {
                 console.log("online: token not valid");
             } else {
                 console.log("online: " + id + " => " + authData.user._id);
-                onlineUsers.set(id, authData.user._id);
-                console.log(onlineUsers);
+                online_users.set(id, authData.user._id);
+                refresh_distinct_online_users();
+
+                if (online_users_timeout.get(id)) {
+                    clearTimeout(online_users_timeout.get(id));
+                }
+                online_users_timeout.set(id, setTimeout(() => {
+                    console.log("offline: " + id + " => " + authData.user._id + " (jwt expired)");
+                    online_users.delete(id);
+                    refresh_distinct_online_users();
+                    online_users_timeout.delete(id);
+                }, authData.exp * 1000 - Date.now()));
             }
         });
     });
     socket.on('offline', function (token) {
-        jwt.verify(token, 'secretkey', (err, authData) => {
-            if (err) {
-                console.log("offline: token not valid");
-            } else {
-                console.log("offline: " + id + " => " + authData.user._id);
-                onlineUsers.delete(id);
-                console.log(onlineUsers);
-            }
-        });
-
+        console.log("offline: " + id);
+        online_users.delete(id);
+        if (online_users_timeout.get(id)) {
+            clearTimeout(online_users_timeout.get(id));
+        }
+        online_users_timeout.delete(id);
+        refresh_distinct_online_users();
     });
 });
+refresh_distinct_online_users = function () {
+    distinct_online_users = [];
+    online_users.forEach((v, k, map) => {
+        if (!distinct_online_users.some(u => u.id === v)) {
+            distinct_online_users.push({ id: v });
+        }
+    });
+}
+exports.online_users = function (req, res) {
+    res.status(200).send({ result: distinct_online_users }).end();
+};
+
 tick_game = function (game, force_broadcast) {
     game.tick++;
     //Notify that in this game the current tick in now 'game.tick'
@@ -272,7 +298,7 @@ remove_game_io_notification = function (game_id) {
     io.emit('game removed', game_id);
 }
 
-add_expiration_game_timeout = function(game_id, seconds) {
+add_expiration_game_timeout = function (game_id, seconds) {
     gameTimeouts.set(game_id, setTimeout(function () {
         console.log("Game " + game_id + " is expired.");
         remove_game(game_id);

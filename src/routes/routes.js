@@ -53,6 +53,9 @@ module.exports = function (app) {
 	app.route('/api/users/:id/history')
 		.get(rankController.get_user_history);
 
+	app.route('/api/online/users')
+		.get(gameController.online_users);
+
 
 
 	app.route('/api/leaderboard')
