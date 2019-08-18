@@ -54,7 +54,7 @@ const NewGame = {
                 <div class="input-group-prepend">
                     <div class="input-group-text"><i class="fas fa-key ml-1"></i></div>
                 </div>
-                <input v-model="game_info.password" type="password" v-bind:class="'form-control '+password_valid" placeholder="Password (Optional)">
+                <input v-model="game_info.password" type="password" v-bind:class="'form-control '+password_valid" placeholder="Password (Optional)" autocomplete="new-password">
             </div>
             <errorSuccessNotifier ref="password_notifier"></errorSuccessNotifier>
 
