@@ -16,7 +16,7 @@ const Leaderboard = {
             </label>
     </div>
 </div>
-<div class="container table-responsive">
+<div class="container table-responsive" style="overflow-y: hidden;">
 <div class="row ">
 <table class="table table-hover">
   <thead>
