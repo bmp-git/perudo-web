@@ -352,6 +352,8 @@ exports.create_game = function (req, res) {
             id = currentId;
             currentId++;
         }
+        new_game.players = parseInt(new_game.players);
+        new_game.turn_time = parseInt(new_game.turn_time);
         new_game.id = id;
         new_game.owner_id = req.user._id;
         new_game.started = false;

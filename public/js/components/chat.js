@@ -134,7 +134,7 @@ const Chat = {
                                 <div class="container chat-message">
                                     <div class="row">
                                         <div class="col-8 col-md-8 col-lg-10">
-                                            <div><i class="text-warning">Turn of </i><strong><username :userid="msg.user_id"></username></strong></div>
+                                            <div><strong><username :userid="msg.user_id"></username>'s </strong><i class="text-warning">turn</i></div>
                                         </div>
                                         <div class="col-2 offset-2 col-md-2 offset-md-2 col-lg-1 offset-lg-1">
                                             <span class="time-right">{{msg.date | formatDate}}</span>

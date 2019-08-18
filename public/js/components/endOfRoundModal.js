@@ -15,7 +15,7 @@ const EndOfRoundModal = {
         <template v-else>
           <h4 class="text-center mb-4">
           <template v-if="game.last_round_recap.spoton_user"><b class="text-primary"><username :userid="game.last_round_recap.spoton_user"></username></b> spoton </template>
-          <template v-if="game.last_round_recap.doubt_user"><b class="text-primary"><username :userid="game.last_round_recap.doubt_user"></username></b> doubt on </template>
+          <template v-if="game.last_round_recap.doubt_user"><b class="text-primary"><username :userid="game.last_round_recap.doubt_user"></username></b> doubted on </template>
           <b class="text-primary"><username :userid="game.last_round_recap.bid_user"></username></b> bid!</h4>
         
           <template v-for="d in dice">
