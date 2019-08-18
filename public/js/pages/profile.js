@@ -69,7 +69,7 @@ const Profile = {
                 
                 <div class="row">
                     <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-12">
-                        <apexchart type=area height=350 :options="chartOptions" :series="rank_series" />
+                        <apexchart type=line height=350 :options="rank_chart_options" :series="rank_series" />
                     </div>
                 </div>
                 
@@ -81,7 +81,7 @@ const Profile = {
                 
                 <div class="row">
                     <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-12">
-                        <apexchart type=area height=350 :options="chartOptions" :series="points_series" />
+                        <apexchart type=line height=350 :options="points_chart_options" :series="points_series" />
                     </div>
                 </div>
                 
@@ -172,7 +172,7 @@ const Profile = {
                 
                 <div class="row">
                     <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-12">
-                        <apexchart type=bar height=350 :options="chartOptions" :series="plays_series" />                                
+                        <apexchart type=bar height=350 :options="plays_chart_options" :series="plays_series" />                                
                     </div>           
                          
                 </div>
@@ -185,7 +185,7 @@ const Profile = {
                 
                 <div class="row">
                     <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-12">
-                        <apexchart type=bar height=350 :options="chartOptions" :series="time_played_series" />                                
+                        <apexchart type=bar height=350 :options="time_played_chart_options" :series="time_played_series" />                                
                     </div>           
                          
                 </div>                
@@ -219,18 +219,47 @@ const Profile = {
             points_series: [],
             plays_series: [],
             time_played_series: [],
-            chartOptions: {
+            rank_chart_options: {
                 chart: {
                     stacked: true,
                     toolbar: {
-                        show: true
+                        show: false
                     },
                     zoom: {
-                        enabled: true
+                        enabled: false
                     }
                 },
                 dataLabels: {
-                    enabled: true
+                    enabled: false
+                },
+                stroke: {
+                    curve: 'smooth'
+                },
+                xaxis: {
+                    type: 'datetime',
+                    categories: [],
+                },
+                yaxis: {
+                    reversed: true
+                },
+                tooltip: {
+                    x: {
+                        format: 'dd/MM/yy'
+                    }
+                }
+            },
+            points_chart_options: {
+                chart: {
+                    stacked: true,
+                    toolbar: {
+                        show: false
+                    },
+                    zoom: {
+                        enabled: false
+                    }
+                },
+                dataLabels: {
+                    enabled: false
                 },
                 stroke: {
                     curve: 'smooth'
@@ -244,7 +273,43 @@ const Profile = {
                         format: 'dd/MM/yy'
                     }
                 }
+            },
+            plays_chart_options: {
+                chart: {
+                    stacked: true,
+                    toolbar: {
+                        show: false
+                    },
+                    zoom: {
+                        enabled: false
+                    }
+                },
+                dataLabels: {
+                    enabled: false
+                },
+                xaxis: {
+                    type: 'datetime',
+                    categories: [],
+                }
+            },
+            time_played_chart_options: {
+                chart: {
+                    toolbar: {
+                        show: false
+                    },
+                    zoom: {
+                        enabled: false
+                    }
+                },
+                dataLabels: {
+                    enabled: false
+                },
+                xaxis: {
+                    type: 'datetime',
+                    categories: [],
+                }
             }
+
         }
     },
     methods: {
@@ -300,24 +365,15 @@ const Profile = {
             this.$refs.profileImage.reload();
         },
         updateChartXAxis: function (categories) {
-            this.chartOptions= {
-                dataLabels: {
-                    enabled: false
-                },
-                stroke: {
-                    curve: 'smooth'
-                },
-
+            const opts = {
                 xaxis: {
-                    type: 'datetime',
-                    categories: categories,
-                },
-                tooltip: {
-                    x: {
-                        format: 'dd/MM/yy'
-                    }
+                    categories: categories
                 }
-            }
+            };
+            this.points_chart_options = opts;
+            this.plays_chart_options = opts;
+            this.time_played_chart_options = opts;
+            this.rank_chart_options = opts;
         }
     },
     watch: {
