@@ -239,3 +239,7 @@ exports.get_leaderboard = function (req, res) {
         res.status(401).send({ message: 'Incorrect parameters' }).end();
     }
 };
+
+exports.get_date = function (req, res) {
+    res.status(200).send({ date: new Date() }).end();
+};
