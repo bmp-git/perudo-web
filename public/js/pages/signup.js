@@ -50,12 +50,10 @@ const Signup = {
         singup: function () {
             Api.signup(this.signup_request.email, this.signup_request.username, this.signup_request.password, () => {
                 this.$refs.notifier.showSuccess("Sign up completed. You will be redirected soon.");
-                tmp_email = (' ' + this.signup_request.email).slice(1); //to force the creation of a copy
-
+                store.commit('setSignUpEmail', (' ' + this.signup_request.email).slice(1) /*to force the creation of a copy*/);
                 this.signup_request.username = "";
                 this.signup_request.email = "";
                 this.signup_request.password = "";
-
                 setTimeout(function () { router.push("/signin"); }, 2000);
             }, error => {
                 this.$refs.notifier.showError(error.response.data.message);

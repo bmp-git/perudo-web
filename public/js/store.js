@@ -20,7 +20,8 @@ const store = new Vuex.Store( {
             game_creation_time: "",
             users: [],
             tick: 0
-        }
+        },
+        signup_email: ""
     },
     mutations: {
         setToken(state, token) {
@@ -68,6 +69,9 @@ const store = new Vuex.Store( {
         },
         clearNotifications(state) {
             state.game_notifications = 0;
+        },
+        setSignUpEmail(state, email) {
+            state.signup_email = email;
         }
     }
 });

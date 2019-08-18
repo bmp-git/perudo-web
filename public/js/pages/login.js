@@ -9,7 +9,7 @@ const Login = {
                             <div class="input-group-prepend">
                                 <div class="input-group-text"><i class="fas fa-envelope"></i></div>
                             </div>
-                            <input v-model="email" type="email" class="form-control" placeholder="Email">
+                            <input v-model="$store.state.signup_email" type="email" class="form-control" placeholder="Email">
                         </div>
                         <label class="sr-only" for="txbPasswordTmp">Password</label>
                         <div class="input-group">
@@ -35,7 +35,6 @@ const Login = {
     },
     data() {
         return {
-            email: "",
             login_request: {
                 password: ""
             }
@@ -43,8 +42,8 @@ const Login = {
     },
     methods: {
         login: function () {
-            if (this.email && this.login_request.password) {
-                Api.login(this.email, this.login_request.password, token => {
+            if (this.$store.state.signup_email && this.login_request.password) {
+                Api.login(this.$store.state.signup_email, this.login_request.password, token => {
                     store.commit('setToken', token);
                     this.login_request.password = "";
                     router.push("/");
@@ -58,9 +57,10 @@ const Login = {
         },
     },
     mounted: function () {
-        if (tmp_email) {
+        /*if (tmp_email) {
             this.email = tmp_email; //Retrive email from signup page
-        }
+            tmp_email = null;
+        }*/
     },
     filters: {
         limit: function (text, length) {

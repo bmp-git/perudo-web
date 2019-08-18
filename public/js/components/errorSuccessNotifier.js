@@ -26,6 +26,7 @@ const errorSuccessNotifier = {
             if(this.old_timeout) {
                 clearTimeout(this.old_timeout);
             }
+            this.show_success = false;
             this.error_message = message;
             this.show_error = true;
             if(timeout !== null) {
@@ -50,6 +51,7 @@ const errorSuccessNotifier = {
             if(this.old_timeout) {
                 clearTimeout(this.old_timeout);
             }
+            this.show_error = false;
             this.success_message = message;
             this.show_success = true;
             if(timeout !== null) {
