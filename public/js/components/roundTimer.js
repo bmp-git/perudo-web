@@ -46,10 +46,20 @@ props: ['game','refresh_time_ms'],
  watch: { 
     game: function(newGame, oldGame) {
     if(newGame.turn_start_time !== oldGame.turn_start_time) {
+        if(!newGame.is_over && this.isUserTurn()) {
+            if("vibrate" in navigator) {
+                window.navigator.vibrate(200);
+            }
+        }
         if(this.current_interval != null) {
             clearInterval(this.current_interval);
         }
         this.startTimer();
+    }
+    if (!oldGame.is_over && newGame.is_over) {
+        if("vibrate" in navigator) {
+            window.navigator.vibrate([300,400,300,400,1000]);
+        }
     }
   }
  }
