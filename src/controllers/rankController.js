@@ -215,12 +215,18 @@ exports.on_game_finish = function (game, game_actions) {
 
 
 exports.get_user_history = function (req, res) {
+    const time_span = 30;
+    const today = todayDate();
+    const from_date = add_days(today, -time_span);
+
     const user_id = req.params.id;
+    //RankHistory.find({user_id: user_id, history: { $elemMatch: { date: {$gte: from_date.toISOString()}}}}
     RankHistory.find({user_id: user_id}, (err, data) => {
         if (err) {
             res.status(500).send({ message: err });
         } else if (data) {
-            const his = data.length > 0 ? data[0].history : [];
+            let his = data.length > 0 ? data[0].history : [];
+            his = his.filter(e => e.date >= from_date);
             res.json(his).end();
         } else {
             res.status(401).send({ message: 'Incorrect user id' }).end();
