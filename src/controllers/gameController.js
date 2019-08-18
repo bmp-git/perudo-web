@@ -273,6 +273,7 @@ refresh_distinct_online_users = function () {
             distinct_online_users.push({ id: v });
         }
     });
+    io.emit('new online or offline user');
 }
 exports.online_users = function (req, res) {
     res.status(200).send({ result: distinct_online_users }).end();

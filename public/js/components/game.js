@@ -49,7 +49,7 @@ const Game = {
         <div class="col-4 col-md-2 text-center pl-3 pr-3 animated bounceIn">
                 <div class="animated bounceIn">
                     <router-link :to="{ name: 'profile', params: { id: user.id }}">
-                        <useravatar v-bind:userid="user.id" size="64"></useravatar> 
+                        <useravatar v-bind:userid="user.id" size="64" show_status="true"></useravatar> 
                     </router-link>
 
                     <router-link :to="{ name: 'profile', params: { id: user.id }}" style="margin-bottom:0px">

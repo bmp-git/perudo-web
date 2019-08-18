@@ -34,10 +34,13 @@ class Api {
     static get_online_users(succHandler, errorHandler) {
         axios.get("/api/online/users")
             .then(response => {
-                succHandler(response.data.result);
+                if (succHandler) {
+                    succHandler(response.data.result);
+                }
+                store.commit('setOnlineUsers', response.data.result);
             })
             .catch(error => {
-                if(errorHandler) {
+                if (errorHandler) {
                     errorHandler(error);
                 } else {
                     console.log(error);

@@ -29,7 +29,7 @@ const Home = { template: `<div class="container" style="height:100vh" v-on:click
                             </div>
                             <div class="row home-page" v-bind:class="online_users_animation">
                                 <div class="offset-md-3 col-md-6 col-12 d-flex justify-content-center">
-                                    <template v-for="user in online_users">
+                                    <template v-for="user in $store.state.online_users">
                                         <div class="ml-2 mr-2">
                                             <h6 class="text-center">
                                                 <useravatar :userid="user.id" style="width: 32px; height: 32px; border-width: 1px;"/></br>
@@ -53,7 +53,6 @@ const Home = { template: `<div class="container" style="height:100vh" v-on:click
         right_dice : 6,
         left_dice_r : 0,
         right_dice_r : 0,
-        online_users: [],
         animation: []
     }
  },
@@ -73,11 +72,6 @@ const Home = { template: `<div class="container" style="height:100vh" v-on:click
         this.right_dice_r = Math.floor(360*Math.random())+1;
         this.left_dice = Math.floor(6*Math.random())+1; 
         this.right_dice = Math.floor(6*Math.random())+1; 
-    
-        Api.get_online_users(users => {
-            this.online_users = users;
-            console.log(this.online_users);
-        });
 
         this.welcome_animation = 'animated bounceInLeft';
         this.animation.push(setTimeout(() => this.to_animation = 'animated bounceInRight', 1000));

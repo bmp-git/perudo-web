@@ -8,10 +8,10 @@ const gameTurn = { template: `
                         <div class="row d-flex justify-content-center">
                             <router-link :to="{ name: 'profile', params: { id: user.id }}">
                                 <template v-if="user.remaining_dice <= 0">
-                                    <useravatar :userid="user.id" v-bind:style="[!isMe(user.id) ? {'border': '2px solid #AAAAAA'} : {}]" style="opacity: 0.5;"/>
+                                    <useravatar :userid="user.id" v-bind:style="[!isMe(user.id) ? {'border': '2px solid #AAAAAA'} : {}]" style="opacity: 0.5;" show_status="true"/>
                                 </template>
                                 <template v-else>
-                                    <useravatar :userid="user.id" v-bind:style="[!isMe(user.id) ? {'border': '2px solid #AAAAAA'} : {}]"/>
+                                    <useravatar :userid="user.id" v-bind:style="[!isMe(user.id) ? {'border': '2px solid #AAAAAA'} : {}]" show_status="true"/>
                                 </template>
                             </router-link>
                         </div>

@@ -21,7 +21,8 @@ const store = new Vuex.Store( {
             users: [],
             tick: 0
         },
-        signup_email: ""
+        signup_email: "",
+        online_users: []
     },
     mutations: {
         setToken(state, token) {
@@ -72,6 +73,9 @@ const store = new Vuex.Store( {
         },
         setSignUpEmail(state, email) {
             state.signup_email = email;
+        },
+        setOnlineUsers(state, online) {
+            state.online_users = online;
         }
     }
 });
