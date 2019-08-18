@@ -1,4 +1,4 @@
-const Home = { template: `<div class="container">
+const Home = { template: `<div class="container" style="height:100vh" v-on:click="stopAnimation">
                             <div class="row home-page">
                                 <div class="col">
                                     <h1 v-show="welcome_animation != ''" v-bind:class="welcome_animation">Welcome</h1>
@@ -54,6 +54,7 @@ const Home = { template: `<div class="container">
         left_dice_r : 0,
         right_dice_r : 0,
         online_users: [],
+        animation: []
     }
  },
  components: {
@@ -66,21 +67,33 @@ const Home = { template: `<div class="container">
         this.to_animation = '';
         this.perudo_animation =  '';
         this.button_animation = '';
-        
+        this.online_users_animation = '';
+
         this.left_dice_r = Math.floor(360*Math.random())+1;
         this.right_dice_r = Math.floor(360*Math.random())+1;
         this.left_dice = Math.floor(6*Math.random())+1; 
         this.right_dice = Math.floor(6*Math.random())+1; 
     
-        this.welcome_animation = 'animated bounceInLeft';
-        setTimeout(() => this.to_animation = 'animated bounceInRight', 1000);
-        setTimeout(() => this.perudo_animation = 'animated bounceInUp', 2000);
-        setTimeout(() => this.button_animation = 'animated tada', 3000);
-        setTimeout(() => this.online_users_animation = 'animated fadeIn', 4000);
         Api.get_online_users(users => {
             this.online_users = users;
             console.log(this.online_users);
         });
+
+        this.welcome_animation = 'animated bounceInLeft';
+        this.animation.push(setTimeout(() => this.to_animation = 'animated bounceInRight', 1000));
+        this.animation.push(setTimeout(() => this.perudo_animation = 'animated bounceInUp', 2000));
+        this.animation.push(setTimeout(() => this.button_animation = 'animated tada', 3000));
+        this.animation.push(setTimeout(() => this.online_users_animation = 'animated fadeIn', 4000));
+     },
+     stopAnimation: function () {
+        this.animation.forEach(timeout => {
+            clearTimeout(timeout);
+        });
+        this.welcome_animation = ' ';
+        this.to_animation = ' ';
+        this.perudo_animation = ' ';
+        this.button_animation = ' ';
+        this.online_users_animation = ' ';
      }
  },
  mounted: function () {
