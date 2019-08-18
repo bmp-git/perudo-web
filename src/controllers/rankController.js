@@ -111,6 +111,12 @@ function todayDate() {
     return today;
 }
 
+function add_days(date, days) {
+    const new_date = new Date(date);
+    new_date.setDate(new_date.getDate() + days);
+    return new_date;
+}
+
 function snapshotRanks() {
     return User.find({}, '_id points').sort({points: -1}).exec();
 }
@@ -221,5 +227,46 @@ exports.get_user_history = function (req, res) {
         }
     });
 };
+
+function generate_sample_history(user_id, days) {
+    const today = todayDate();
+    const records = [];
+    for(let i = days; i > 0; i--) {
+        const date = add_days(today, -i);
+        const record = {
+            time_played: Math.round(Math.random() * 8 * 60 * 60 * 1000),
+            wins: Math.round(Math.random() * 100),
+            losses: Math.round(Math.random() * 100),
+            date: date,
+            rank: Math.round(Math.random() * 1000),
+            points: Math.round(Math.random() * 10000)
+        };
+        records.push(record);
+    }
+
+    updateRankHistory().then(() => {
+            RankHistory.findOneAndUpdate({user_id: user_id}, {
+                $push: {
+                    history: {
+                        $each: records,
+                        $sort: { date: 1 }
+                    }
+                }
+            },(err, data) => {
+                if (err) {
+                    console.log("Error updating user sample history " + err);
+                } else if (data) {
+                    console.log("User sample history updated!");
+                } else {
+                    console.log("User id not found in sample history update!");
+                }
+            });
+        }
+    )
+
+
+}
+
+//generate_sample_history('5d4bd25fb9976803582381a5', 100);
 
 //exports.on_game_finish(examples.example_game, examples.example_actions);
