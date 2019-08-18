@@ -31,6 +31,19 @@ class Api {
             });
     }
 
-    //TODO rest of api calls...
+    static get_online_users(succHandler, errorHandler) {
+        axios.get("/api/online/users")
+            .then(response => {
+                succHandler(response.data.result);
+            })
+            .catch(error => {
+                if(errorHandler) {
+                    errorHandler(error);
+                } else {
+                    console.log(error);
+                }
+            });
+    }
 
+    //TODO rest of api calls...
 }
