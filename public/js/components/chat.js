@@ -3,7 +3,7 @@ const Chat = {
                 <div class="col-12 col-sm-12 col-md-10 offset-md-1 col-lg-10 offset-lg-1 col-xl-8 offset-xl-2 pl-0 pr-0">
                     <div ref="chat" class="chat-container">
                         <template v-for="msg in messages">
-                            <div class="animated fadeInRight faster">
+                            <div class="animated fadeIn faster">
                             <template v-if="msg.type === 'message'">
                                 <div class="container chat-message">
                                     <div class="row">
