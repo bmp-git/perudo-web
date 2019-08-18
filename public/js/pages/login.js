@@ -9,14 +9,14 @@ const Login = {
                             <div class="input-group-prepend">
                                 <div class="input-group-text"><i class="fas fa-envelope"></i></div>
                             </div>
-                            <input v-model="email" type="email" class="form-control" placeholder="Email" required>
+                            <input v-model="email" type="email" class="form-control" placeholder="Email">
                         </div>
                         <label class="sr-only" for="txbPasswordTmp">Password</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
                                 <div class="input-group-text"><i class="fas fa-key"></i></div>
                             </div>
-                            <input v-model="login_request.password" type="password" class="form-control" placeholder="Password" required>
+                            <input @keyup.enter="login" v-model="login_request.password" type="password" class="form-control" placeholder="Password">
                         </div>
                         <errorSuccessNotifier ref="errorNotifier"></errorSuccessNotifier>
                         <div class="form-group" style="padding-top:10px">

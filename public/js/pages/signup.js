@@ -8,23 +8,21 @@ const Signup = {
                 <div class="input-group-prepend">
                     <div class="input-group-text"><i class="fas fa-user"></i></div>
                 </div>
-                <input v-model="signup_request.username" type="text" class="form-control" placeholder="Username"
-                    required>
+                <input v-model="signup_request.username" type="text" class="form-control" placeholder="Username">
             </div>
             <label class="sr-only" for="txbEmail">Email</label>
             <div class="input-group mb-2 mt-2">
                 <div class="input-group-prepend">
                     <div class="input-group-text"><i class="fas fa-envelope"></i></div>
                 </div>
-                <input v-model="signup_request.email" type="email" class="form-control" placeholder="Email" required>
+                <input v-model="signup_request.email" type="email" class="form-control" placeholder="Email">
             </div>
             <label class="sr-only" for="txbPasswordTmp">Password</label>
             <div class="input-group">
                 <div class="input-group-prepend">
                     <div class="input-group-text"><i class="fas fa-key"></i></div>
                 </div>
-                <input v-model="signup_request.password" type="password" class="form-control" placeholder="Password"
-                    required>
+                <input @keyup.enter="singup" v-model="signup_request.password" type="password" class="form-control" placeholder="Password">
             </div>
             <errorSuccessNotifier ref="notifier"></errorSuccessNotifier>
             <div class="form-group" style="padding-top:10px">
@@ -51,7 +49,7 @@ const Signup = {
     methods: {
         singup: function () {
             Api.signup(this.signup_request.email, this.signup_request.username, this.signup_request.password, () => {
-                this.$refs.notifier.showSuccess("Sign up completed. You will be redirected soon.");                
+                this.$refs.notifier.showSuccess("Sign up completed. You will be redirected soon.");
                 tmp_email = (' ' + this.signup_request.email).slice(1); //to force the creation of a copy
 
                 this.signup_request.username = "";
@@ -60,7 +58,7 @@ const Signup = {
 
                 setTimeout(function () { router.push("/signin"); }, 2000);
             }, error => {
-                this.$refs.notifier.showError(error.response.data.message);       
+                this.$refs.notifier.showError(error.response.data.message);
             })
         },
     },
