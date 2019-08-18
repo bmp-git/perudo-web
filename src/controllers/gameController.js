@@ -60,6 +60,7 @@ check_for_win = function (game) {
         actions_add_event(game.id, "The game is over!", 3);
         oldDice.get(game.id).set(game.round, currentDice.get(game.id));
         update_ranking(game, actions.get(game.id));
+        add_expiration_game_timeout(game.id, 5 * 60); //5 minutes
     }
 }
 
@@ -271,6 +272,14 @@ remove_game_io_notification = function (game_id) {
     io.emit('game removed', game_id);
 }
 
+add_expiration_game_timeout = function(game_id, seconds) {
+    gameTimeouts.set(game_id, setTimeout(function () {
+        console.log("Game " + game_id + " is expired.");
+        remove_game(game_id);
+        gameTimeouts.delete(game_id);
+    }, seconds * 1000));
+}
+
 
 
 exports.get_games = function (req, res) {
@@ -397,11 +406,7 @@ exports.leave_game = function (req, res) {
             if (game.started) {
                 remove_game(game.id);
             } else {
-                gameTimeouts.set(game.id, setTimeout(function () {
-                    console.log("Game " + game.id + " is expired.");
-                    remove_game(game.id);
-                    gameTimeouts.delete(game.id);
-                }, 60 * 1000));
+                add_expiration_game_timeout(game.id, 60);
                 tick_game(game);
             }
         } else if (game.started && !game.is_over) {

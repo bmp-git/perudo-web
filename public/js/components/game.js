@@ -62,7 +62,7 @@ const Game = {
             </div>
         </template>
         
-        <template v-for="i in freeSpaces" v-bind:key="i">
+        <template v-if="!game.is_over && !game.started" v-for="i in freeSpaces" v-bind:key="i">
             <div class="col-4 col-md-2 text-center animated fadeIn">
                 <a href="" @click.prevent="joinGame">
                     <useravatar size="64"></useravatar> 
