@@ -18,24 +18,12 @@ const ProfileSettings = {
                     
                     <div class="col-lg-5 col-md-4">
 
-                        
-                        <editableForm icon="user" type="" placeholder="Username" :value.sync="user.username" :onchangeconfirm="changeUsername"></editableForm>
+                        <editableForm icon="user" type="" placeholder="Username" :value.sync="user.username" :onchangeconfirm="changeUsername" label="Username"></editableForm>
+                        <editableForm icon="envelope" type="email" placeholder="Email" :value.sync="user.email" :onchangeconfirm="changeEmail" label="E-mail"></editableForm>
 
                     </div>
                 </div>
-                              
-
-                <div class="row">
-                    <div class="col-md-8 offset-md-2">
-                        <hr class="hr-text" data-content="E-mail" />
-                    </div>
-                </div>
-                
-                <div class="row">
-                    <div class="col-md-8 offset-md-2">
-                        <editableForm icon="envelope" type="email" placeholder="Email" :value.sync="user.email" :onchangeconfirm="changeEmail"></editableForm>
-                    </div>
-                </div>
+                            
                 
                 
                 <div class="row">
