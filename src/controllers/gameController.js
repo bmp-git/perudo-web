@@ -447,6 +447,7 @@ exports.leave_game = function (req, res) {
     const id = parseInt(req.params.id);
     const game = games.get(id);
     if (assert_in_game(game, req, res)) {
+        var leaving_user_dice = game.users.find(u => u.id === req.user._id).remaining_dice;
         game.users = game.users.filter(u => u.id !== req.user._id);
         if (game.users.length === 0) {
             game.empty_from_date = new Date();
@@ -463,7 +464,7 @@ exports.leave_game = function (req, res) {
             if (game.is_over) {
                 game.last_round_recap = { leave_user: req.user._id };
             } else {
-                if (!game.is_over && game.users.find(u => u.id === req.user._id).remaining_dice > 0) {
+                if (!game.is_over && leaving_user_dice > 0) {
                     game.last_round_recap = { leave_user: req.user._id };
                     next_round(game, false, null);
                 }
