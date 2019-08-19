@@ -5,12 +5,14 @@ const argv = require('minimist')(process.argv.slice(2), {
     s: 'https',
     t: 'http2',
     c: 'cert',
-    k: 'key'
+    k: 'key',
+    g: 'compression'
   },
   default: {
     port: default_port,
     https: false,
     http2: false,
+    compression: false,
     cert: './cert.crt',
     key: './key.key'
   },
@@ -27,6 +29,11 @@ if (isNaN(argv.port) || argv.port < 0 || argv.port > 65535 ) {
 
 const express = require('express');
 const app = express();
+if (argv.compression) {
+  console.log("Using compression.");
+  const compression = require('compression');
+  app.use(compression());
+}
 const mongoose = require('mongoose');
 mongoose.set('useCreateIndex', true);
 require('./src/models/user');
