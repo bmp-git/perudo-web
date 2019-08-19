@@ -20,9 +20,6 @@ const ProfileSettings = {
 
                         
                         <editableForm icon="user" type="" placeholder="Username" :value.sync="user.username" :onchangeconfirm="changeUsername"></editableForm>
-                        
-                        <editableForm icon="flag" type="" placeholder="Nationality" :value.sync="user.nationality" :onchangeconfirm="changeNationality"></editableForm>
-
 
                     </div>
                 </div>
@@ -81,7 +78,6 @@ const ProfileSettings = {
         return {
             user: {
                 id : '',
-                nationality: 'Italy',
                 email: '',
                 username: '',
                 avatar: ''
@@ -120,9 +116,6 @@ const ProfileSettings = {
                 .catch(error => {
                     err(error.response.data.message);
                 });
-        },
-        changeNationality: function(nationality, succ, err) {
-            succ("Nationality changed successfully!");
         },
         changeEmail: function(email, succ, err) {
             const authHeader = 'bearer '.concat(this.$store.state.token);
