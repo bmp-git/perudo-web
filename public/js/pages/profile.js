@@ -220,6 +220,7 @@ const Profile = {
             plays_series: [],
             time_played_series: [],
             rank_chart_options: {
+                colors:['#F86624'],
                 chart: {
                     stacked: true,
                     toolbar: {
@@ -233,7 +234,8 @@ const Profile = {
                     enabled: false
                 },
                 stroke: {
-                    curve: 'smooth'
+                    curve: 'smooth',
+                    width: 3
                 },
                 xaxis: {
                     type: 'datetime',
@@ -252,7 +254,10 @@ const Profile = {
                 },
                 yaxis: {
                     reversed: true,
-                    min: 1
+                    min: 1,
+                    labels: {
+                        show: false
+                    }
                 },
                 tooltip: {
                     x: {
@@ -261,6 +266,7 @@ const Profile = {
                 }
             },
             points_chart_options: {
+                colors:['#1B998B'],
                 chart: {
                     stacked: true,
                     toolbar: {
@@ -274,7 +280,8 @@ const Profile = {
                     enabled: false
                 },
                 stroke: {
-                    curve: 'smooth'
+                    curve: 'smooth',
+                    width: 3
                 },
                 xaxis: {
                     type: 'datetime',
@@ -292,6 +299,9 @@ const Profile = {
                     }
                 },
                 yaxis: {
+                    labels: {
+                        show: false
+                    }
                 },
                 tooltip: {
                     x: {
@@ -300,6 +310,7 @@ const Profile = {
                 }
             },
             plays_chart_options: {
+                colors:['#4CAF50', '#F44336'],
                 chart: {
                     stacked: true,
                     toolbar: {
@@ -331,6 +342,7 @@ const Profile = {
                 }
             },
             time_played_chart_options: {
+            colors:['#A5978B'],
                 chart: {
                     toolbar: {
                         show: false
