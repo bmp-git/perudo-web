@@ -1,6 +1,8 @@
 var socket = io();
 socket.on('you are connected', function (game_id) {
-    socket.emit("online", localStorage.token);
+    if (localStorage.token) {
+        socket.emit("online", localStorage.token);
+    }
 });
 socket.on('new online or offline user', function (game_id) {
     console.log("refreshing online users");
@@ -55,7 +57,7 @@ var loadToken = function () {
         }
     }
 }
-var unloadToken = function() {
+var unloadToken = function () {
     socket.emit("offline", localStorage.token);
 }
 loadToken();
