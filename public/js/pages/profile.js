@@ -238,9 +238,21 @@ const Profile = {
                 xaxis: {
                     type: 'datetime',
                     categories: [],
+                    labels: {
+                        datetimeFormatter: {
+                            year: 'yyyy',
+                            month: "MMM 'yy",
+                            day: 'dd MMM',
+                            hour: '',
+                        }
+                    },
+                    axisTicks: {
+                        show: false
+                    }
                 },
                 yaxis: {
-                    reversed: true
+                    reversed: true,
+                    min: 1
                 },
                 tooltip: {
                     x: {
@@ -267,6 +279,19 @@ const Profile = {
                 xaxis: {
                     type: 'datetime',
                     categories: [],
+                    labels: {
+                        datetimeFormatter: {
+                            year: 'yyyy',
+                            month: "MMM 'yy",
+                            day: 'dd MMM',
+                            hour: '',
+                        }
+                    },
+                    axisTicks: {
+                        show: false
+                    }
+                },
+                yaxis: {
                 },
                 tooltip: {
                     x: {
@@ -287,9 +312,22 @@ const Profile = {
                 dataLabels: {
                     enabled: false
                 },
+                yaxis: {
+                },
                 xaxis: {
                     type: 'datetime',
                     categories: [],
+                    labels: {
+                        datetimeFormatter: {
+                            year: 'yyyy',
+                            month: "MMM 'yy",
+                            day: 'dd MMM',
+                            hour: '',
+                        }
+                    },
+                    axisTicks: {
+                        show: false
+                    }
                 }
             },
             time_played_chart_options: {
@@ -307,6 +345,17 @@ const Profile = {
                 xaxis: {
                     type: 'datetime',
                     categories: [],
+                    labels: {
+                        datetimeFormatter: {
+                            year: 'yyyy',
+                            month: "MMM 'yy",
+                            day: 'dd MMM',
+                            hour: '',
+                        }
+                    },
+                    axisTicks: {
+                        show: false
+                    }
                 }
             }
 
