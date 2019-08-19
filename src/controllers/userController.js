@@ -172,11 +172,15 @@ exports.get_user_rank = function (req, res) {
     });
 };
 
+let cannot_reset = new Set();
+const too_may_requests_timeout_ms = 30000;
 exports.reset_user_stats = function (req, res) {
     const id = req.params.id;
     const tokenId = req.authData.user._id;
     if (tokenId !== id) {
         res.status(400).send({ message: "Id and token aren't compatible." }).end();
+    } else if (cannot_reset.has(id)) {
+        res.status(429).send({ message: "Too many reset requests! Wait some time." }).end();
     } else {
         User.findByIdAndUpdate(id, {
             lastReset: new Date(),
@@ -188,10 +192,12 @@ exports.reset_user_stats = function (req, res) {
             if (err) {
                 res.status(500).send({ message: err }).end();
             } else if (result) {
+                cannot_reset.add(id);
+                setTimeout(() => cannot_reset.delete(id), too_may_requests_timeout_ms);
                 rankController.updateRankHistory().then(() => {
                     console.log("Players history updated.")
                 }, err => {
-                    console.log("Cannot players history: " + err)
+                    console.log("Cannot update players history: " + err)
                 });
                 res.status(200).send({ message: "User stats successfully reset." }).end();
             } else {
