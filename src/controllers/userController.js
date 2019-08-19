@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const User = mongoose.model('User');
 
+var rankController = require('./rankController');
+
 exports.change_user_username = function (req, res) {
     const username = req.body.username;
     const id = req.params.id;
@@ -186,6 +188,11 @@ exports.reset_user_stats = function (req, res) {
             if (err) {
                 res.status(500).send({ message: err }).end();
             } else if (result) {
+                rankController.updateRankHistory().then(() => {
+                    console.log("Players history updated.")
+                }, err => {
+                    console.log("Cannot players history: " + err)
+                });
                 res.status(200).send({ message: "User stats successfully reset." }).end();
             } else {
                 res.status(401).send({ message: "Incorrect user id." }).end();

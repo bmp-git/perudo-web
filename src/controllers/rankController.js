@@ -206,10 +206,13 @@ function updateRankHistory(players) {
             const losses_to_add = losers.find(u => u._id == user_id) ? 1 : 0;
 
             let time_played = 0;
-            const player = players.ranks.find(u => u._id == user_id);
-            if(player) {
-                time_played = player.time_played;
+            if (players) {
+                const player = players.ranks.find(u => u._id == user_id);
+                if(player) {
+                    time_played = player.time_played;
+                }
             }
+
             const promise = updatePlayerRankHistory(user_id, rank + 1, points, time_played, wins_to_add, losses_to_add).then(() => {
                 console.log("User "+ user_id + " history updated.")
             }, err => {
@@ -220,6 +223,7 @@ function updateRankHistory(players) {
         return Promise.all(promises);
     });
 }
+exports.updateRankHistory = updateRankHistory;
 
 exports.on_game_finish = function (game, game_actions) {
     const players = get_users_place(game_actions);
