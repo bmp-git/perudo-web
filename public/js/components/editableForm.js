@@ -2,11 +2,14 @@ const editableForm = {
     template: `
 
         <div>
-            <div class="input-group mb-2 mt-2">
+            <template v-if="label">
+                    <label class="control-label" :for="this._uid">{{label}}</label>
+            </template>
+            <div class="input-group mb-2">
                 <div class="input-group-prepend">
                     <div class="input-group-text"><i v-bind:class="'fas fa-'+icon"></i></div>
                 </div>
-                <input v-model="value" v-bind:type="type" class="form-control" v-bind:placeholder="placeholder" v-bind:disabled="disabled">
+                <input :id="this._uid" v-model="value" v-bind:type="type" class="form-control" v-bind:placeholder="placeholder" v-bind:disabled="disabled">
                 <div class="input-group-append">
                     <div class="input-group-text"><a href="" title="edit" @click.prevent="toggle"><i v-bind:class="disabled ? 'fas fa fa-edit' : 'fas fa fa-check'"></i></a></div>
                 </div>
@@ -25,7 +28,7 @@ const editableForm = {
             disabled: true
         }
     },
-    props: ['icon', 'type', 'placeholder', 'value', 'onchangeconfirm'],
+    props: ['icon', 'type', 'placeholder', 'value', 'onchangeconfirm', 'label'],
     computed: {
     },
     methods: {
