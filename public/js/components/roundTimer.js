@@ -1,7 +1,7 @@
 const roundTimer = { template: `
 <div class="container">
     <div class="progress">
-    <div class="progress-bar progress-bar-striped progress-bar-animated" v-bind:class="isUserTurn() ? remaining_time < 5000 ? 'bg-danger' : '' : 'bg-secondary'" role="progressbar" v-bind:style="'width: '+ progress_bar +'%'">{{Math.ceil(remaining_time/1000)}}</div>
+    <div class="progress-bar progress-bar-striped progress-bar-animated" v-bind:class="(notransition?'notransition ':'') + (isUserTurn() ? remaining_time < 5000 ? 'bg-danger' : '' : 'bg-secondary')" role="progressbar" v-bind:style="'width: '+ progress_bar +'%'">{{Math.ceil(remaining_time/1000)}}</div>
     </div>
   </div>
 </div>
@@ -13,16 +13,19 @@ props: ['game','refresh_time_ms'],
         progress_bar : 100,
         current_interval : null,
         offset: 0,
+        notransition: true,
+        pre_finish_time: 1000 //ms
     }
  },
  methods: {
      startTimer: function() {
+        this.notransition = true;
         this.remaining_time = this.game.turn_time * 1000 + (new Date(this.game.turn_start_time) - new Date() - this.offset);
         this.progress_bar = 100;
         this.current_interval = setInterval(() => {
-            this.remaining_time -= this.refresh_time_ms;
+            this.notransition = false;
+            this.remaining_time -= this.refresh_time_ms + (this.pre_finish_time / ((this.game.turn_time * 1000) / this.refresh_time_ms));
             this.progress_bar = ((this.remaining_time) * 100 / 1000) / (this.game.turn_time);
-
             if(this.remaining_time < 0) {
                 clearInterval(this.current_interval);
                 this.remaining_time = 0;
@@ -60,6 +63,7 @@ props: ['game','refresh_time_ms'],
         if("vibrate" in navigator) {
             window.navigator.vibrate([300,400,300,400,1000]);
         }
+        this.remaining_time = 0;
     }
   }
  }
