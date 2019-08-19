@@ -63,6 +63,7 @@ props: ['game','refresh_time_ms'],
         if("vibrate" in navigator) {
             window.navigator.vibrate([300,400,300,400,1000]);
         }
+        this.remaining_time = 0;
     }
   }
  }
