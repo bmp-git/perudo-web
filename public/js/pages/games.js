@@ -16,7 +16,7 @@ const Games = {
         <template v-else>
             <div class="empty-page">
                 <template v-if="this.$store.state.authenticated">
-                    <p> There aren't any games at the moment, create a new one clicking the plus button in the right bottom of this page! </p>
+                    <p> There aren't any games at the moment, create a new one clicking the plus button in the bottom right of this page! </p>
                 </template>
                 <template v-else>
                     <p> There aren't any games at the moment, in order to create a new game and play, please <router-link to="/signup">sign-up</router-link> and <router-link to="/signin">sign-in</router-link>!</p>

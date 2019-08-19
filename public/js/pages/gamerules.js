@@ -51,7 +51,7 @@ const Gamerules = {
     <h5>Jones <span class="dice dice-1 mr-1"></span><span class="dice dice-1 mr-1"></span><span class="dice dice-3 mr-1"></span><span class="dice dice-3 mr-1"></span><span class="dice dice-5"></span></h5>
     <p>Every player see only his dice.</br>The round starts and it's Bill's turn. Bill try to bluff and <b>bids 3 dice of <span class="dice dice-3"></span></b>.</br>
     Now it's Turner's turn, he's not sure about Bill's bid and changes dice, he <b>bids 4 dice of <span class="dice dice-6"></span></b> hoping the other two have at least one <span class="dice dice-6"></span> in cases Jones doubt</br>
-    Jones think that the bid is corrent and doesn't want to doubt, according to Bill's bid he think there are many <span class="dice dice-3"></span> and <b>bids 6 dice of <span class="dice dice-3"></span></b></br>
+    Jones think that the bid is corrent and doesn't want to doubt, thanks to Bill's bid and his own dice he think there are many <span class="dice dice-3"></span> and <b>bids 6 dice of <span class="dice dice-3"></span></b></br>
     Bill knows that Jones's bid is based on his initial bluff, therefore he <b>Doubts</b>.</br>
     The count of dice is: </p>
     <h5>Bill <span class="dice dice-2 mr-1"></span><span class="dice dice-4 mr-1"></span><span class="dice dice-4 mr-1"></span><span class="dice dice-5 mr-1"></span><span class="dice dice-6"></span></h5>
@@ -60,8 +60,8 @@ const Gamerules = {
     <p>There are only 5 dice of <span class="dice dice-3 mr-1"></span>! Jones loses a die.</br>A new round starts and it's Jones's turn...</p>
 
     <h1 class="mt-5">Interface tutorial</h1>
-    In this section are explained some of the principal component to interact with the game. In order to play you must be signed-in, if you haven't yet please take a 
-    moment to <router-link to="/signup">sign-up</router-link> or <router-link to="/signin">sign-in</router-link>
+    In this section are explained some of the principal component to interact with the games. In order to play you must be signed-in, if you haven't yet please take a 
+    moment to <router-link to="/signup">sign-up</router-link> or <router-link to="/signin">sign-in</router-link>.
 
     <p class="h5 text-primary mt-5">Games</p>
 
