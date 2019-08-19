@@ -2,6 +2,7 @@ const router = new VueRouter({
     mode: 'history',
     routes: [
         {path: '/', component: Home, name: "home" },
+        {path: '/gamerules', component: Gamerules, name: "Gamerules" },
         {path: '/leaderboard', component: Leaderboard, name: "leaderboard"},
         {path: '/games', component: Games, name: "games"},
         {path: '/new_game', component: NewGame, name: "new_game", meta: {requiresAuth: true} },
