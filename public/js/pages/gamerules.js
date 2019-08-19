@@ -1,6 +1,6 @@
 const Gamerules = {
     template: `
-    <div class="container text-center mt-3 col-12 col-sm-8 col-md-6 col-lg-5 col-xl-4">
+    <div class="container text-center mt-3 mb-5 col-12 col-sm-8 col-md-6 col-lg-5 col-xl-4">
     <p class="h1">Game rules</p>
     <p>Perudo is a dice game. The object of perudo is to be the last player with a die or more.</p>
 
@@ -42,7 +42,7 @@ const Gamerules = {
     <p class="h5 text-primary mt-5">Counting dice</p>
     
     <p>When someone Doubt or Spoton on a bid the dice are counted following this rules: all die within the bid are counted, and the aces are added to the sum only for the 
-    player who made the bid. If the bid is one the aces, all aces are counted.</p>
+    player who made the bid. If the bid is on the aces, all aces are counted.</p>
 
     <p class="h4 text-primary mt-5">Example</p>
     <p>There are three players with this dice: </p>
@@ -59,11 +59,34 @@ const Gamerules = {
     <h5>Jones <span style="background-color: red;" class="dice dice-1 mr-1"></span><span style="background-color: red;" class="dice dice-1 mr-1"></span><span style="background-color: red;" class="dice dice-3 mr-1"></span><span style="background-color: red;" class="dice dice-3 mr-1"></span><span class="dice dice-5"></span></h5>
     <p>There are only 5 dice of <span class="dice dice-3 mr-1"></span>! Jones loses a die.</br>A new round starts and it's Jones's turn...</p>
 
-    <p class="h4 text-primary mt-5">Interface tutorial</p>
-    <diceSelector bid="bid" game="game"/>
+    <h1 class="mt-5">Interface tutorial</h1>
+    In this section are explained some of the principal component to interact with the game. In order to play you must be signed-in, if you haven't yet please take a 
+    moment to <router-link to="/signup">sign-up</router-link> or <router-link to="/signin">sign-in</router-link>
+
+    <p class="h5 text-primary mt-5">Games</p>
+
+    <p>In <router-link to="/games">games</router-link> section you will see all games. You can join a game not started by clicking on <button type="button" class="btn btn-primary btn-sm mt-1">Join</button>
+     or specatate a started game with the button <button type="button"class="btn btn-secondary btn-sm mt-1"">Spectate</button>
+    </br>In order to create your own game you can press the plus button on bottom right of the page <button type="button" class="btn btn-primary btn-circle"><i class="fas fa-plus"></i></button>
+    and compiling the "new game" form.</br>
+    If you are the owner of the lobby (a game not started) you can start it when there are at least two players with the button <button type="button" class="btn btn-primary btn-sm mt-1">Start game!</button></br>
+    Inside a lobby you can chat with the players using the chat at the bottom of the page.</p>
+    
+    
+    
+    <p class="mt-5">When a game is started you will be redirected to the game page. Now will be described some in-game components in order to help you make the first steps.</p>
+
+    <p class="h5 text-primary mt-5">Bid</p>
+    <p>When is your turn you can select a bid with the bid selector: press +/- to increse or decrease the quantity and use the scroll to select the wanted dice.<br>
+    The selector will help you by setting the minimum quantity that you can bid when selecting a different dice (in this case always to one).</p>
+
+    <diceSelector v-bind:bid.sync="this.bid" v-bind:game="game"/>
+
+    <p><i> Selected bid: {{bid.quantity}} dice of <span v-bind:class="'dice dice-'+bid.dice+' ml-1'"></span> </i></p>
     </div>`,
     components: {
         'diceSelector': diceSelector,
+        'game': Game
     },
     data() {
         return {

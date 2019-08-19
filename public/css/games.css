@@ -1,61 +1,64 @@
 .btn-circle.btn-xl {
-    width: 60px;
-    height: 60px;
-    border-radius: 35px;
-    font-size: 24px;
-    line-height: 1.33;
+  width: 60px;
+  height: 60px;
+  border-radius: 35px;
+  font-size: 24px;
+  line-height: 1.33;
 }
 
 .btn-circle {
-    width: 30px;
-    height: 30px;
-    padding: 6px 0px;
-    border-radius: 15px;
-    text-align: center;
-    font-size: 12px;
-    line-height: 1.42857;
-    
-    box-shadow: 0 6px 10px 0 #666;
-    position: fixed;
-    right: 50px;
-    bottom: 50px;
-    z-index: 1;
-    transition: all 0.1s ease-in-out;
+  width: 30px;
+  height: 30px;
+  padding: 6px 0px;
+  border-radius: 15px;
+  text-align: center;
+  font-size: 12px;
+  line-height: 1.42857;
+  box-shadow: 0 6px 10px 0 #666;
 }
+
+.btn-botton-right {
+  position: fixed;
+  right: 50px;
+  bottom: 50px;
+  z-index: 1;
+  transition: all 0.1s ease-in-out;
+}
+
 .btn-circle.btn-xl:hover {
-   box-shadow: 0 6px 14px 0 #666;
+  box-shadow: 0 6px 14px 0 #666;
 }
 
 .row-with-margin {
-    margin-top:15px;
-    margin-bottom:15px
+  margin-top: 15px;
+  margin-bottom: 15px
 }
 
 .empty-page {
-    text-align: center;
+  text-align: center;
 }
 
 .empty-page p {
-    font-size: 1rem;
-    line-height: 1.6;
+  font-size: 1rem;
+  line-height: 1.6;
 }
 
 .home-page {
-    text-align: center;
+  text-align: center;
 }
 
 .home-page h1 {
-    font-size: 4rem;
+  font-size: 4rem;
 }
 
 .perudo-title {
-    text-align: center;
-    color: #f35626;
-    background-image: linear-gradient(92deg, #f35626 0%,#feab3a 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: hue 60s infinite linear;
+  text-align: center;
+  color: #f35626;
+  background-image: linear-gradient(92deg, #f35626 0%, #feab3a 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: hue 60s infinite linear;
 }
 
 @media (min-width: 650px) {
@@ -66,11 +69,10 @@
 }
 
 @keyframes hue {
-    from {
-      filter: hue-rotate(0deg);
-    }
-    
-    to {
-      filter: hue-rotate(-360deg);
-    }
+  from {
+    filter: hue-rotate(0deg);
   }
+  to {
+    filter: hue-rotate(-360deg);
+  }
+}

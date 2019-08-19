@@ -24,7 +24,7 @@ const Games = {
             </div>
         </template>
         <template v-if="this.$store.state.authenticated && !isUserInGame">
-            <button type="button" class="btn btn-primary btn-circle btn-xl animated tada" @click.prevent="newGame"><i class="fas fa-plus"></i></button>
+            <button type="button" class="btn btn-primary btn-botton-right btn-circle btn-xl animated tada" @click.prevent="newGame"><i class="fas fa-plus"></i></button>
             <errorSuccessNotifier ref="new_game_notifier" class="mt-4"></errorSuccessNotifier>
         </template>
     </div>`,
