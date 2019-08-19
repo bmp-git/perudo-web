@@ -15,7 +15,7 @@ const Home = { template: `<div class="container" style="height:100vh; overflow: 
                             <div class="row">
                                 <div class="offset-md-3 col-md-6 col-12 d-flex justify-content-center">
                                     <router-link to="/games" v-show="button_animation != ''" v-bind:class="button_animation" class="btn btn-home btn-outline-primary btn-lg mr-4"><i class="fas fa-dice"></i> Play</router-link>
-                                    <router-link to="/gamesrules" v-show="button_animation != ''" v-bind:class="button_animation" class="btn btn-home btn-outline-primary btn-lg ml-4"><i class="fas fa-book"></i> Rules</router-link>
+                                    <router-link to="/gamerules" v-show="button_animation != ''" v-bind:class="button_animation" class="btn btn-home btn-outline-primary btn-lg ml-4"><i class="fas fa-book"></i> Rules</router-link>
                                 </div>
                             </div>
                             <template v-if="online_users_animation != ''">

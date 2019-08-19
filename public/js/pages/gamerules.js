@@ -1,6 +1,6 @@
 const Gamerules = {
     template: `
-    <div class="container text-center mt-3">
+    <div class="container text-center mt-3 col-12 col-sm-8 col-md-6 col-lg-5 col-xl-4">
     <p class="h1">Game rules</p>
     <p>Perudo is a dice game. The object of perudo is to be the last player with a die or more.</p>
 
