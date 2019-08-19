@@ -3,12 +3,14 @@ const argv = require('minimist')(process.argv.slice(2), {
   alias: {
     p: 'port',
     s: 'https',
+    t: 'http2',
     c: 'cert',
     k: 'key'
   },
   default: {
     port: default_port,
     https: false,
+    http2: false,
     cert: './cert.crt',
     key: './key.key'
   },
@@ -51,6 +53,13 @@ if (argv.https) {
     cert: fs.readFileSync(argv.cert)
   };
   server = require('https').createServer(options, app);
+} else if (argv.http2) {
+  const fs = require('fs');
+  const options = {
+    key: fs.readFileSync(argv.key),
+    cert: fs.readFileSync(argv.cert)
+  };
+  server = require('spdy').createServer(options, app);
 } else {
   server = require('http').Server(app);
 }
