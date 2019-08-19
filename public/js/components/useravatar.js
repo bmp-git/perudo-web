@@ -2,12 +2,12 @@ var useravatars = new Map();
 const Useravatar = {
     template: `
     <template v-if="userid">
-        <img ref="avatar" v-bind:src="'/api/users/'+userid+'/avatar'" class="useravatar" 
+        <img alt="User avatar" ref="avatar" v-bind:src="'/api/users/'+userid+'/avatar'" class="useravatar" 
         v-bind:style="'opacity: '+(($store.state.online_users.some(u => u.id === userid) || !show_status)?'1':'0.2')" 
         v-bind:title="$store.state.online_users.some(u => u.id === userid)?'Online':'Offline'">
     </template>
     <template v-else>
-        <img ref="avatar" src="/img/empty" class="useravatar emptyuseravatar">
+        <img  alt="Empty space" ref="avatar" src="/img/empty" class="useravatar emptyuseravatar">
     </template>`,
     props: ['userid' ,'show_status'],
     methods: {
