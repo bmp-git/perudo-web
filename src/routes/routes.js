@@ -10,6 +10,10 @@ module.exports = function (app) {
 		res.sendFile(appRoot + '/www/index.html');
 	});
 
+	app.route('/service-worker.js').get(function (req, res) {
+		res.sendFile(appRoot + '/service-worker.js');
+	});
+
 	//Login apis
 	app.route('/api/users')
 		.post(loginController.user_signup);

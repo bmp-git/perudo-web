@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Perudo</title>
-
+<link rel="manifest" href="/static/manifest.json"/>
 <link rel="stylesheet" href="/static/css/bootstrap.css"></link>
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
@@ -94,7 +94,13 @@
 
 <script src="/static/js/router.js"></script>
 <script src="/static/js/vueMain.js"></script>
-
+<script>
+	if('serviceWorker' in navigator) {
+	  navigator.serviceWorker
+			   .register('/service-worker.js')
+			   .then(function() { console.log("Service Worker Registered"); });
+	}
+</script>
 </body>
 </html>
 
