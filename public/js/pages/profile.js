@@ -220,6 +220,7 @@ const Profile = {
             plays_series: [],
             time_played_series: [],
             rank_chart_options: {
+                colors:['#F86624'],
                 chart: {
                     stacked: true,
                     toolbar: {
@@ -233,14 +234,30 @@ const Profile = {
                     enabled: false
                 },
                 stroke: {
-                    curve: 'smooth'
+                    curve: 'smooth',
+                    width: 3
                 },
                 xaxis: {
                     type: 'datetime',
                     categories: [],
+                    labels: {
+                        datetimeFormatter: {
+                            year: 'yyyy',
+                            month: "MMM 'yy",
+                            day: 'dd MMM',
+                            hour: '',
+                        }
+                    },
+                    axisTicks: {
+                        show: false
+                    }
                 },
                 yaxis: {
-                    reversed: true
+                    reversed: true,
+                    min: 1,
+                    labels: {
+                        show: false
+                    }
                 },
                 tooltip: {
                     x: {
@@ -249,6 +266,7 @@ const Profile = {
                 }
             },
             points_chart_options: {
+                colors:['#1B998B'],
                 chart: {
                     stacked: true,
                     toolbar: {
@@ -262,11 +280,28 @@ const Profile = {
                     enabled: false
                 },
                 stroke: {
-                    curve: 'smooth'
+                    curve: 'smooth',
+                    width: 3
                 },
                 xaxis: {
                     type: 'datetime',
                     categories: [],
+                    labels: {
+                        datetimeFormatter: {
+                            year: 'yyyy',
+                            month: "MMM 'yy",
+                            day: 'dd MMM',
+                            hour: '',
+                        }
+                    },
+                    axisTicks: {
+                        show: false
+                    }
+                },
+                yaxis: {
+                    labels: {
+                        show: false
+                    }
                 },
                 tooltip: {
                     x: {
@@ -275,6 +310,7 @@ const Profile = {
                 }
             },
             plays_chart_options: {
+                colors:['#4CAF50', '#F44336'],
                 chart: {
                     stacked: true,
                     toolbar: {
@@ -287,12 +323,26 @@ const Profile = {
                 dataLabels: {
                     enabled: false
                 },
+                yaxis: {
+                },
                 xaxis: {
                     type: 'datetime',
                     categories: [],
+                    labels: {
+                        datetimeFormatter: {
+                            year: 'yyyy',
+                            month: "MMM 'yy",
+                            day: 'dd MMM',
+                            hour: '',
+                        }
+                    },
+                    axisTicks: {
+                        show: false
+                    }
                 }
             },
             time_played_chart_options: {
+            colors:['#A5978B'],
                 chart: {
                     toolbar: {
                         show: false
@@ -307,6 +357,17 @@ const Profile = {
                 xaxis: {
                     type: 'datetime',
                     categories: [],
+                    labels: {
+                        datetimeFormatter: {
+                            year: 'yyyy',
+                            month: "MMM 'yy",
+                            day: 'dd MMM',
+                            hour: '',
+                        }
+                    },
+                    axisTicks: {
+                        show: false
+                    }
                 }
             }
 
