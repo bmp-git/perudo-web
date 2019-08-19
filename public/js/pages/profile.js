@@ -17,7 +17,6 @@ const Profile = {
                     
                     <div class="col-lg-3 col-md-4 col-6 align-self-center">
                         <h2>{{user.username}}</h2>
-                        <h4><i>Italy</i></h4>
                     </div>
                 
                 </div>
@@ -35,18 +34,10 @@ const Profile = {
                     <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-12">
                         <div class="row">
                             <div class="col-8">
-                                <strong>Global ranking</strong>
+                                <strong>Rank</strong>
                             </div>
                             <div class="col-4">
-                                <p class="float-right" style="font-size:23px">{{globalRank}}</p>
-                            </div>                            
-                        </div>
-                        <div class="row">
-                            <div class="col-8">
-                                <strong>Country ranking</strong>
-                            </div>
-                            <div class="col-4">
-                                <p class="float-right">{{globalRank}}</p>
+                                <p class="float-right" style="font-size:23px">{{rank}}</p>
                             </div>                            
                         </div>                        
                         <div class="row">
@@ -209,7 +200,7 @@ const Profile = {
                 totalPlayTime: 0,
                 avatar: ""
             },
-            globalRank : -1,
+            rank : -1,
             rankHistory : [],
             pointsHistory : [],
             playHistory : [],
@@ -384,7 +375,7 @@ const Profile = {
                 });
             axios.get("/api/users/" + this.$route.params.id + "/rank")
                 .then(response => {
-                    this.globalRank = response.data.rank;
+                    this.rank = response.data.rank;
                 })
                 .catch(error => {
                     router.push("/404")
