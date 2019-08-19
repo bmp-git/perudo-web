@@ -8,14 +8,21 @@ var examples = require('./exampleInstances');
 get_users_place = function(game_actions) {
     let ranks = [];
     let leavers = [];
+    let winner = null;
     for(let i = 0; i < game_actions.length; i++) {
         const action = game_actions[i];
         if(action.type === 'lost') {
             ranks.push({ _id: action.user_id});
+        } else if(action.type === 'win') {
+            winner = { _id: action.user_id};
         } else if(action.type === 'left' && !ranks.find(e => e._id == action.user_id)) {
             ranks.push({ _id: action.user_id});
             leavers.push({ _id: action.user_id});
         }
+    }
+
+    if (winner) {
+        ranks.push(winner);
     }
 
     return {ranks, leavers};
@@ -200,9 +207,7 @@ function updateRankHistory(players) {
 }
 
 exports.on_game_finish = function (game, game_actions) {
-    const winner = { _id:game.winning_user};
     const players = get_users_place(game_actions);
-    players.ranks.push(winner);
     return get_users(players.ranks.map(elem => elem._id)).then(res => {
         const points = compute_points(players.ranks, res);
         update_users_stats(points, game, game_actions).then(() => {
