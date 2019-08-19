@@ -66,6 +66,15 @@ function get_time_played(game_start_time, leave_time) {
     return Math.abs(end - start);
 }
 
+function add_time_played_in_place(players, game, game_actions) {
+    for(let i = 0; i < players.length; i++) {
+        const user_id = players[i]._id;
+        const leave_time = get_leave_date(user_id, game_actions);
+        const time_played = get_time_played(game.game_start_time, leave_time);
+        players[i].time_played = time_played;
+    }
+}
+
 function update_user_stats(user_id, points_to_add, wins_to_add, losses_to_add, time_to_add) {
     return User.findByIdAndUpdate(user_id,
         {
@@ -84,8 +93,8 @@ function update_users_stats(points, game, game_actions) {
     for(let i = 0; i < points.length; i++) {
         const user_id = points[i]._id;
         const points_to_add = points[i].delta_points;
-        const leave_time = get_leave_date(points[i]._id, game_actions);
-        const time_played = get_time_played(game.game_start_time, leave_time);
+
+        const time_played = points[i].time_played;
 
         const wins_to_add = game.winning_user == user_id ? 1 : 0;
         const losses_to_add = game.winning_user == user_id ? 0 : 1;
@@ -195,7 +204,13 @@ function updateRankHistory(players) {
             const points = ranks[rank].points;
             const wins_to_add = (winner && user_id == winner._id) ? 1 : 0;
             const losses_to_add = losers.find(u => u._id == user_id) ? 1 : 0;
-            const promise = updatePlayerRankHistory(user_id, rank + 1, points, 0, wins_to_add, losses_to_add).then(() => {
+
+            let time_played = 0;
+            const player = players.ranks.find(u => u._id == user_id);
+            if(player) {
+                time_played = player.time_played;
+            }
+            const promise = updatePlayerRankHistory(user_id, rank + 1, points, time_played, wins_to_add, losses_to_add).then(() => {
                 console.log("User "+ user_id + " history updated.")
             }, err => {
                 console.log("Cannot update user " + user_id + " history." + err)
@@ -208,6 +223,7 @@ function updateRankHistory(players) {
 
 exports.on_game_finish = function (game, game_actions) {
     const players = get_users_place(game_actions);
+    add_time_played_in_place(players.ranks, game, game_actions);
     return get_users(players.ranks.map(elem => elem._id)).then(res => {
         const points = compute_points(players.ranks, res);
         update_users_stats(points, game, game_actions).then(() => {
