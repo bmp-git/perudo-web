@@ -1,59 +1,64 @@
 const ProfileSettings = {
     template: `
-        <div class="container">
-                
-                <div class="row">
-                    <div class="col-md-8 offset-md-2">
-                        <hr class="hr-text" data-content="Edit my profile" />
-                    </div>
-                </div>
-                
-                
-                <div class="row">
-                    
-                    <div class="col-lg-3 offset-lg-2 col-md-4 offset-md-2">
-                        <profileImage ref="profileImage" :userid="this.$store.state.user._id" canedit="true" :onnewimage="changeAvatar"></profileImage>
-                    </div>
-                    
-                    
-                    <div class="col-lg-5 col-md-4">
-
-                        <editableForm icon="user" type="" placeholder="Username" :value.sync="user.username" :onchangeconfirm="changeUsername" label="Username"></editableForm>
-                        <editableForm icon="envelope" type="email" placeholder="Email" :value.sync="user.email" :onchangeconfirm="changeEmail" label="E-mail"></editableForm>
-
-                    </div>
-                </div>
-                            
-                
-                
-                <div class="row">
-                    <div class="col-md-8 offset-md-2">
-                        <hr class="hr-text" data-content="Change password" />
-                    </div>
-                </div> 
-                
-                <passwordChanger></passwordChanger>
-
-                <div class="row">
-                    <div class="col-md-8 offset-md-2">
-                        <hr class="hr-text" data-content="Reset my stats and rankings" />
-                    </div>
-                </div>                 
-                
-
-                <div class="row">
-                    <div class="col-md-8 offset-md-2">
-                    
-                        <div class="form-group" style="padding-top:10px">
-                            <input type="button" @click.prevent="resetStats" class="btn btn-danger btn-lg btn-block" value="Reset my stats">
+        <div>
+            <header class="sr-only">Profile Settings</header>
+            <main>
+                <div class="container">
+                        
+                        <div class="row">
+                            <div class="col-md-8 offset-md-2">
+                                <hr class="hr-text" data-content="Edit my profile" />
+                            </div>
                         </div>
                         
-                        <errorSuccessNotifier ref="resetNotifier"></errorSuccessNotifier>   
-                                             
-                    </div>
-                </div>                
-
-
+                        
+                        <div class="row">
+                            
+                            <div class="col-lg-3 offset-lg-2 col-md-4 offset-md-2">
+                                <profileImage ref="profileImage" :userid="this.$store.state.user._id" canedit="true" :onnewimage="changeAvatar"></profileImage>
+                            </div>
+                            
+                            
+                            <div class="col-lg-5 col-md-4">
+        
+                                <editableForm icon="user" type="" placeholder="Username" :value.sync="user.username" :onchangeconfirm="changeUsername" label="Username"></editableForm>
+                                <editableForm icon="envelope" type="email" placeholder="Email" :value.sync="user.email" :onchangeconfirm="changeEmail" label="E-mail"></editableForm>
+        
+                            </div>
+                        </div>
+                                    
+                        
+                        
+                        <div class="row">
+                            <div class="col-md-8 offset-md-2">
+                                <hr class="hr-text" data-content="Change password" />
+                            </div>
+                        </div> 
+                        
+                        <passwordChanger></passwordChanger>
+        
+                        <div class="row">
+                            <div class="col-md-8 offset-md-2">
+                                <hr class="hr-text" data-content="Reset my stats and rankings" />
+                            </div>
+                        </div>                 
+                        
+        
+                        <div class="row">
+                            <div class="col-md-8 offset-md-2">
+                            
+                                <div class="form-group" style="padding-top:10px">
+                                    <input type="button" @click.prevent="resetStats" class="btn btn-danger btn-lg btn-block" value="Reset my stats">
+                                </div>
+                                
+                                <errorSuccessNotifier ref="resetNotifier"></errorSuccessNotifier>   
+                                                     
+                            </div>
+                        </div>                
+        
+        
+                </div>
+            </main>
         </div>
 `,
     components: {
