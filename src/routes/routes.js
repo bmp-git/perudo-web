@@ -121,6 +121,10 @@ module.exports = function (app) {
 		res.sendFile(appRoot + '/www/img/empty.png');
 	});
 
+	app.route('/robots.txt').get((req, res) => {
+		res.sendFile(appRoot + '/public/robots.txt');
+	});
+
 	app.use(function (req, res) {
 		res.sendFile(appRoot + '/www/index.html');
 	});
