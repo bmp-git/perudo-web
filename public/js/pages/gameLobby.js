@@ -84,17 +84,14 @@ const gameLobby = {
     },
     methods: {
         reload: function (game_id) {
-            axios.get("/api/games/" + game_id, { headers: { Authorization: 'bearer '.concat(this.$store.state.token) } })
-                .then(response => {
-                    if (response.data.result.round > this.game.round || (response.data.result.is_over === true && this.game.is_over === false)) {
-                        this.$refs.endOfRoundModal.show(response.data.result);
-                    }
-                    this.game = response.data.result;
-                })
-                .catch(error => {
-                    console.log(error);
-                    router.push("/404")
-                });
+            Api.get_game(game_id, game => {
+                if (game.round > this.game.round || (game.is_over === true && this.game.is_over === false)) {
+                    this.$refs.endOfRoundModal.show(game);
+                }
+                this.game = game;
+            }, error => {
+                router.push("/404");
+            });
         },
         gameChanged: function (game) {
             if (game.id === this.game.id) {
@@ -104,7 +101,7 @@ const gameLobby = {
         toggle_last_round: function () {
             this.$refs.endOfRoundModal.show(this.game);
         },
-        game_removed: function(game_id) {
+        game_removed: function (game_id) {
             if (this.$router.currentRoute.name !== "games" && this.game && game_id === this.game.id) {
                 router.push({ name: 'games' });
             }
