@@ -44,6 +44,33 @@ var setTokenTimeout = function (tokenData, server_date) {
     }, tokenData.exp * 1000 - server_date - 1000 * 90);
     console.log("Token refresh timer set in " + (Math.round((tokenData.exp * 1000 - server_date - 1000 * 90) / (60 * 1000))) + "  minutes");
 }
+
+let app = null;
+var start_app = function () {
+    app = new Vue({
+        router,
+        el: "#perudo",
+        store,
+        components: {
+            'gamefooter': gameFooter,
+            'navbar': Navbar
+        },
+        methods: {
+        },
+        mounted() {
+            Api.get_games(games => {
+                allGames = new Map();
+                games.forEach(g => {
+                    allGames.set(g.id, g);
+                    if (g.users.some(u => u.id === this.$store.state.user._id)) {
+                        store.commit('setGame', g);
+                    }
+                });
+            });
+        }
+    });
+}
+
 var loadToken = function () {
     Api.get_date(server_date => {
         if (localStorage.token) {
@@ -58,32 +85,13 @@ var loadToken = function () {
                 socket.emit("online", localStorage.token);
             }
         }
-    });
+        start_app();
+    }, error => { start_app(); });
 }
 var unloadToken = function () {
     socket.emit("offline", localStorage.token);
 }
+
 loadToken();
 
-const app = new Vue({
-    router,
-    el: "#perudo",
-    store,
-    components: {
-        'gamefooter': gameFooter,
-        'navbar': Navbar
-    },
-    methods: {
-    },
-    mounted() {
-        Api.get_games(games => {
-            allGames = new Map();
-            games.forEach(g => {
-                allGames.set(g.id, g);
-                if (g.users.some(u => u.id === this.$store.state.user._id)) {
-                    store.commit('setGame', g);
-                }
-            });
-        });
-    }
-});
+
