@@ -67,7 +67,7 @@ const Gamerules = {
 
     <p>In <router-link to="/games">games</router-link> section you will see all games. You can join a game not started by clicking on <button type="button" class="btn btn-primary btn-sm mt-1">Join</button>
      or specatate a started game with the button <button type="button"class="btn btn-secondary btn-sm mt-1"">Spectate</button>
-    </br>In order to create your own game you can press the plus button on bottom right of the page <button type="button" class="btn btn-primary btn-circle"><i class="fas fa-plus"></i></button>
+    </br>In order to create your own game you can press the plus button on bottom right of the page <button type="button" class="btn btn-primary btn-circle" aria-label="Create new game"><i class="fas fa-plus"></i></button>
     and compiling the "new game" form.</br>
     If you are the owner of the lobby (a game not started) you can start it when there are at least two players with the button <button type="button" class="btn btn-primary btn-sm mt-1">Start game!</button></br>
     Inside a lobby you can chat with the players using the chat at the bottom of the page.</p>
