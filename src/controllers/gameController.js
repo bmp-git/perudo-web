@@ -179,6 +179,7 @@ change_turn = function (game, user_id) {
         }, game.turn_time * 1000));
     }
 };
+
 go_next_turn = function (game) {
     var t = -1;
     for (i = 0; i < game.users.length; i++) {
@@ -191,7 +192,11 @@ go_next_turn = function (game) {
             break;
         }
     }
-    change_turn(game, game.users[t].id);
+    if(t === -1) { //the user leaved, randomize next player
+        change_turn(game, game.users[Math.floor(Math.random() * game.users.length)].id); 
+    } else {
+        change_turn(game, game.users[t].id);
+    }
 };
 is_valid_bid = function (game, dice, quantity) {
     if (dice < 1 || dice > 6 || quantity < 1) {
