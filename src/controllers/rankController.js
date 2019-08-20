@@ -7,17 +7,15 @@ var examples = require('./exampleInstances');
 
 get_users_place = function(game_actions) {
     let ranks = [];
-    let leavers = [];
     let winner = null;
     for(let i = 0; i < game_actions.length; i++) {
         const action = game_actions[i];
         if(action.type === 'lost') {
-            ranks.push({ _id: action.user_id});
+            ranks.push({ _id: action.user_id, is_leaver: false});
         } else if(action.type === 'win') {
-            winner = { _id: action.user_id};
+            winner = { _id: action.user_id, is_leaver: false};
         } else if(action.type === 'left' && !ranks.find(e => e._id == action.user_id)) {
-            ranks.push({ _id: action.user_id});
-            leavers.push({ _id: action.user_id});
+            ranks.push({ _id: action.user_id, is_leaver: true});
         }
     }
 
@@ -25,7 +23,7 @@ get_users_place = function(game_actions) {
         ranks.push(winner);
     }
 
-    return {ranks, leavers};
+    return ranks;
 };
 
 compute_points = function(players, current_points) {
@@ -45,6 +43,11 @@ compute_points = function(players, current_points) {
         //winner
         if(i === (players.length - 1)) {
             player.delta_points += pointsBid;
+        }
+
+        //if player left before losing loses another 10% of his points
+        if(player.is_leaver) {
+            player.delta_points -= cp * 0.10;
         }
 
         player.delta_points = Math.round(player.delta_points);
@@ -193,9 +196,9 @@ function updateRankHistory(players) {
     return snapshotRanks().then(ranks => {
         let winner = null;
         let losers = [];
-        if(players && players.ranks.length > 0) {
-            winner = players.ranks[players.ranks.length - 1];
-            losers = players.ranks.slice(0, players.ranks.length - 1);
+        if(players && players.length > 0) {
+            winner = players[players.length - 1];
+            losers = players.slice(0, players.length - 1);
         }
 
         const promises = [];
@@ -207,7 +210,7 @@ function updateRankHistory(players) {
 
             let time_played = 0;
             if (players) {
-                const player = players.ranks.find(u => u._id == user_id);
+                const player = players.find(u => u._id == user_id);
                 if(player) {
                     time_played = player.time_played;
                 }
@@ -227,9 +230,9 @@ exports.updateRankHistory = updateRankHistory;
 
 exports.on_game_finish = function (game, game_actions) {
     const players = get_users_place(game_actions);
-    add_time_played_in_place(players.ranks, game, game_actions);
-    return get_users(players.ranks.map(elem => elem._id)).then(res => {
-        const points = compute_points(players.ranks, res);
+    add_time_played_in_place(players, game, game_actions);
+    return get_users(players.map(elem => elem._id)).then(res => {
+        const points = compute_points(players, res);
         update_users_stats(points, game, game_actions).then(() => {
             console.log("Users stats updated!");
             return updateRankHistory(players).then( () => console.log("Users rank history updated!"));
@@ -300,4 +303,4 @@ function generate_sample_history(user_id, days) {
 
 //generate_sample_history('5d4bd25fb9976803582381a5', 100);
 
-//exports.on_game_finish(examples.example_game, examples.example_actions);
+exports.on_game_finish(examples.example_game, examples.example_actions);
