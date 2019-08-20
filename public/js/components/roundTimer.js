@@ -47,7 +47,7 @@ const roundTimer = {
             Api.get_date(date => {
                 var receive_time = new Date();
                 var round_trip_time = receive_time - send_time;
-                this.offset = new Date(date) - receive_time + round_trip_time / 2;
+                this.offset = date - receive_time + round_trip_time / 2;
                 this.startTimer();
             });
         }
