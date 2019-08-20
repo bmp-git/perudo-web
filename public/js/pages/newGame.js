@@ -4,19 +4,21 @@ const NewGame = {
             <hr class="hr-text" data-content="Create new Game">
 
             
+            <label :for="this._uid+'gamename'" class="sr-only">Game name</label>
             <div class="input-group mt-2">
                 <div class="input-group-prepend">
                     <div class="input-group-text"><i class="fas fa-dice"></i></div>
                 </div>
-                <input v-model="game_info.name" type="text" v-bind:class="'form-control '+name_valid" placeholder="Game name">
+                <input v-model="game_info.name" :id="this._uid+'gamename'" type="text" v-bind:class="'form-control '+name_valid" placeholder="Game name">
             </div>
             <errorSuccessNotifier ref="name_notifier"></errorSuccessNotifier>
 
+            <label :for="this._uid+'playerscount'" class="sr-only">Players count</label>
             <div class="input-group mt-2">
                 <div class="input-group-prepend">
                     <div class="input-group-text"><i class="fas fa-users"></i></div>
                 </div>
-                <select v-bind:class="'form-control '+players_valid" v-model="game_info.players">
+                <select :id="this._uid+'playerscount'" v-bind:class="'form-control '+players_valid" v-model="game_info.players">
                     <option disabled value="0">Player count</option>
                     <option value="2">2 players</option>
                     <option value="3">3 players</option>
@@ -29,11 +31,12 @@ const NewGame = {
             </div>
             <errorSuccessNotifier ref="players_notifier"></errorSuccessNotifier>
 
+            <label :for="this._uid+'turntime'" class="sr-only">Turn time</label>
             <div class="input-group mt-2">
                 <div class="input-group-prepend">
                     <div class="input-group-text"><i class="fas fa-hourglass ml-1 mr-1"></i></div>
                 </div>
-                <select v-bind:class="'form-control '+time_valid" v-model="game_info.turn_time">
+                <select :id="this._uid+'turntime'" v-bind:class="'form-control '+time_valid" v-model="game_info.turn_time">
                     <option disabled value="0">Time per turn</option>
                     <option value="10">10 seconds</option>
                     <option value="15">15 seconds</option>
@@ -50,11 +53,12 @@ const NewGame = {
             </div>
             <errorSuccessNotifier ref="time_notifier"></errorSuccessNotifier>
 
+            <label :for="this._uid+'gamepassword'" class="sr-only">Password (optional)</label>
             <div class="input-group mt-2">
                 <div class="input-group-prepend">
                     <div class="input-group-text"><i class="fas fa-key ml-1"></i></div>
                 </div>
-                <input v-model="game_info.password" type="password" v-bind:class="'form-control '+password_valid" placeholder="Password (Optional)" autocomplete="new-password">
+                <input :id="this._uid+'gamepassword'" v-model="game_info.password" type="password" v-bind:class="'form-control '+password_valid" placeholder="Password (Optional)" autocomplete="new-password">
             </div>
             <errorSuccessNotifier ref="password_notifier"></errorSuccessNotifier>
 
