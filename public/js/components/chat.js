@@ -254,11 +254,12 @@ const Chat = {
                     
                     </div>
                         
+                    <label class="sr-only" :for="this._uid + '_chat'">Message to send</label>    
                     <div class="input-group mb-2 mt-2">
                         <div class="input-group-prepend">
                             <div class="input-group-text"><i class="fas fa-paper-plane"></i></div>
                         </div>                                
-                      <input v-model="message" type="text" class="form-control" placeholder="Type a message" @keyup.enter="sendMessage">
+                      <input :id="this._uid + '_chat'" v-model="message" type="text" class="form-control" placeholder="Type a message" @keyup.enter="sendMessage">
                       <div class="input-group-append d-none d-sm-block">
                         <button class="btn btn-outline-secondary" @click.prevent="sendMessage" @keyup.enter="sendMessage" type="button">Send</button>
                       </div>

@@ -28,7 +28,10 @@ const Game = {
                     <template v-if="!currentUserInside">
                         <div class="input-group-append float-right">
                             <template v-if="game.password != null">
-                                <input v-model="inserted_password" type="password" :disabled="(!freeSpaceAvailable && !currentUserInside)" v-bind:class="'form-control '+(password_wrong?'is-invalid':'')" placeholder="Password" required>
+                                <form>
+                                    <label class="sr-only" :for="this._uid + '_g_pass'">Lobby password</label>
+                                    <input autocomplete="off" :id="this._uid + '_g_pass'" v-model="inserted_password" type="password" :disabled="(!freeSpaceAvailable && !currentUserInside)" v-bind:class="'form-control '+(password_wrong?'is-invalid':'')" placeholder="Password" required>
+                                </form>
                             </template>
                             <button type="button" @click.prevent="joinGame" :disabled="(!freeSpaceAvailable && !currentUserInside)" class="btn btn-primary btn-sm float-right ml-2">Join</button>
                         </div>
@@ -83,7 +86,7 @@ const Game = {
     components: {
         'username': Username,
         'useravatar': Useravatar,
-        'gameBadge' : gameBadge
+        'gameBadge': gameBadge
     },
     props: ['gameid', 'includedivisor'],
     data() {
@@ -108,19 +111,13 @@ const Game = {
         updateGame: function (game) {
             this.game = game;
             allGames.set(this.gameid, game);
-            if(this.currentUserInside) {
+            if (this.currentUserInside) {
                 store.commit('setGame', game);
             }
         },
         updateGameFromWeb: function () {
             console.log("refreshing game " + this.gameid + " from web");
-            axios.get("/api/games/" + this.gameid)
-                .then(response => {
-                    this.updateGame(response.data.result);
-                })
-                .catch(error => {
-                    console.log(error);
-                });
+            Api.get_game(this.gameid, game => this.updateGame(game));
         },
         joinStartGame: function (operation) {
             const authHeader = 'bearer '.concat(this.$store.state.token);
@@ -173,7 +170,7 @@ const Game = {
                 .then(response => {
                     this.updateGame(response.data.result);
                     store.commit('unsetGame');
-                    if(this.$router.currentRoute.name !== "games") {
+                    if (this.$router.currentRoute.name !== "games") {
                         router.push({ name: 'games' });
                     }
                 })
@@ -181,7 +178,7 @@ const Game = {
                     console.log(error);
                 });
         },
-        spectateGame: function() {
+        spectateGame: function () {
             router.push({ name: 'gamelobby', params: { id: this.gameid } });
         },
         gameChanged: function (game) {
@@ -189,7 +186,7 @@ const Game = {
                 this.updateGameFromWeb();
             }
         },
-        initialize: function() {
+        initialize: function () {
             socket.on('game changed', this.gameChanged);
             var cachedGame = allGames.get(this.gameid);
             //console.log(this.gameid);
@@ -259,11 +256,11 @@ const Game = {
             }
         },
         turnTime: function () {
-            if (this.game.turn_time) { 
-                if(this.game.turn_time % 60 === 0) {
+            if (this.game.turn_time) {
+                if (this.game.turn_time % 60 === 0) {
                     return (this.game.turn_time / 60) + " min";
-                } else if(this.game.turn_time > 60) {
-                    return (this.game.turn_time / 60 | 0)+ " min " + (this.game.turn_time % 60) + " sec";
+                } else if (this.game.turn_time > 60) {
+                    return (this.game.turn_time / 60 | 0) + " min " + (this.game.turn_time % 60) + " sec";
                 }
                 return this.game.turn_time + " sec";
             } else {

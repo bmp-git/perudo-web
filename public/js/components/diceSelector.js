@@ -7,9 +7,9 @@ const diceSelector = {
                 <div class="row d-flex justify-content-around">
 
                         <div>
-                            <button class="btn btn-primary m-2" v-bind:disabled="buttonMinusDisabled" @click.prevent="decrementQuantity"><i class="fa fa-minus"></i></button>
+                            <button class="btn btn-primary m-2" v-bind:disabled="buttonMinusDisabled" @click.prevent="decrementQuantity" aria-label="Decrement dice quantity"><i class="fa fa-minus"></i></button>
                             <strong class="align-self-center">{{bid.quantity}}</strong>
-                            <button class="btn btn-primary m-2" @click.prevent="incrementQuantity"><i class="fa fa-plus"></i></button>
+                            <button class="btn btn-primary m-2" @click.prevent="incrementQuantity" aria-label="Increment dice quantity"><i class="fa fa-plus"></i></button>
                         </div>
                     
 

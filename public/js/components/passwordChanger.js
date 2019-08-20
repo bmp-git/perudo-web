@@ -6,19 +6,21 @@ const passwordChanger = {
                 <div class="row">
                     <div class="col-md-8 offset-md-2">
                         <form>
+                            <label class="sr-only" :for="this._uid + '_new'">New Password</label>
                             <input type="text" v-bind:value="this.$store.state.user.email" autocomplete="username email" hidden>
                             <div class="input-group mb-2 mt-2">
                                 <div class="input-group-prepend">
                                     <div class="input-group-text"><i class="fas fa-key"></i></div>
                                 </div>
-                                <input v-model="newPassword" type="password" autocomplete="new-password" class="form-control" placeholder="New Password" required>
+                                <input :id="this._uid + '_new'" v-model="newPassword" type="password" autocomplete="new-password" class="form-control" placeholder="New Password" required>
                             </div>
                             
+                            <label class="sr-only" :for="this._uid + '_conf'">New Password</label>
                             <div class="input-group mb-2 mt-2">
                                 <div class="input-group-prepend">
                                     <div class="input-group-text"><i class="fas fa-check-double"></i></div>
                                 </div>
-                                <input v-model="confirmNewPassword" type="password" autocomplete="new-password" class="form-control" placeholder="Confirm Password" required>
+                                <input :id="this._uid + '_conf'" v-model="confirmNewPassword" type="password" autocomplete="new-password" class="form-control" placeholder="Confirm Password" required>
                             </div>                        
     
                             <errorSuccessNotifier ref="notifier"></errorSuccessNotifier>

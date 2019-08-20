@@ -3,26 +3,33 @@ class Api {
     static log(message) {
         console.log("API => " + message);
     }
+    static handleError(error, errorHandler) {
+        if (errorHandler) {
+            errorHandler(error);
+        }
+        console.log("API error => " + error);
+    }
+
     static login(email, password, succHandler, errorHandler) {
         Api.log("posting on /api/users/" + email + "/token");
         axios.post("/api/users/" + email + "/token", { password })
             .then(response => {
-                succHandler(response.data.token);
+                if (succHandler) {
+                    succHandler(response.data.token);
+                }
             })
-            .catch(error => {
-                errorHandler(error);
-            });
+            .catch(error => handleError(error, errorHandler));
     }
 
     static signup(email, username, password, succHandler, errorHandler) {
         Api.log("posting on /api/users/");
         axios.post("/api/users/", { email, username, password })
             .then(response => {
-                succHandler();
+                if (succHandler) {
+                    succHandler();
+                }
             })
-            .catch(error => {
-                errorHandler(error);
-            });
+            .catch(error => handleError(error, errorHandler));
     }
 
     static get_dice(game_id, round, succHandler, errorHandler) {
@@ -30,11 +37,11 @@ class Api {
         const authHeader = 'bearer '.concat(app.$store.state.token);
         axios.get("/api/games/" + game_id + "/dice", { params: { round }, headers: { Authorization: authHeader } })
             .then(response => {
-                succHandler(response.data.result);
+                if (succHandler) {
+                    succHandler(response.data.result);
+                }
             })
-            .catch(error => {
-                errorHandler(error);
-            });
+            .catch(error => handleError(error, errorHandler));
     }
 
     static get_online_users(succHandler, errorHandler) {
@@ -45,13 +52,7 @@ class Api {
                     succHandler(response.data.result);
                 }
             })
-            .catch(error => {
-                if (errorHandler) {
-                    errorHandler(error);
-                } else {
-                    console.log(error);
-                }
-            });
+            .catch(error => handleError(error, errorHandler));
     }
 
     static get_date(succHandler, errorHandler) {
@@ -62,13 +63,7 @@ class Api {
                     succHandler(new Date(response.data.date));
                 }
             })
-            .catch(error => {
-                if (errorHandler) {
-                    errorHandler(error);
-                } else {
-                    console.log(error);
-                }
-            });
+            .catch(error => handleError(error, errorHandler));
     }
 
     static get_games(succHandler, errorHandler) {
@@ -79,13 +74,18 @@ class Api {
                     succHandler(response.data.result);
                 }
             })
-            .catch(error => {
-                if (errorHandler) {
-                    errorHandler(error);
-                } else {
-                    console.log(error);
+            .catch(error => handleError(error, errorHandler));
+    }
+
+    static get_game(id, succHandler, errorHandler) {
+        Api.log("getting on /api/games/" + id);
+        axios.get("/api/games/" + id)
+            .then(response => {
+                if (succHandler) {
+                    succHandler(response.data.result);
                 }
-            });
+            })
+            .catch(error => handleError(error, errorHandler));
     }
 
     //TODO rest of api calls...
