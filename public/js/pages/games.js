@@ -47,17 +47,13 @@ const Games = {
             return this.games_index.length === 0;
         },
         updateGames: function () {
-            axios.get("/api/games")
-                .then(response => {
-                    allGames = new Map();
-                    response.data.result.forEach(g => {
-                        allGames.set(g.id, g);
-                    });
-                    this.games_index = response.data.result.map(g => g.id);
-                })
-                .catch(error => {
-                    console.log(error);
+            Api.get_games(games => {
+                allGames = new Map();
+                games.forEach(g => {
+                    allGames.set(g.id, g);
                 });
+                this.games_index = games.map(g => g.id);
+            });
         },
         newGame: function () {
             if(!this.isUserInGame) {
