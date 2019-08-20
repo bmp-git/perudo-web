@@ -20,12 +20,6 @@
     word-wrap: break-word;
 }
 
-/* Darker chat container */
-.darker {
-    border-color: #ccc;
-    background-color: #ddd;
-}
-
 /* Clear floats */
 .chat-message::after {
     content: "";
@@ -47,10 +41,4 @@
 .time-right {
     float: right;
     color: #aaa;
-}
-
-/* Style time text */
-.time-left {
-    float: left;
-    color: #999;
 }
