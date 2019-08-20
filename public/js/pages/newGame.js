@@ -3,7 +3,10 @@ const NewGame = {
         <form class="form-group">
             <hr class="hr-text" data-content="Create new Game">
 
-            
+            <header class="sr-only">
+                <p>Create new Game</p>
+            </header>
+            <main>
             <label :for="this._uid+'gamename'" class="sr-only">Game name</label>
             <div class="input-group mt-2">
                 <div class="input-group-prepend">
@@ -66,6 +69,7 @@ const NewGame = {
             <div class="form-group" style="padding-top:10px">
                 <input type="button" @click.prevent="create_game" class="btn btn-primary btn-lg btn-block" value="Create game!">
             </div>
+            </main>
         </form>
     </div>`,
     components: {
