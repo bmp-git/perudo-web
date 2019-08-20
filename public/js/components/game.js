@@ -29,7 +29,7 @@ const Game = {
                         <div class="input-group-append float-right">
                             <template v-if="game.password != null">
                                 <form>
-                                    <label class="sr-only" :for="this._uid + '_g_pass'">New Password</label>
+                                    <label class="sr-only" :for="this._uid + '_g_pass'">Lobby password</label>
                                     <input autocomplete="off" :id="this._uid + '_g_pass'" v-model="inserted_password" type="password" :disabled="(!freeSpaceAvailable && !currentUserInside)" v-bind:class="'form-control '+(password_wrong?'is-invalid':'')" placeholder="Password" required>
                                 </form>
                             </template>
