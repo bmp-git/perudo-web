@@ -102,7 +102,7 @@ const gameLobby = {
             this.$refs.endOfRoundModal.show(this.game);
         },
         game_removed: function (game_id) {
-            if (this.$router.currentRoute.name !== "games" && this.game && game_id === this.game.id) {
+            if (this.game && game_id === this.game.id && this.$router.currentRoute.name === "gamelobby" && this.$route.params.id ===  this.game.id ) {
                 router.push({ name: 'games' });
             }
         }
