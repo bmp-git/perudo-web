@@ -1,89 +1,96 @@
 const Leaderboard = {
-    template: `<div class="container">
-<hr class="hr-text" data-content="Global leaderboard">
-
-<div class="row">
-    <div class="col-md-12">
-                <label> Show players
-                <select class="custom-select custom-select-sm" v-model="page_lenght" v-on:change="changePageLenght">
-                    <option>1</option>
-                    <option>2</option>
-                    <option>3</option>
-                    <option>10</option>
-                    <option>25</option>
-                    <option>50</option>
-                </select>
-            </label>
-    </div>
-</div>
-<div class="container table-responsive" style="overflow-y: hidden;">
-<div class="row ">
-<table class="table table-hover">
-  <thead>
-    <tr>
-      <th scope="col">Rank</th>
-      <th scope="col">Username</th>
-      <th scope="col">Points</th>
-    </tr>
-  </thead>
-  <tbody>
-    <template v-for="user in users">
-        <tr>
-            <th scope="row">{{user.rank}}</th>
-            <td>
-                <router-link :to="{ name: 'profile', params: { id: user.id }}">
-                <useravatar :userid="user.id" style="width: 32px; height: 32px; border-width: 1px;"/>
-                </router-link>
-                <router-link :to="{ name: 'profile', params: { id: user.id }}">
-                {{user.username}}
-                </router-link>
-            </td>
-            <td>{{user.points}}</td>
-        </tr>
-    </template>
-  </tbody>
-</table>
-</div>
-</div>
-<div class="row">
-<div class="col-sm-5 col-md-5">
-    <p><i>Showing {{firstUser}} to {{lastUser}} of {{total}} players</i></p>
-</div>
-<div class="col-sm-7 col-md-7">
-        <ul class="pagination float-right">
-        <li class="page-item" v-bind:class="page == 1 ? 'disabled' : ''">
-            <a class="page-link" @click.prevent="changePage(page-1)" href="" tabindex="-1" aria-disabled="true">
-                <i class="fas fa-chevron-left"></i>
-            </a>
-        </li>
-        <template v-if="pages <= 5">
-            <template v-for="n in pages">
-            <li class="page-item" v-bind:class="n == page ? 'active' : ''">
-                <a class="page-link" @click.prevent="changePage(n)" href="">{{n}}</a>
-            </li>
-            </template>
-        </template>
-        <template v-else>
-            <template v-for="n in pages">
-            <template v-if="n == 1 || n == page || n == pages">
-                <li class="page-item" v-bind:class="n == page ? 'active' : ''">
-                    <a class="page-link" @click.prevent="changePage(n)" href="">{{n}}</a>
-                </li>
-            </template>
-            <template v-else-if="n == page + 1 || n == page - 1">
-                <li class="page-item disabled"> <a class="page-link">...</a></li>
-            </template>
-            </template>
-        </template>
-        <li class="page-item" v-bind:class="lastPage ? 'disabled' : ''">
-            <a class="page-link" @click.prevent="changePage(page+1)" href="">
-                <i class="fas fa-chevron-right"></i>
-            </a>
-        </li>
-        </ul>
-    </div>
-</div>
-</div>`,
+    template: `
+        <div>
+            <header class="sr-only">Global leaderboard</header>
+            <main>
+                <div class="container">
+                    <hr class="hr-text" data-content="Global leaderboard">
+                    
+                    <div class="row">
+                        <div class="col-md-12">
+                                    <label> Show players
+                                    <select class="custom-select custom-select-sm" v-model="page_lenght" v-on:change="changePageLenght">
+                                        <option>1</option>
+                                        <option>2</option>
+                                        <option>3</option>
+                                        <option>10</option>
+                                        <option>25</option>
+                                        <option>50</option>
+                                    </select>
+                                </label>
+                        </div>
+                    </div>
+                    <div class="container table-responsive" style="overflow-y: hidden;">
+                    <div class="row ">
+                    <table class="table table-hover">
+                      <thead>
+                        <tr>
+                          <th scope="col">Rank</th>
+                          <th scope="col">Username</th>
+                          <th scope="col">Points</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <template v-for="user in users">
+                            <tr>
+                                <th scope="row">{{user.rank}}</th>
+                                <td>
+                                    <router-link :to="{ name: 'profile', params: { id: user.id }}">
+                                    <useravatar :userid="user.id" style="width: 32px; height: 32px; border-width: 1px;"/>
+                                    </router-link>
+                                    <router-link :to="{ name: 'profile', params: { id: user.id }}">
+                                    {{user.username}}
+                                    </router-link>
+                                </td>
+                                <td>{{user.points}}</td>
+                            </tr>
+                        </template>
+                      </tbody>
+                    </table>
+                    </div>
+                    </div>
+                    <div class="row">
+                    <div class="col-sm-5 col-md-5">
+                        <p><i>Showing {{firstUser}} to {{lastUser}} of {{total}} players</i></p>
+                    </div>
+                    <div class="col-sm-7 col-md-7">
+                            <ul class="pagination float-right">
+                            <li class="page-item" v-bind:class="page == 1 ? 'disabled' : ''">
+                                <a class="page-link" @click.prevent="changePage(page-1)" tabindex="-1" aria-disabled="true" style="cursor: pointer">
+                                    <i class="fas fa-chevron-left"></i>
+                                </a>
+                            </li>
+                            <template v-if="pages <= 5">
+                                <template v-for="n in pages">
+                                <li class="page-item" v-bind:class="n == page ? 'active' : ''">
+                                    <a class="page-link" @click.prevent="changePage(n)" style="cursor: pointer">{{n}}</a>
+                                </li>
+                                </template>
+                            </template>
+                            <template v-else>
+                                <template v-for="n in pages">
+                                <template v-if="n == 1 || n == page || n == pages">
+                                    <li class="page-item" v-bind:class="n == page ? 'active' : ''">
+                                        <a class="page-link" @click.prevent="changePage(n)" style="cursor: pointer">{{n}}</a>
+                                    </li>
+                                </template>
+                                <template v-else-if="n == page + 1 || n == page - 1">
+                                    <li class="page-item disabled"> <a class="page-link">...</a></li>
+                                </template>
+                                </template>
+                            </template>
+                            <li class="page-item" v-bind:class="lastPage ? 'disabled' : ''">
+                                <a class="page-link" @click.prevent="changePage(page+1)" style="cursor: pointer">
+                                    <i class="fas fa-chevron-right"></i>
+                                </a>
+                            </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+`,
     data() {
         return {
             page: 1,
