@@ -10,10 +10,6 @@ module.exports = function (app) {
 		res.sendFile(appRoot + '/www/index.html');
 	});
 
-	app.route('/service-worker.js').get(function (req, res) {
-		res.sendFile(appRoot + '/service-worker.js');
-	});
-
 	//Login apis
 	app.route('/api/users')
 		.post(loginController.user_signup);
@@ -123,6 +119,14 @@ module.exports = function (app) {
 
 	app.route('/robots.txt').get((req, res) => {
 		res.sendFile(appRoot + '/public/robots.txt');
+	});
+
+	app.route('/offline.html').get(function (req, res) {
+		res.sendFile(appRoot + '/www/offline.html');
+	});
+
+	app.route('/service-worker.js').get(function (req, res) {
+		res.sendFile(appRoot + '/service-worker.js');
 	});
 
 	app.use(function (req, res) {

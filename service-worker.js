@@ -1,30 +1,25 @@
-importScripts('https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js');
-
-workbox.routing.registerRoute(
-    /\.js$/,
-    new workbox.strategies.NetworkFirst()
-);
-
-workbox.routing.registerRoute(
-    /\.css$/,
-    // Use cache but update in the background.
-    new workbox.strategies.StaleWhileRevalidate({
-      cacheName: 'css-cache',
+const version = "0.0.2";
+const cacheName = `perudo-${version}`;
+self.addEventListener('install', function(event) {
+  console.log("Installing and caching");
+  event.waitUntil(
+    caches.open(cacheName).then(function(cache) {
+      return cache.addAll(
+        [
+          '/offline.html',
+          '/service-worker.js'
+        ]
+      );
     })
   );
-  
-  workbox.routing.registerRoute(
-    /\.(?:png|jpg|jpeg|svg|gif)$/,
-    // Use the cache if it's available.
-    new workbox.strategies.CacheFirst({
-      cacheName: 'image-cache',
-      plugins: [
-        new workbox.expiration.Plugin({
-          // Cache only 20 images.
-          maxEntries: 20,
-          // Cache for a maximum of a week.
-          maxAgeSeconds: 7 * 24 * 60 * 60,
-        })
-      ],
+});
+
+self.addEventListener('fetch', function(event) {
+  event.respondWith(    
+    fetch(event.request).catch(() => {
+      console.log("No connection");
+      return caches.match('/offline.html')
     })
+    
   );
+});
