@@ -303,4 +303,4 @@ function generate_sample_history(user_id, days) {
 
 //generate_sample_history('5d4bd25fb9976803582381a5', 100);
 
-exports.on_game_finish(examples.example_game, examples.example_actions);
+//exports.on_game_finish(examples.example_game, examples.example_actions);
