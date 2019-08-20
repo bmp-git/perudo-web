@@ -7,7 +7,7 @@ const Useravatar = {
         v-bind:title="$store.state.online_users.some(u => u.id === userid)?'Online':'Offline'">
     </template>
     <template v-else>
-        <img  alt="Empty space" ref="avatar" src="/img/empty" class="useravatar emptyuseravatar">
+        <img alt="Empty space" ref="avatar" src="/public/img/empty.png" class="useravatar emptyuseravatar">
     </template>`,
     props: ['userid' ,'show_status'],
     methods: {

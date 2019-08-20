@@ -69,6 +69,7 @@ exports.change_user_avatar = function (req, res) {
     }
 };
 
+var path = require('path');
 exports.get_user_avatar = function (req, res) {
     const id = req.params.id;
 
@@ -85,7 +86,7 @@ exports.get_user_avatar = function (req, res) {
                 });
                 res.end(img);
             } else {
-                res.sendFile(appRoot + '/www/img/avatar.png');
+                res.sendFile(path.join(__dirname, '../../public/img', 'avatar.png'));
             }
 
         } else {
