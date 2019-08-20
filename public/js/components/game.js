@@ -28,7 +28,10 @@ const Game = {
                     <template v-if="!currentUserInside">
                         <div class="input-group-append float-right">
                             <template v-if="game.password != null">
-                                <input v-model="inserted_password" type="password" :disabled="(!freeSpaceAvailable && !currentUserInside)" v-bind:class="'form-control '+(password_wrong?'is-invalid':'')" placeholder="Password" required>
+                                <form>
+                                    <label class="sr-only" :for="this._uid + '_g_pass'">New Password</label>
+                                    <input autocomplete="off" :id="this._uid + '_g_pass'" v-model="inserted_password" type="password" :disabled="(!freeSpaceAvailable && !currentUserInside)" v-bind:class="'form-control '+(password_wrong?'is-invalid':'')" placeholder="Password" required>
+                                </form>
                             </template>
                             <button type="button" @click.prevent="joinGame" :disabled="(!freeSpaceAvailable && !currentUserInside)" class="btn btn-primary btn-sm float-right ml-2">Join</button>
                         </div>
