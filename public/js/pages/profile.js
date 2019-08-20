@@ -1,186 +1,191 @@
 const Profile = {
     template: `
-        <div class="container">
-        
-                <div class="row">
-                    <div class="col-md-8 offset-md-2">
-                        <hr class="hr-text" data-content="Player info" />
-                    </div>
-                </div>        
+        <div>
+            <header class="sr-only">Profile of {{user.username}}</header>
+            <main>
+                <div class="container">
                 
-                
-                <div class="row">
-                    
-                    <div class="col-lg-3 offset-lg-3 col-md-4 offset-md-2 col-6">
-                        <profileImage ref="profileImage" :userid="this.$route.params.id"></profileImage>
-                    </div>
-                    
-                    <div class="col-lg-3 col-md-4 col-6 align-self-center">
-                        <h2>{{user.username}}</h2>
-                    </div>
-                
-                </div>
-                              
-
-                <div class="row">
-                    <div class="col-md-8 offset-md-2">
-                        <hr class="hr-text" data-content="Ranking" />
-                    </div>
-                </div>                  
-                
-
-                
-                <div class="row">
-                    <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-12">
                         <div class="row">
-                            <div class="col-8">
-                                <strong>Rank</strong>
+                            <div class="col-md-8 offset-md-2">
+                                <hr class="hr-text" data-content="Player info" />
                             </div>
-                            <div class="col-4">
-                                <p class="float-right" style="font-size:23px">{{rank}}</p>
-                            </div>                            
-                        </div>                        
+                        </div>        
+                        
+                        
                         <div class="row">
-                            <div class="col-8">
-                                <strong>Points</strong>
+                            
+                            <div class="col-lg-3 offset-lg-3 col-md-4 offset-md-2 col-6">
+                                <profileImage ref="profileImage" :userid="this.$route.params.id"></profileImage>
                             </div>
-                            <div class="col-4">
-                                <p class="float-right">{{user.points}}</p>
-                            </div>                            
-                        </div>                        
-                                   
-                    </div>
-                </div>
-                
-                <div class="row">
-                    <div class="col-md-8 offset-md-2">
-                        <hr class="hr-text" data-content="Rank History" />
-                    </div>
-                </div>
-                
-                <div class="row">
-                    <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-12">
-                        <apexchart type=line height=350 :options="rank_chart_options" :series="rank_series" />
-                    </div>
-                </div>
-                
-                <div class="row">
-                    <div class="col-md-8 offset-md-2">
-                        <hr class="hr-text" data-content="Points History" />
-                    </div>
-                </div>
-                
-                <div class="row">
-                    <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-12">
-                        <apexchart type=line height=350 :options="points_chart_options" :series="points_series" />
-                    </div>
-                </div>
-                
-
-                <div class="row">
-                    <div class="col-md-8 offset-md-2">
-                        <hr class="hr-text" data-content="Stats" />
-                    </div>
-                </div>
-                                
-                <div class="row">
-                    <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-12">
-                        <div class="row">
-                            <div class="col-8">
-                                <strong>Member since</strong>
+                            
+                            <div class="col-lg-3 col-md-4 col-6 align-self-center">
+                                <h2>{{user.username}}</h2>
                             </div>
-                            <div class="col-4">
-                                <p class="float-right">{{user.registeredDate | formatDate}}</p>
-                            </div>                            
+                        
                         </div>
+                                      
+        
                         <div class="row">
-                            <div class="col-8">
-                                <strong>Last stat reset</strong>
+                            <div class="col-md-8 offset-md-2">
+                                <hr class="hr-text" data-content="Ranking" />
                             </div>
-                            <div class="col-4">
-                                <p class="float-right">{{user.lastReset | formatDate}}</p>
-                            </div>                            
-                        </div>                         
+                        </div>                  
+                        
+        
+                        
                         <div class="row">
-                            <div class="col-8">
-                                <strong>Total play time</strong>
+                            <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-12">
+                                <div class="row">
+                                    <div class="col-8">
+                                        <strong>Rank</strong>
+                                    </div>
+                                    <div class="col-4">
+                                        <p class="float-right" style="font-size:23px">{{rank}}</p>
+                                    </div>                            
+                                </div>                        
+                                <div class="row">
+                                    <div class="col-8">
+                                        <strong>Points</strong>
+                                    </div>
+                                    <div class="col-4">
+                                        <p class="float-right">{{user.points}}</p>
+                                    </div>                            
+                                </div>                        
+                                           
                             </div>
-                            <div class="col-4">
-                                <p class="float-right">{{user.totalPlayTime | formatToHours}} hours</p>
-                            </div>                            
-                        </div>                         
+                        </div>
+                        
                         <div class="row">
-                            <div class="col-8">
-                                <strong>Play time since reset</strong>
+                            <div class="col-md-8 offset-md-2">
+                                <hr class="hr-text" data-content="Rank History" />
                             </div>
-                            <div class="col-4">
-                                <p class="float-right">{{user.playTime | formatToHours}} hours</p>
-                            </div>                            
-                        </div>                         
+                        </div>
+                        
                         <div class="row">
-                            <div class="col-8">
-                                <strong>Play count</strong>
+                            <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-12">
+                                <apexchart type=line height=350 :options="rank_chart_options" :series="rank_series" />
                             </div>
-                            <div class="col-4">
-                                <p class="float-right">{{user.wins + user.losses}}</p>
-                            </div>                            
-                        </div>                         
+                        </div>
+                        
                         <div class="row">
-                            <div class="col-8">
-                                <strong>Wins</strong>
+                            <div class="col-md-8 offset-md-2">
+                                <hr class="hr-text" data-content="Points History" />
                             </div>
-                            <div class="col-4">
-                                <p class="float-right">{{user.wins}}</p>
-                            </div>                            
-                        </div>                         
-                         <div class="row">
-                            <div class="col-8">
-                                <strong>Losses</strong>
-                            </div>
-                            <div class="col-4">
-                                <p class="float-right">{{user.losses}}</p>
-                            </div>                            
-                        </div> 
+                        </div>
+                        
                         <div class="row">
-                            <div class="col-8">
-                                <strong>Win/Loss ratio</strong>
+                            <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-12">
+                                <apexchart type=line height=350 :options="points_chart_options" :series="points_series" />
                             </div>
-                            <div class="col-4">
-                                <p class="float-right">{{user.wins | ratio(user.losses)}}</p>
-                            </div>                            
-                        </div>                                                                        
-                                
-                    </div>           
-                         
+                        </div>
+                        
+        
+                        <div class="row">
+                            <div class="col-md-8 offset-md-2">
+                                <hr class="hr-text" data-content="Stats" />
+                            </div>
+                        </div>
+                                        
+                        <div class="row">
+                            <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-12">
+                                <div class="row">
+                                    <div class="col-8">
+                                        <strong>Member since</strong>
+                                    </div>
+                                    <div class="col-4">
+                                        <p class="float-right">{{user.registeredDate | formatDate}}</p>
+                                    </div>                            
+                                </div>
+                                <div class="row">
+                                    <div class="col-8">
+                                        <strong>Last stat reset</strong>
+                                    </div>
+                                    <div class="col-4">
+                                        <p class="float-right">{{user.lastReset | formatDate}}</p>
+                                    </div>                            
+                                </div>                         
+                                <div class="row">
+                                    <div class="col-8">
+                                        <strong>Total play time</strong>
+                                    </div>
+                                    <div class="col-4">
+                                        <p class="float-right">{{user.totalPlayTime | formatToHours}} hours</p>
+                                    </div>                            
+                                </div>                         
+                                <div class="row">
+                                    <div class="col-8">
+                                        <strong>Play time since reset</strong>
+                                    </div>
+                                    <div class="col-4">
+                                        <p class="float-right">{{user.playTime | formatToHours}} hours</p>
+                                    </div>                            
+                                </div>                         
+                                <div class="row">
+                                    <div class="col-8">
+                                        <strong>Play count</strong>
+                                    </div>
+                                    <div class="col-4">
+                                        <p class="float-right">{{user.wins + user.losses}}</p>
+                                    </div>                            
+                                </div>                         
+                                <div class="row">
+                                    <div class="col-8">
+                                        <strong>Wins</strong>
+                                    </div>
+                                    <div class="col-4">
+                                        <p class="float-right">{{user.wins}}</p>
+                                    </div>                            
+                                </div>                         
+                                 <div class="row">
+                                    <div class="col-8">
+                                        <strong>Losses</strong>
+                                    </div>
+                                    <div class="col-4">
+                                        <p class="float-right">{{user.losses}}</p>
+                                    </div>                            
+                                </div> 
+                                <div class="row">
+                                    <div class="col-8">
+                                        <strong>Win/Loss ratio</strong>
+                                    </div>
+                                    <div class="col-4">
+                                        <p class="float-right">{{user.wins | ratio(user.losses)}}</p>
+                                    </div>                            
+                                </div>                                                                        
+                                        
+                            </div>           
+                                 
+                        </div>
+                        
+                        
+                        <div class="row">
+                            <div class="col-md-8 offset-md-2">
+                                <hr class="hr-text" data-content="Play History" />
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-12">
+                                <apexchart type=bar height=350 :options="plays_chart_options" :series="plays_series" />                                
+                            </div>           
+                                 
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-8 offset-md-2">
+                                <hr class="hr-text" data-content="Played time history" />
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-12">
+                                <apexchart type=bar height=350 :options="time_played_chart_options" :series="time_played_series" />                                
+                            </div>           
+                                 
+                        </div>                
+                        
                 </div>
-                
-                
-                <div class="row">
-                    <div class="col-md-8 offset-md-2">
-                        <hr class="hr-text" data-content="Play History" />
-                    </div>
-                </div>
-                
-                <div class="row">
-                    <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-12">
-                        <apexchart type=bar height=350 :options="plays_chart_options" :series="plays_series" />                                
-                    </div>           
-                         
-                </div>
-                
-                <div class="row">
-                    <div class="col-md-8 offset-md-2">
-                        <hr class="hr-text" data-content="Played time history" />
-                    </div>
-                </div>
-                
-                <div class="row">
-                    <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-12">
-                        <apexchart type=bar height=350 :options="time_played_chart_options" :series="time_played_series" />                                
-                    </div>           
-                         
-                </div>                
-                
+            </main>
         </div>
 `,
     components: {
