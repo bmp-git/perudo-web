@@ -75,8 +75,50 @@ const Gamerules = {
     
     
     <p class="mt-5">When a game is started you will be redirected to the game page. Now will be described some in-game components in order to help you make the first steps.</p>
+    
+    <p class="h5 text-primary mt-5">Turn time</p>
+    <p>This progress bar indicates how much time is left to play.
+    Don't worry to much if the color of the bar is gray, it means that is not your turn...</p>
+    <div class="progress" style="margin-bottom:16px">
+        <div class="progress-bar progress-bar-striped progress-bar-animated bg-secondary" style="width: 100%;">10</div>
+    </div>
+    <p>But pay attention.. when the bar is blue it's your time!</p>
+    <div class="progress">
+        <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: 100%">10</div>
+    </div>
 
+    <p class="h5 text-primary mt-5">Player turn</p>
+
+    <p>This component is essential in order to see how many dice each player has and which player is the turn.
+     To distinguish yourself from the others your name is "You" and your avatar border is blue.
+     To indicate which player is the turn there is a little arrow under the name it pulse infinitely.</p>
+     <p> In the example below, it's your turn and currently you have 1 dice more then your opponent. </p>
+    <div class="col-12 col-sm-12 col-md-10 offset-md-1 col-lg-10 offset-lg-1 col-xl-8 offset-xl-2 pl-0 pr-0"><div class="row justify-content-around">
+        <div class="animated pulse infinite slow">
+            <div class="row d-flex justify-content-center">5 dice</div> 
+            <div class="row d-flex justify-content-center">
+                <a href="#"><img alt="User avatar" src="/static/img/avatar.png" title="Online" class="useravatar" style="opacity: 1;"></a>
+            </div> 
+            <div class="row d-flex justify-content-center">
+                <a href="#" class=""> You </a>
+            </div> 
+            <div class="row d-flex justify-content-center">
+                <i class="fas fa-chevron-up"></i>
+            </div>
+        </div>
+        <div>
+            <div class="row d-flex justify-content-center">4 dice</div> 
+            <div class="row d-flex justify-content-center">
+                <a href="#"><img alt="User avatar" src="/static/img/avatar.png" title="Online" class="useravatar" style="opacity: 1;border: 2px solid #AAAAAA"></a>
+            </div> 
+            <div class="row d-flex justify-content-center">
+                <a href="#" class=""> Worthy opponent </a>
+            </div> 
+        </div>
+    </div>
+    
     <p class="h5 text-primary mt-5">Bid</p>
+
     <p>When is your turn you can select a bid with the bid selector: press +/- to increse or decrease the quantity and use the scroll to select the wanted dice.<br>
     The selector will help you by setting the minimum quantity that you can bid when selecting a different dice (in this case always to one).</p>
 
@@ -86,7 +128,6 @@ const Gamerules = {
     </div>`,
     components: {
         'diceSelector': diceSelector,
-        'game': Game
     },
     data() {
         return {
@@ -94,6 +135,7 @@ const Gamerules = {
                 current_bid: null,
                 is_palifico_round: false,
                 round: 1,
+                turn_time: 30,
             },
             bid: {
                 quantity: 1,
