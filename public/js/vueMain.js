@@ -88,7 +88,9 @@ var loadToken = function () {
                 socket.emit("online", localStorage.token);
             }
         }
-        start_app();
+        if (!app) {
+            start_app();
+        }
     }, error => { start_app(); });
 }
 var unloadToken = function () {
