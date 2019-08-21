@@ -12,7 +12,7 @@ const profileImage = {
                 <input type="file" ref="inputFile" accept="image/*" @change="loadImage" hidden>
                 
                 <template v-if="canedit">
-                    <button class="mt-1 btn btn-primary btn-block" @click.prevent="onEditClick">
+                    <button class="mt-3 btn btn-primary btn-block" @click.prevent="onEditClick">
                         <i class="fas fa fa-edit"></i> Change Avatar
                     </button>
                     
