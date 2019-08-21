@@ -56,7 +56,7 @@ if (fs.existsSync(jwt_secret_path)) {
 }
 
 if (!jwt_secret) {
-  jwt_secret = genRandomString(16);
+  jwt_secret = genRandomString(32);
   fs.writeFileSync(jwt_secret_path, jwt_secret);
 }
 exports.jwt_secret = jwt_secret;

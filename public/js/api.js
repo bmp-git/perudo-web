@@ -87,4 +87,17 @@ class Api {
             })
             .catch(error => Api.handleError(error, errorHandler));
     }
+
+    static refresh_token(succHandler, errorHandler) {
+        var tokenData = JSON.parse(atob(localStorage.token.split('.')[1]));
+        Api.log("getting on /api/users/" + tokenData.user._id + "/token");
+        const authHeader = 'bearer '.concat(localStorage.token);
+        axios.get("/api/users/" + tokenData.user._id + "/token", { headers: { Authorization: authHeader } })
+            .then(response => {
+                if (succHandler) {
+                    succHandler(response.data.token);
+                }
+            })
+            .catch(error => Api.handleError(error, errorHandler));
+    }
 }

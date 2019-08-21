@@ -1,12 +1,12 @@
 var socket = io();
-socket.on('you are connected', function (game_id) {
+socket.on('you are connected', function () {
     if (localStorage.token) {
         socket.emit("online", localStorage.token);
     }
 });
 Api.get_online_users(users => {
     store.commit('setOnlineUsers', users);
-    socket.on('new online or offline user', function (game_id) {
+    socket.on('new online or offline user', function () {
         Api.get_online_users(users => {
             store.commit('setOnlineUsers', users);
         });
@@ -32,20 +32,16 @@ socket.on('new action', function (game_id) {
 
 var setTokenTimeout = function (tokenData, server_date) {
     setTimeout(function () {
-        const authHeader = 'bearer '.concat(localStorage.token);
-        axios.get("/api/users/" + tokenData.user._id + "/token", { headers: { Authorization: authHeader } })
-            .then(
-                tokenRes => {
-                    socket.emit("online", tokenRes.data.token);
-                    store.commit('setToken', tokenRes.data.token);
-                    var tokenData = JSON.parse(atob(tokenRes.data.token.split('.')[1]));
-                    Api.get_date(s_date => {
-                        setTokenTimeout(tokenData, s_date);
-                    });
-                }
-            );
-    }, tokenData.exp * 1000 - server_date - 1000 * 90);
-    console.log("Token refresh timer set in " + (Math.round((tokenData.exp * 1000 - server_date - 1000 * 90) / (60 * 1000))) + "  minutes");
+        Api.refresh_token(token => {
+            socket.emit("online", token);
+            store.commit('setToken', token);
+            var newTokenData = JSON.parse(atob(token.split('.')[1]));
+            Api.get_date(s_date => {
+                setTokenTimeout(newTokenData, s_date);
+            });
+        });
+    }, tokenData.exp * 1000 - server_date - 1000 * 60 * 60);
+    console.log("Token refresh timer set in " + (Math.round((tokenData.exp * 1000 - server_date - 1000 * 60 * 60) / (60 * 1000))) + "  minutes");
 }
 
 let app = null;
@@ -77,16 +73,18 @@ var start_app = function () {
 var loadToken = function () {
     Api.get_date(server_date => {
         if (localStorage.token) {
-            store.commit('setToken', localStorage.token);
-            var tokenData = JSON.parse(atob(localStorage.token.split('.')[1]));
-            if ((tokenData.exp * 1000 - server_date) <= 1000 * 60) { //token expired or exipre in less than a minute
-                console.log("Token is expired");
-                store.commit('unsetToken');
-                socket.emit("offline");
-            } else {
-                setTokenTimeout(tokenData, server_date);
-                socket.emit("online", localStorage.token);
-            }
+            Api.refresh_token(
+                token => {
+                    store.commit('setToken', token);
+                    var tokenData = JSON.parse(atob(token.split('.')[1]));
+                    setTokenTimeout(tokenData, server_date);
+                    socket.emit("online", token);
+                },
+                error => {
+                    console.log("Token is expired");
+                    store.commit('unsetToken');
+                    socket.emit("offline");
+                });
         }
         if (!app) {
             start_app();
@@ -96,7 +94,6 @@ var loadToken = function () {
 var unloadToken = function () {
     socket.emit("offline", localStorage.token);
 }
-
 loadToken();
 
 
