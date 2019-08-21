@@ -116,6 +116,7 @@ const Gamerules = {
             </div> 
         </div>
     </div>
+    </div>
     
     <p class="h5 text-primary mt-5">Bid</p>
 
@@ -125,9 +126,23 @@ const Gamerules = {
     <diceSelector v-bind:bid.sync="this.bid" v-bind:game="game"/>
 
     <p><i> Selected bid: {{bid.quantity}} dice of <span v-bind:class="'dice dice-'+bid.dice+' ml-1'"></span> </i></p>
+
+    <p class="h5 text-primary mt-5">Game buttons</p>
+    <p>In order to play there is a button for each game action discussed in the section about the game rules.
+    These buttons are enabled according to these rules. The bid button make the bid selected in the previous component.</p>
+    <div class="col-12 col-sm-12 col-md-10 offset-md-1 col-lg-10 offset-lg-1 col-xl-8 offset-xl-2 pl-0 pr-0">
+        <div class="row d-flex justify-content-around">
+            <button type="button" class="btn btn-primary ml-1 mr-1">Bid</button>
+            <button type="button" class="btn btn-primary ml-1 mr-1">Doubt</button>
+            <button type="button" class="btn btn-primary ml-1 mr-1" disabled>Spot on</button>
+            <button type="button" class="btn btn-primary ml-1 mr-1">Palifico</button>
+        </div>  
+    </div>
+    
     </div>`,
     components: {
         'diceSelector': diceSelector,
+        'gameButtons': GameButtons
     },
     data() {
         return {
