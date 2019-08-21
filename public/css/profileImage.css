@@ -1,6 +1,5 @@
 .profileImage {
     position:relative;
-    overflow:hidden;
     padding-bottom:100%;
 }
 .profileImage img{
@@ -8,5 +7,5 @@
     object-fit: cover;
     width: 100%;
     height: 100%;
-    border-radius: 25%;
+    border-radius: 50%;
 }
