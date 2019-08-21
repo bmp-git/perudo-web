@@ -18,22 +18,27 @@ const gameLobby = {
                         <div class="row row-with-margin">
                             <currentbid v-bind:game="game"></currentbid>
                         </div>
-                        <div class="row row-with-margin">
-                            <roundTimer v-bind:game="game" v-bind:refresh_time_ms="100"></roundTimer>
-                        </div>
+
+                        <template v-if="canPlay">
+                            <div class="row row-with-margin">
+                                <roundTimer v-bind:game="game" v-bind:refresh_time_ms="100"></roundTimer>
+                            </div>
+                        </template>
 
                         <div class="row row-with-margin">
                             <gameTurn v-bind:game="game"></gameTurn>
                         </div>
 
-                        <div class="row row-with-margin">
-                            <dice v-bind:game="game"></dice>
-                        </div>
+                        <template v-if="canPlay">
+                            <div class="row row-with-margin">
+                                <dice v-bind:game="game"></dice>
+                            </div>
 
-                        <div class="row row-with-margin">
-                            <diceSelector v-bind:game="game" v-bind:bid.sync="this.bid"></diceSelector>
-                        </div>
-                        
+                            <div class="row row-with-margin">
+                                <diceSelector v-bind:game="game" v-bind:bid.sync="this.bid"></diceSelector>
+                            </div>
+                        </template>
+
                         <div class="row row-with-margin">
                             <gameButtons v-bind:game="game" v-bind:bid="this.bid"></gameButtons>
                         </div>
@@ -81,6 +86,9 @@ const gameLobby = {
     },
     props: [],
     computed: {
+        canPlay: function() {
+            return !this.game.is_over && this.game.users.find(u => u.id === this.$store.state.user._id);
+        }
     },
     methods: {
         reload: function (game_id) {
