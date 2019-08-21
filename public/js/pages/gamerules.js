@@ -66,7 +66,7 @@ const Gamerules = {
     <p class="h5 text-primary mt-5">Games</p>
 
     <p>In <router-link to="/games">games</router-link> section you will see all games. You can join a game not started by clicking on <button type="button" class="btn btn-primary btn-sm mt-1">Join</button>
-     or specatate a started game with the button <button type="button"class="btn btn-secondary btn-sm mt-1"">Spectate</button>
+     or spectate a started game with the button <button type="button"class="btn btn-secondary btn-sm mt-1"">Spectate</button>
     </br>In order to create your own game you can press the plus button on bottom right of the page <button type="button" class="btn btn-primary btn-circle" aria-label="Create new game"><i class="fas fa-plus"></i></button>
     and compiling the "new game" form.</br>
     If you are the owner of the lobby (a game not started) you can start it when there are at least two players with the button <button type="button" class="btn btn-primary btn-sm mt-1">Start game!</button></br>
@@ -76,6 +76,10 @@ const Gamerules = {
     
     <p class="mt-5">When a game is started you will be redirected to the game page. Now will be described some in-game components in order to help you make the first steps.</p>
     
+    <p class="h5 text-primary mt-5">Current bid</p>
+    <p>This is the current bid.</p>
+    <currentbid v-bind:game="bid_game"></currentbid>
+
     <p class="h5 text-primary mt-5">Turn time</p>
     <p>This progress bar indicates how much time is left to play.
     Don't worry to much if the color of the bar is gray, it means that is not your turn...</p>
@@ -116,7 +120,20 @@ const Gamerules = {
             </div> 
         </div>
     </div>
-    
+    </div>
+
+    <p class="h5 text-primary mt-5">Your dice</p>
+    <p>Here you can see your 5 dice. 4 Aces (<span class="dice dice-1"></span>) ?? Shame on you.</p>
+    <div class="col-12 col-sm-12 col-md-10 offset-md-1 col-lg-10 offset-lg-1 col-xl-8 offset-xl-2 pl-0 pr-0">
+                    <div class="row justify-content-around">
+                        <span style="font-size: 3em;" class="dice dice-1"></span>
+                        <span style="font-size: 3em;" class="dice dice-1"></span>
+                        <span style="font-size: 3em;" class="dice dice-1"></span>
+                        <span style="font-size: 3em;" class="dice dice-1"></span>                              
+                        <span style="font-size: 3em;" class="dice dice-6"></span>
+                    </div>
+
+            </div>   
     <p class="h5 text-primary mt-5">Bid</p>
 
     <p>When is your turn you can select a bid with the bid selector: press +/- to increse or decrease the quantity and use the scroll to select the wanted dice.<br>
@@ -125,9 +142,23 @@ const Gamerules = {
     <diceSelector v-bind:bid.sync="this.bid" v-bind:game="game"/>
 
     <p><i> Selected bid: {{bid.quantity}} dice of <span v-bind:class="'dice dice-'+bid.dice+' ml-1'"></span> </i></p>
+
+    <p class="h5 text-primary mt-5">Game buttons</p>
+    <p>In order to play there is a button for each game action discussed in the section about the game rules.
+    These buttons are enabled according to these rules. The bid button make the bid selected in the previous component.</p>
+    <div class="col-12 col-sm-12 col-md-10 offset-md-1 col-lg-10 offset-lg-1 col-xl-8 offset-xl-2 pl-0 pr-0">
+        <div class="row d-flex justify-content-around">
+            <button type="button" class="btn btn-primary ml-1 mr-1">Bid</button>
+            <button type="button" class="btn btn-primary ml-1 mr-1">Doubt</button>
+            <button type="button" class="btn btn-primary ml-1 mr-1" disabled>Spot on</button>
+            <button type="button" class="btn btn-primary ml-1 mr-1">Palifico</button>
+        </div>  
+    </div>
+    
     </div>`,
     components: {
         'diceSelector': diceSelector,
+        'currentbid': currentBid,
     },
     data() {
         return {
@@ -136,6 +167,12 @@ const Gamerules = {
                 is_palifico_round: false,
                 round: 1,
                 turn_time: 30,
+            },
+            bid_game : {
+                current_bid: {
+                    dice: 1,
+                    quantity: 1
+                }
             },
             bid: {
                 quantity: 1,
