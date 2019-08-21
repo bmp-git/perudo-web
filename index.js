@@ -40,6 +40,7 @@ require('./src/models/user');
 require('./src/models/rankHistory');
 const bodyParser = require('body-parser');
 
+const crypto = require('crypto');
 const genRandomString = function (length) {
   return crypto.randomBytes(Math.ceil(length / 2))
       .toString('hex')
