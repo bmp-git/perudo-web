@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const User = mongoose.model('User');
 
+const jwt_secret = require('../../index').jwt_secret;
+
 var rankController = require('./rankController');
 
 var games = new Map(); // game id -> game
@@ -244,7 +246,7 @@ io.on('connection', function (socket) {
     });
 
     socket.on('online', function (token) {
-        jwt.verify(token, 'secretkey', (err, authData) => {
+        jwt.verify(token, jwt_secret, (err, authData) => {
             if (err) {
                 console.log("online: token not valid");
             } else {

@@ -1,4 +1,5 @@
 var jwt = require('jsonwebtoken');
+const jwt_secret = require('../../index').jwt_secret;
 
 module.exports = function (app) {
 	var loginController = require('../controllers/loginController');
@@ -139,7 +140,7 @@ module.exports = function (app) {
 			const bearer = bearerHeader.split(' ');
 			const bearerToken = bearer[1];
 			req.token = bearerToken;
-			jwt.verify(req.token, 'secretkey', (err, authData) => {
+			jwt.verify(req.token, jwt_secret, (err, authData) => {
 				if (err) {
 					res.status(403).send({ message: 'Authentication token is not valid.' }).end();
 				} else {

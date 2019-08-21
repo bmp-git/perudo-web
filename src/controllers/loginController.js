@@ -3,11 +3,16 @@ const User = mongoose.model('User');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 
+const jwt_secret = require('../../index').jwt_secret;
+
 const genRandomString = function (length) {
 	return crypto.randomBytes(Math.ceil(length / 2))
 		.toString('hex')
 		.slice(0, length)
 };
+
+exports.genRandomString = genRandomString;
+
 const saltPassword = function (password, salt) {
 	const hash = crypto.createHmac('sha512', salt);
 	hash.update(password);
@@ -59,7 +64,7 @@ exports.user_login = function (req, res) {
 				const hashedPassword = saltPassword(password, user.salt);
 				if (hashedPassword == user.password) {
 					console.log('[user_auth] Auth of: ' + email + ' success!');
-					jwt.sign({ user: { _id: user._id, email: user.email, username: user.username } }, 'secretkey', { expiresIn: '2 days' }, (err, token) => {
+					jwt.sign({ user: { _id: user._id, email: user.email, username: user.username } }, jwt_secret, { expiresIn: '2 days' }, (err, token) => {
 						res.json({ token: token }).end();
 					});
 				} else {
@@ -86,7 +91,7 @@ exports.refresh_token = function (req, res) {
 			if (err) {
 				res.status(500).send({message: err});
 			} else if (user) {
-				jwt.sign({ user: { _id: user._id, email: user.email, username: user.username } }, 'secretkey', { expiresIn: '2 days' }, (err, token) => {
+				jwt.sign({ user: { _id: user._id, email: user.email, username: user.username } }, jwt_secret, { expiresIn: '2 days' }, (err, token) => {
 					if(err) {
 						res.status(500).send({ message: err });
 					} else {

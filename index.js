@@ -40,7 +40,25 @@ require('./src/models/user');
 require('./src/models/rankHistory');
 const bodyParser = require('body-parser');
 
+const genRandomString = function (length) {
+  return crypto.randomBytes(Math.ceil(length / 2))
+      .toString('hex')
+      .slice(0, length)
+};
 
+const fs = require('fs');
+
+let jwt_secret = null;
+const jwt_secret_path = './jwt_secret';
+if (fs.existsSync(jwt_secret_path)) {
+  jwt_secret = fs.readFileSync(jwt_secret_path, "utf8");
+}
+
+if (!jwt_secret) {
+  jwt_secret = genRandomString(16);
+  fs.writeFileSync(jwt_secret_path, jwt_secret);
+}
+exports.jwt_secret = jwt_secret;
 
 mongoose.connect('mongodb://localhost/perudo', { useNewUrlParser: true, useFindAndModify: false });
 
@@ -54,14 +72,12 @@ app.use('/static', express.static(__dirname + '/public'));
 let server = null;
 
 if (argv.https) {
-  const fs = require('fs');
   const options = {
     key: fs.readFileSync(argv.key),
     cert: fs.readFileSync(argv.cert)
   };
   server = require('https').createServer(options, app);
 } else if (argv.http2) {
-  const fs = require('fs');
   const options = {
     key: fs.readFileSync(argv.key),
     cert: fs.readFileSync(argv.cert)
