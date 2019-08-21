@@ -87,6 +87,4 @@ class Api {
             })
             .catch(error => Api.handleError(error, errorHandler));
     }
-
-    //TODO rest of api calls...
 }

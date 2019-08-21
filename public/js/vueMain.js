@@ -4,9 +4,12 @@ socket.on('you are connected', function (game_id) {
         socket.emit("online", localStorage.token);
     }
 });
-socket.on('new online or offline user', function (game_id) {
-    Api.get_online_users(users => {
-        store.commit('setOnlineUsers', users);
+Api.get_online_users(users => {
+    store.commit('setOnlineUsers', users);
+    socket.on('new online or offline user', function (game_id) {
+        Api.get_online_users(users => {
+            store.commit('setOnlineUsers', users);
+        });
     });
 });
 

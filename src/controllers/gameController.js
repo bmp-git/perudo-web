@@ -243,7 +243,6 @@ io.on('connection', function (socket) {
         set_socket_offline(id);
     });
 
-    //TODO: move this outside this file
     socket.on('online', function (token) {
         jwt.verify(token, 'secretkey', (err, authData) => {
             if (err) {
