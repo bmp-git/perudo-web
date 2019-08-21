@@ -42,7 +42,7 @@ const gameTurn = { template: `
          return id === this.$store.state.user._id;
      },
      isUserTurn: function(user_id) {
-         return this.game.current_turn_user_id === user_id;
+         return this.game.current_turn_user_id === user_id && !this.game.is_over;
      }
  }
 };
