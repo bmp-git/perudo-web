@@ -18,7 +18,7 @@ class Api {
                     succHandler(response.data.token);
                 }
             })
-            .catch(error => handleError(error, errorHandler));
+            .catch(error => Api.handleError(error, errorHandler));
     }
 
     static signup(email, username, password, succHandler, errorHandler) {
@@ -29,7 +29,7 @@ class Api {
                     succHandler();
                 }
             })
-            .catch(error => handleError(error, errorHandler));
+            .catch(error => Api.handleError(error, errorHandler));
     }
 
     static get_dice(game_id, round, succHandler, errorHandler) {
@@ -41,7 +41,7 @@ class Api {
                     succHandler(response.data.result);
                 }
             })
-            .catch(error => handleError(error, errorHandler));
+            .catch(error => Api.handleError(error, errorHandler));
     }
 
     static get_online_users(succHandler, errorHandler) {
@@ -52,7 +52,7 @@ class Api {
                     succHandler(response.data.result);
                 }
             })
-            .catch(error => handleError(error, errorHandler));
+            .catch(error => Api.handleError(error, errorHandler));
     }
 
     static get_date(succHandler, errorHandler) {
@@ -63,7 +63,7 @@ class Api {
                     succHandler(new Date(response.data.date));
                 }
             })
-            .catch(error => handleError(error, errorHandler));
+            .catch(error => Api.handleError(error, errorHandler));
     }
 
     static get_games(succHandler, errorHandler) {
@@ -74,7 +74,7 @@ class Api {
                     succHandler(response.data.result);
                 }
             })
-            .catch(error => handleError(error, errorHandler));
+            .catch(error => Api.handleError(error, errorHandler));
     }
 
     static get_game(id, succHandler, errorHandler) {
@@ -85,7 +85,7 @@ class Api {
                     succHandler(response.data.result);
                 }
             })
-            .catch(error => handleError(error, errorHandler));
+            .catch(error => Api.handleError(error, errorHandler));
     }
 
     //TODO rest of api calls...
