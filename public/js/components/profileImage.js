@@ -3,7 +3,7 @@ const profileImage = {
             <div>
                 <div class="profileImage">
                     <template v-if="this.userid">
-                        <router-link :to="{ name: 'profile', params: { id: this.userid }}">
+                        <router-link :to="getImageLink">
                             <useravatar ref="avatar" :userid="userid" style="border: 0px"/>
                         </router-link>
                     </template>
@@ -36,6 +36,25 @@ const profileImage = {
         'useravatar': Useravatar
     },
     computed: {
+        getImageLink: function () {
+            if (
+                this.$store &&
+                this.$store.state &&
+                this.$store.state.user &&
+                this.$store.state.user._id === this.userid &&
+                this.$route.name === "profile" &&
+                this.$route.params.id ===  this.userid
+            ) {
+                return {
+                    name: 'settings'
+                };
+            } else {
+                return {
+                    name: 'profile',
+                    params: { id: this.userid }
+                };
+            }
+        }
     },
     methods: {
         reload: function() {
