@@ -16,65 +16,65 @@ const Gamerules = {
     <p class="h5 text-primary mt-5">Bid</p>
     
     <p>The first player announces a number, and then the next player has the choice of doubting it, by saying Doubt or raising the bid, either by the number of dice or by the 
-    value of the dice. (or by doing both) For example, if player 1 bid three twos, then player two could bid three threes, four twos, four fours, or even ten sixes.</br>
+    value of the dice (or by doing both). For example, if player 1 bid three <span class="dice dice-2"></span>, then player two could bid three <span class="dice dice-3"></span>, four <span class="dice dice-2"></span>, four <span class="dice dice-4"></span>, or even ten <span class="dice dice-6"></span>.</br>
 
     Players may bid Aces (<span class="dice dice-1"></span>) in a round, and halve the previous number announced. If the number does not halve, they 
-    should round up. The next player will need to bid more aces or to bid one more than double the number bid in order to bid a different number.</p>
+    should round up. The next player will need to bid more Aces or to bid one more than double the number bid in order to bid a different number.</p>
     
     
     <p class="h5 text-primary mt-5">Doubt</p>
     
-    <p>If a player call Doubt all the players show their dice to verify whether the number was indeed too high. If there are enough dice of that number, then the player who 
-    Doubted lose a die. If there are not, then the player who made the last bid is the one who lose a die. In either case, a new round begins.</p>
+    <p>If a player calls Doubt all the players show their dice to verify whether the number was indeed too high. If there are enough dice of that number, then the player who 
+    Doubted loses a die. If there are not, then the player who made the last bid is the one who loses a die. In either case, a new round begins.</p>
     
     
     <p class="h5 text-primary mt-5">Palifico</p>
     
-    <p>If a player remains with one die, once per game he can call Palifico. He will be the one who do the first bid and the die that he select cannot be changed.</p>
+    <p>If a player remains with one die, once per game he can call Palifico. He will be the one who do the first bid and the die that he selects cannot be changed.</p>
      
     
     <p class="h5 text-primary mt-5">Spoton</p>
     
-    <p>If a player has less than five dice, he can 'Spoton'. This is valid only when it's not your turn and you don't made the current bid. After call spoton all players 
-    reveal their dice and if the bid is exact the one who spoton win a die, otherwise loses one. In either case, a new round begins.</p>
+    <p>If a player has less than five dice, he can 'Spoton'. This is valid only when it's not your turn and you didn't made the current bid. After calling spoton all players 
+    reveal their dice and if the bid is exact the one who called spoton wins a die, otherwise they lose one. In either case, a new round begins.</p>
     
     
     <p class="h5 text-primary mt-5">Counting dice</p>
     
-    <p>When someone Doubt or Spoton on a bid the dice are counted following this rules: all die within the bid are counted, and the aces are added to the sum only for the 
-    player who made the bid. If the bid is on the aces, all aces are counted.</p>
+    <p>When someone calls Doubt or Spoton on a bid the dice are counted following this rules: all die within the bid are counted, and the Aces are added to the sum only for the 
+    player who made the bid. If the bid is on Aces, all Aces are counted.</p>
 
     <p class="h4 text-primary mt-5">Example</p>
-    <p>There are three players with this dice: </p>
+    <p>There are three players with these dice: </p>
     <h5>Bill <span class="dice dice-2 mr-1"></span><span class="dice dice-4 mr-1"></span><span class="dice dice-4 mr-1"></span><span class="dice dice-5 mr-1"></span><span class="dice dice-6"></span></h5>
     <h5>Turner <span class="dice dice-1 mr-1"></span><span class="dice dice-2 mr-1"></span><span class="dice dice-3 mr-1"></span><span class="dice dice-6 mr-1"></span><span class="dice dice-6"></span></h5>
     <h5>Jones <span class="dice dice-1 mr-1"></span><span class="dice dice-1 mr-1"></span><span class="dice dice-3 mr-1"></span><span class="dice dice-3 mr-1"></span><span class="dice dice-5"></span></h5>
-    <p>Every player see only his dice.</br>The round starts and it's Bill's turn. Bill try to bluff and <b>bids 3 dice of <span class="dice dice-3"></span></b>.</br>
-    Now it's Turner's turn, he's not sure about Bill's bid and changes dice, he <b>bids 4 dice of <span class="dice dice-6"></span></b> hoping the other two have at least one <span class="dice dice-6"></span> in cases Jones doubt</br>
-    Jones think that the bid is corrent and doesn't want to doubt, thanks to Bill's bid and his own dice he think there are many <span class="dice dice-3"></span> and <b>bids 6 dice of <span class="dice dice-3"></span></b></br>
-    Bill knows that Jones's bid is based on his initial bluff, therefore he <b>Doubts</b>.</br>
+    <p>Each player only sees their dice.</br>The round starts and it's Bill's turn. Bill tries to bluff and <b>bids 3 dice of <span class="dice dice-3"></span></b>.</br>
+    Now it's Turner's turn, he's not sure about Bill's bid and changes dice, he <b>bids 4 dice of <span class="dice dice-6"></span></b> hoping the other two have at least one <span class="dice dice-6"></span> in case Jones doubts.</br>
+    Jones thinks that the bid is corrent and doesn't want to doubt, thanks to Bill's bid and his own dice he thinks there are many <span class="dice dice-3"></span> and <b>bids 6 dice of <span class="dice dice-3"></span></b>.</br>
+    Bill knows that Jones' bid is based on his initial bluff, therefore he <b>Doubts</b>.</br>
     The count of dice is: </p>
     <h5>Bill <span class="dice dice-2 mr-1"></span><span class="dice dice-4 mr-1"></span><span class="dice dice-4 mr-1"></span><span class="dice dice-5 mr-1"></span><span class="dice dice-6"></span></h5>
     <h5>Turner <span class="dice dice-1 mr-1"></span><span class="dice dice-2 mr-1"></span><span style="background-color: red;" class="dice dice-3 mr-1"></span><span class="dice dice-6 mr-1"></span><span class="dice dice-6"></span></h5>
     <h5>Jones <span style="background-color: red;" class="dice dice-1 mr-1"></span><span style="background-color: red;" class="dice dice-1 mr-1"></span><span style="background-color: red;" class="dice dice-3 mr-1"></span><span style="background-color: red;" class="dice dice-3 mr-1"></span><span class="dice dice-5"></span></h5>
-    <p>There are only 5 dice of <span class="dice dice-3 mr-1"></span>! Jones loses a die.</br>A new round starts and it's Jones's turn...</p>
+    <p>There are only 5 dice of <span class="dice dice-3 mr-1"></span>! Jones loses a die.</br>A new round starts and it's Jones' turn...</p>
 
     <h1 class="mt-5">Interface tutorial</h1>
-    In this section are explained some of the principal component to interact with the games. In order to play you must be signed-in, if you haven't yet please take a 
-    moment to <router-link to="/signup">sign-up</router-link> or <router-link to="/signin">sign-in</router-link>.
+    This section explains the game's GUI. In order to play you must be signed in, if you haven't yet please take a 
+    moment to <router-link to="/signup">sign up</router-link> or <router-link to="/signin">sign in</router-link>.
 
     <p class="h5 text-primary mt-5">Games</p>
 
-    <p>In <router-link to="/games">games</router-link> section you will see all games. You can join a game not started by clicking on <button type="button" class="btn btn-primary btn-sm mt-1">Join</button>
-     or spectate a started game with the button <button type="button"class="btn btn-secondary btn-sm mt-1"">Spectate</button>
-    </br>In order to create your own game you can press the plus button on bottom right of the page <button type="button" class="btn btn-primary btn-circle" aria-label="Create new game"><i class="fas fa-plus"></i></button>
-    and compiling the "new game" form.</br>
-    If you are the owner of the lobby (a game not started) you can start it when there are at least two players with the button <button type="button" class="btn btn-primary btn-sm mt-1">Start game!</button></br>
-    Inside a lobby you can chat with the players using the chat at the bottom of the page.</p>
+    <p>In the <router-link to="/games">games</router-link> section you will see all the games. You can join a game that hasn't started yet by clicking on <button type="button" class="btn btn-primary btn-sm mt-1">Join</button>
+     or you can spectate an ongoing game with the button <button type="button"class="btn btn-secondary btn-sm mt-1"">Spectate</button>
+    </br>In order to create your own lobby you must press the plus button on bottom right of the page <button type="button" class="btn btn-primary btn-circle" aria-label="Create new game"><i class="fas fa-plus"></i></button>
+    and fill the "new game" form.</br>
+    If you are the owner of the lobby with at least 2 players you may begin the game by clicking the <button type="button" class="btn btn-primary btn-sm mt-1">Start game!</button></br>
+    In a game you can chat with the players using the chat at the bottom of the page.</p>
     
     
     
-    <p class="mt-5">When a game is started you will be redirected to the game page. Now will be described some in-game components in order to help you make the first steps.</p>
+    <p class="mt-5">When a game starts you will be redirected to the game page. And now for the ingame GUI:</p>
     
     <p class="h5 text-primary mt-5">Current bid</p>
     <p>This is the current bid.</p>
@@ -86,16 +86,14 @@ const Gamerules = {
     <div class="progress" style="margin-bottom:16px">
         <div class="progress-bar progress-bar-striped progress-bar-animated bg-secondary" style="width: 100%;">10</div>
     </div>
-    <p>But pay attention.. when the bar is blue it's your time!</p>
+    <p>But pay attention.. when the bar is blue it's your turn!</p>
     <div class="progress">
         <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: 100%">10</div>
     </div>
 
     <p class="h5 text-primary mt-5">Player turn</p>
 
-    <p>This component is essential in order to see how many dice each player has and which player is the turn.
-     To distinguish yourself from the others your name is "You" and your avatar border is blue.
-     To indicate which player is the turn there is a little arrow under the name it pulse infinitely.</p>
+    <p>This part is essential in order to see how many dice each player has and whose turn it is. Your name is "You" and your avatar has a blue border. The player who is currently bidding has an arrow under his avatar.</p>
      <p> In the example below, it's your turn and currently you have 1 dice more then your opponent. </p>
     <div class="col-12 col-sm-12 col-md-10 offset-md-1 col-lg-10 offset-lg-1 col-xl-8 offset-xl-2 pl-0 pr-0"><div class="row justify-content-around">
         <div class="animated pulse infinite slow">
@@ -136,16 +134,16 @@ const Gamerules = {
             </div>   
     <p class="h5 text-primary mt-5">Bid</p>
 
-    <p>When is your turn you can select a bid with the bid selector: press +/- to increse or decrease the quantity and use the scroll to select the wanted dice.<br>
-    The selector will help you by setting the minimum quantity that you can bid when selecting a different dice (in this case always to one).</p>
+    <p>When it's your turn you can select a bid with the bid selector: press +/- to increase or decrease the quantity and use the dice carousel to select the die you want to bid on.<br>
+    The bid selector will help you by setting the minimum quantity that you can bid when selecting a different die (in this example, the minimum quantity is one).</p>
 
     <diceSelector v-bind:bid.sync="this.bid" v-bind:game="game"/>
 
     <p><i> Selected bid: {{bid.quantity}} dice of <span v-bind:class="'dice dice-'+bid.dice+' ml-1'"></span> </i></p>
 
     <p class="h5 text-primary mt-5">Game buttons</p>
-    <p>In order to play there is a button for each game action discussed in the section about the game rules.
-    These buttons are enabled according to these rules. The bid button make the bid selected in the previous component.</p>
+    <p>Each action discussed in the "game rules" section has its own button.
+    These buttons are enabled according to the aforementioned rules. The bid button places a bid with the previously selected die and quantity.</p>
     <div class="col-12 col-sm-12 col-md-10 offset-md-1 col-lg-10 offset-lg-1 col-xl-8 offset-xl-2 pl-0 pr-0">
         <div class="row d-flex justify-content-around">
             <button type="button" class="btn btn-primary ml-1 mr-1">Bid</button>
@@ -154,6 +152,16 @@ const Gamerules = {
             <button type="button" class="btn btn-primary ml-1 mr-1">Palifico</button>
         </div>  
     </div>
+	
+	<p class="mt-5">
+	The best way to learn this game is by playing it! So let's play!!
+	
+	</p>
+	<div class="col">
+	<router-link to="/games">
+	<button type="button" class="btn btn-primary ml-1 mr-1 btn-xl" style="width:100%">Play!</button>
+	</router-link>
+	</div>
     
     </div>`,
     components: {
