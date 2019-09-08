@@ -1,14 +1,14 @@
 const Home = {
-    template: `<div class="container unselectable" style="height:calc(100vh - 60px); overflow-x: hidden;" v-bind:style="overflow" v-on:click="stopAnimation">
+    template: `<div class="container" style="height:calc(100vh - 60px); overflow-x: hidden;" v-bind:style="overflow" v-on:click="stopAnimation">
                             <div class="row home-page">
                                 <div class="offset-md-3 col-md-6 col-12">
-                                    <h1 v-show="welcome_animation != ''" v-bind:class="welcome_animation">Welcome</h1>
-                                    <h1 v-show="to_animation != ''" v-bind:class="to_animation">
-                                        <span @click.prevent="randomize_dice" v-bind:class="'dice dice-' + left_dice" v-bind:style="'transform: rotate('+left_dice_r+'deg); transition-duration: '+transition_duration+'s'" style="margin-bottom:-15px; margin-right:20px;"></span>
-                                            to 
-                                        <span @click.prevent="randomize_dice" v-bind:class="'dice dice-' + right_dice" v-bind:style="'transform: rotate('+right_dice_r+'deg); transition-duration: '+transition_duration+'s'" style="margin-bottom:-15px; margin-left:20px;"></span>
-                                    </h1>
-                                    <div v-show="perudo_animation != ''" v-bind:class="perudo_animation">
+                                    <h1 class="unselectable" v-show="welcome_animation != ''" v-bind:class="welcome_animation">Welcome</h1>
+                                    <h1 v-show="to_animation != ''" v-bind:class="to_animation"><p>
+                                        <span @click.prevent="randomize_dice" v-bind:class="'dice dice-' + left_dice" v-bind:style="'transform: rotate('+left_dice_r+'deg); transition-duration: '+transition_duration+'s'" style="margin-bottom:-15px;cursor: pointer">
+                                        </span><span class="unselectable " style="margin-left:20px; margin-right:20px"> to
+                                        </span><span @click.prevent="randomize_dice" v-bind:class="'dice dice-' + right_dice" v-bind:style="'transform: rotate('+right_dice_r+'deg); transition-duration: '+transition_duration+'s'" style="margin-bottom:-15px;cursor: pointer"></span>
+                                    </p></h1>
+                                    <div class="unselectable" v-show="perudo_animation != ''" v-bind:class="perudo_animation">
                                         <h1 class="perudo-title">Perudo.io</h1>
                                     </div>
                                 </div>
