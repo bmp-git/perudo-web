@@ -15,7 +15,7 @@ get_users_place = function(game_actions) {
         } else if(action.type === 'win') {
             winner = { _id: action.user_id, is_leaver: false};
         } else if(action.type === 'left' && !ranks.find(e => e._id == action.user_id)) {
-            ranks.push({ _id: action.user_id, is_leaver: true});
+            ranks.push({ _id: action.user_id, is_leaver: true });
         }
     }
 
