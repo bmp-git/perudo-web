@@ -10,12 +10,9 @@ const Leaderboard = {
                         <div class="col-md-12">
                                     <label> Show players
                                     <select class="custom-select custom-select-sm" v-model="page_lenght" v-on:change="changePageLenght">
-                                        <option>1</option>
-                                        <option>2</option>
                                         <option>3</option>
                                         <option>10</option>
                                         <option>25</option>
-                                        <option>50</option>
                                     </select>
                                 </label>
                         </div>
