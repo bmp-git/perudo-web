@@ -76,8 +76,8 @@ const Leaderboard = {
                                 </template>
                                 </template>
                             </template>
-                            <li class="page-item" v-bind:class="lastPage ? 'disabled' : ''">
-                                <a class="page-link" @click.prevent="changePage(page+1)" style="cursor: pointer">
+                            <li class="page-item" v-bind:class="lastPage ? 'disabled' : ''" v-bind:style="lastPage ? '' : 'color:#007bff'">
+                                <a class="page-link" @click.prevent="changePage(page+1)"  style="cursor: pointer;">
                                     <i class="fas fa-chevron-right"></i>
                                 </a>
                             </li>

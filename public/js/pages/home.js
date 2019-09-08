@@ -70,7 +70,7 @@ const Home = {
             this.perudo_animation = '';
             this.button_animation = '';
             this.online_users_animation = '';
-
+            this.overflow = 'overflow-y: hidden',
             this.randomize_dice();
 
             this.welcome_animation = 'animated bounceInLeft';
