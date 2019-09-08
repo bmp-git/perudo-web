@@ -205,7 +205,7 @@ const Profile = {
                 totalPlayTime: 0,
                 avatar: ""
             },
-            rank : -1,
+            rank : "*",
             rankHistory : [],
             pointsHistory : [],
             playHistory : [],
@@ -443,7 +443,7 @@ const Profile = {
     filters: {
         formatDate: function(value) {
             if (value) {
-                return moment(String(value)).format("MM/DD/YYYY");
+                return moment(String(value)).format("DD/MM/YYYY");
             }
         },
         formatToHours: function(milliseconds) {
