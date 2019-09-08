@@ -1,5 +1,5 @@
 const Home = {
-    template: `<div class="container unselectable" style="height:calc(100vh - 60px); overflow-x: hidden" v-on:click="stopAnimation">
+    template: `<div class="container unselectable" style="height:calc(100vh - 60px); overflow-x: hidden;" v-bind:style="overflow" v-on:click="stopAnimation">
                             <div class="row home-page">
                                 <div class="offset-md-3 col-md-6 col-12">
                                     <h1 v-show="welcome_animation != ''" v-bind:class="welcome_animation">Welcome</h1>
@@ -50,6 +50,7 @@ const Home = {
             perudo_animation: '',
             button_animation: '',
             online_users_animation: '',
+            overflow: 'overflow-y: hidden',
             left_dice: 1,
             right_dice: 6,
             left_dice_r: 0,
@@ -76,7 +77,7 @@ const Home = {
             this.animation.push(setTimeout(() => this.to_animation = 'animated bounceInRight', 1000));
             this.animation.push(setTimeout(() => this.perudo_animation = 'animated bounceInUp', 2000));
             this.animation.push(setTimeout(() => this.button_animation = 'animated tada', 3000));
-            this.animation.push(setTimeout(() => this.online_users_animation = 'animated fadeIn', 4000));
+            this.animation.push(setTimeout(() => { this.online_users_animation = 'animated fadeIn', this.overflow = ''}, 4000));
         },
         stopAnimation: function () {
             this.animation.forEach(timeout => {
@@ -87,6 +88,7 @@ const Home = {
             this.perudo_animation = ' ';
             this.button_animation = ' ';
             this.online_users_animation = ' ';
+            this.overflow = '';
         },
         randomize_dice: function () {
             this.transition_duration = 0.0;
