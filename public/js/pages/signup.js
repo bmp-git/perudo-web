@@ -1,6 +1,6 @@
 var tmp_email;
 const Signup = {
-    template: `<div class="container">
+    template: `<div class="container col-12 col-sm-8 col-md-6 col-lg-5 col-xl-4">
         <form class="form-group">
             <hr class="hr-text" data-content="Sign up!">
             <label class="sr-only" for="txbPasswordTmp">Username</label>
