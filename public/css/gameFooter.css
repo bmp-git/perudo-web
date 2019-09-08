@@ -1,6 +1,6 @@
 .gameFooter {
   position: fixed;
-  opacity: 0.5;
+  opacity: 0.9;
   left: 0;
   bottom: 0;
   width: 100%;
@@ -8,9 +8,8 @@
   color: white;
   text-align: center;
   z-index: 2;
-  border-radius: 10px 10px 3px 3px;
+  border-radius: 10px 10px 0px 0px;
   border: 5px solid #007bff;
-  margin-bottom: 2px;
   padding-bottom: 0px;
 }
 

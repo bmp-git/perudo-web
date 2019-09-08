@@ -2,7 +2,7 @@ const Game = {
     template: `
 <div class="row">
     <div class="col-12 col-sm-12 col-md-10 offset-md-1 col-lg-10 offset-lg-1 col-xl-8 offset-xl-2">
-            <gameBadge v-bind:game="game"></gameBadge>
+            <gameBadge v-bind:game="game" v-bind:margin="10"></gameBadge>
         
             <h6 class="card-title">
             <template v-if="this.$store.state.authenticated">

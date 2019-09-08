@@ -6,7 +6,7 @@ const gameFooter = {
             <div class="row d-flex justify-content-around">
               <div>
                 <span class="badge badge-pill badge-light" v-bind:class="notification_animation" v-show="notification > 0">{{notification}} new notifications! </span>
-                <gameBadge v-bind:game="this.$store.state.game"></gameBadge>
+                <gameBadge v-bind:game="this.$store.state.game" v-bind:margin="0"></gameBadge>
                 <router-link :to="{ name: 'gamelobby', params: { id: this.$store.state.game.id }}" style="color:white; text-decoration:underline;">{{this.$store.state.game.name}}</router-link>
               </div>
               
