@@ -20,13 +20,13 @@ const Home = {
                                 </div>
                             </div>
                             <template v-if="online_users_animation != ''">
-                            <div class="row home-page mt-5" v-bind:class="online_users_animation">
+                            <div class="row home-page mt-4" v-bind:class="online_users_animation">
                                 <div class="offset-md-3 col-md-6 col-12 d-flex justify-content-center">
                                 <hr class="hr-text mb-4 mt-5" style="width:270px;" data-content="Online users">
                                 </div>
                             </div>
                             
-                            <div class="row home-page mb-5" v-bind:class="online_users_animation">
+                            <div class="row home-page mb-4" v-bind:class="online_users_animation">
                                 <div class="offset-md-3 col-md-6 col-12 d-flex justify-content-center">
                                     <template v-for="user in $store.state.online_users">
                                         <div class="ml-2 mr-2">
