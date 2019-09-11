@@ -17,31 +17,31 @@ const Game = {
             <i class="fas fa-stopwatch" title="Maximum time per turn"> </i> <small>{{turnTime}}</small>
             <i class=" fas fa-users ml-3" title="Number of users"> </i><small> {{usedSpaces}} </small>
 
-            <template v-if="this.$store.state.authenticated">
+            <template class="d-none d-sm-block" v-if="this.$store.state.authenticated">
                 <template v-if="game.started">
-                    <button type="button" class="btn btn-primary btn-sm float-right" disabled>Game started</button>
+                    <button type="button" class="btn btn-primary btn-sm float-right d-none d-sm-block" disabled>Game started</button>
                 </template>
                 <template v-else>
                     <template v-if="userIsOwner">
-                        <button type="button" @click.prevent="startGame" class="btn btn-primary btn-sm float-right" v-bind:disabled="userNumber < 2">Start game!</button>
+                        <button type="button" @click.prevent="startGame" class="btn btn-primary btn-sm float-right d-none d-sm-block" v-bind:disabled="userNumber < 2">Start game!</button>
                     </template>
                     <template v-if="!currentUserInside">
-                        <div class="input-group-append float-right">
+                        <div class="input-group-append float-right" >
                             <template v-if="game.password != null">
                                 <form>
                                     <label class="sr-only" :for="this._uid + '_g_pass'">Lobby password</label>
-                                    <input autocomplete="off" :id="this._uid + '_g_pass'" v-model="inserted_password" type="password" :disabled="(!freeSpaceAvailable && !currentUserInside)" v-bind:class="'form-control '+(password_wrong?'is-invalid':'')" placeholder="Password" required>
+                                    <input style="max-height:31px" class="d-none d-sm-block" autocomplete="off" size="6" :id="this._uid + '_g_pass'" v-model="inserted_password" type="password" :disabled="(!freeSpaceAvailable && !currentUserInside)" v-bind:class="'form-control '+(password_wrong?'is-invalid':'')" placeholder="Password" required>
                                 </form>
                             </template>
-                            <button type="button" @click.prevent="joinGame" :disabled="(!freeSpaceAvailable && !currentUserInside)" class="btn btn-primary btn-sm float-right ml-2">Join</button>
+                            <button type="button" @click.prevent="joinGame" :disabled="(!freeSpaceAvailable && !currentUserInside)" class="btn btn-primary btn-sm float-right ml-2 d-none d-sm-block">Join</button>
                         </div>
                     </template>
                 </template>
                 <template v-if="currentUserInside">
-                    <button type="button" @click.prevent="leaveGame" class="btn btn-primary btn-sm float-right mr-2">Leave</button>
+                    <button type="button" @click.prevent="leaveGame" class="btn btn-primary btn-sm float-right mr-2 d-none d-sm-block">Leave</button>
                 </template>
                 <template v-else>
-                    <button type="button" @click.prevent="spectateGame" class="btn btn-secondary btn-sm float-right mr-2">Spectate</button>
+                    <button type="button" @click.prevent="spectateGame" class="btn btn-secondary btn-sm float-right mr-2 d-none d-sm-block">Spectate</button>
                 </template>
             </template>
             </h6>
@@ -75,7 +75,38 @@ const Game = {
                 </a>
             </div>
         </template>
-        
+
+        <div class="container d-block d-sm-none" v-if="this.$store.state.authenticated">
+        <div class="row justify-content-end">
+            <div class="col-12">
+                <template v-if="game.started">
+                    <button type="button" class="btn btn-primary btn-sm float-right" disabled>Game started</button>
+                </template>
+                <template v-else>
+                    <template v-if="userIsOwner">
+                        <button type="button" @click.prevent="startGame" class="btn btn-primary btn-sm float-right" v-bind:disabled="userNumber < 2">Start game!</button>
+                    </template>
+                    <template v-if="!currentUserInside">
+                        <div class="input-group-append float-right">
+                            <template v-if="game.password != null">
+                                <form>
+                                    <label class="sr-only" :for="this._uid + '_g_pass2'">Lobby password</label>
+                                    <input autocomplete="off" style="max-height:31px" size="6" :id="this._uid + '_g_pass2'" v-model="inserted_password" type="password" :disabled="(!freeSpaceAvailable && !currentUserInside)" v-bind:class="'form-control '+(password_wrong?'is-invalid':'')" placeholder="Password" required>
+                                </form>
+                            </template>
+                            <button type="button" @click.prevent="joinGame" :disabled="(!freeSpaceAvailable && !currentUserInside)" class="btn btn-primary btn-sm float-right ml-2">Join</button>
+                        </div>
+                    </template>
+                </template>
+                <template v-if="currentUserInside">
+                    <button type="button" @click.prevent="leaveGame" class="btn btn-primary btn-sm float-right mr-2">Leave</button>
+                </template>
+                <template v-else>
+                    <button type="button" @click.prevent="spectateGame" class="btn btn-secondary btn-sm float-right mr-2">Spectate</button>
+                </template>
+                </div>
+            </div>
+        </div>
     </div>
     <template v-if="includedivisor">
         <hr class="hr-text mb-4 mt-0" data-content="">
