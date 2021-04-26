@@ -4,7 +4,7 @@
 Perudo is a dice game. The object of perudo is to be the last player with a die or more.
 
 ### Demo
-A working demo can be found at: https://perudo.mnd.cloud
+A working demo can be found at: https://perudo.brb.dynu.net
 
 ### Prerequisites
 The prerequisite are:
