@@ -10,7 +10,7 @@ WORKDIR ${WORKINGDIR}
 RUN	apk update						&&	\
 	apk add nodejs npm git
 
-RUN git clone https://docker:4QnaPMwu2eh_DHdbM4KV@gitlab.com/bitbmp/progetto-asw.git ${WORKINGDIR}
+RUN git clone https://github.com/bmp-git/perudo-web.git ${WORKINGDIR}
 RUN git clone https://github.com/eficode/wait-for.git ${WAITFOR}
 
 RUN	npm install
