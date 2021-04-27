@@ -46,15 +46,19 @@ exports.change_user_email = function (req, res) {
     }
 };
 
-exports.change_user_avatar = function (req, res) { //TODO: svg can be used to inject code [Thanks to @eciavatta]
+exports.change_user_avatar = function (req, res) {
     const avatar = req.body.avatar;
     const id = req.params.id;
     const tokenId = req.authData.user._id;
     if (tokenId !== id) {
         res.status(400).send({ message: "Id and token aren't compatible." }).end();
-    } else {
-        if (avatar !== '' && avatar.split(',')[0].split(';')[0].split(':')[1].split('/')[0] !== "image") {
-            res.status(400).send({ message: "Please upload only image." }).end();
+    } else { //TODO: improve sanification
+        if (avatar !== '' && avatar.split(',')[0].split(';')[0].split(':')[1].split('/')[0] !== "image" && 
+           (avatar.split(',')[0].split(';')[0].split(':')[1].split('/')[1] === "png" || 
+            avatar.split(',')[0].split(';')[0].split(':')[1].split('/')[1] === "jpg" || 
+            avatar.split(',')[0].split(';')[0].split(':')[1].split('/')[1] === "jpeg" || 
+            avatar.split(',')[0].split(';')[0].split(':')[1].split('/')[1] === "gif" || )) {
+            res.status(400).send({ message: "Please upload only png or jpg or jpeg or gif." }).end();
         } else {
             User.findByIdAndUpdate(id, { avatar: avatar }, function (err, result) {
                 if (err) {
