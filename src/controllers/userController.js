@@ -52,14 +52,17 @@ exports.change_user_avatar = function (req, res) {
     const tokenId = req.authData.user._id;
     if (tokenId !== id) {
         res.status(400).send({ message: "Id and token aren't compatible." }).end();
-    } else { //TODO: improve sanification
-        if (avatar !== '' && avatar.split(',')[0].split(';')[0].split(':')[1].split('/')[0] !== "image" && 
-           (avatar.split(',')[0].split(';')[0].split(':')[1].split('/')[1] === "png" || 
-            avatar.split(',')[0].split(';')[0].split(':')[1].split('/')[1] === "jpg" || 
-            avatar.split(',')[0].split(';')[0].split(':')[1].split('/')[1] === "jpeg" || 
-            avatar.split(',')[0].split(';')[0].split(':')[1].split('/')[1] === "gif" || )) {
-            res.status(400).send({ message: "Please upload only png or jpg or jpeg or gif." }).end();
-        } else {
+    } else {
+        let isValidFormat;
+        try {
+          const base64Data = avatar.split(',')[0].split(';')[0].split(':')[1];
+          const base64Type = base64Data.split('/')[0];
+          const base64Format = base64Data.split('/')[1];
+          isValidFormat = base64Type === "image" && ["png", "jpg", "jpeg", "gif"].includes(base64Format);
+        } catch {
+          isValidFormat = false;
+        }
+        if (isValidFormat) {
             User.findByIdAndUpdate(id, { avatar: avatar }, function (err, result) {
                 if (err) {
                     res.status(500).send({ message: err }).end();
@@ -69,6 +72,8 @@ exports.change_user_avatar = function (req, res) {
                     res.status(401).send({ message: "Incorrect user id." }).end();
                 }
             });
+        } else {
+            res.status(400).send({ message: "Please upload only png or jpg or jpeg or gif." }).end();
         }
     }
 };
