@@ -47,9 +47,8 @@ exports.change_user_email = function (req, res) {
 };
 
 exports.change_user_avatar = function (req, res) {
-    res.status(500).send({ message: "Service unavailable." }).end();
-    
-    /*const avatar = req.body.avatar;
+    //res.status(500).send({ message: "Service unavailable." }).end();
+    const avatar = req.body.avatar;
     const id = req.params.id;
     const tokenId = req.authData.user._id;
     if (tokenId !== id) {
@@ -77,7 +76,7 @@ exports.change_user_avatar = function (req, res) {
         } else {
             res.status(400).send({ message: "Please upload only png or jpg or jpeg or gif." }).end();
         }
-    }*/
+    }
 };
 
 var path = require('path');
