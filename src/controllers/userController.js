@@ -46,7 +46,7 @@ exports.change_user_email = function (req, res) {
     }
 };
 
-exports.change_user_avatar = function (req, res) {
+exports.change_user_avatar = function (req, res) { //TODO: svg can be used to inject code [Thanks to @eciavatta]
     const avatar = req.body.avatar;
     const id = req.params.id;
     const tokenId = req.authData.user._id;
